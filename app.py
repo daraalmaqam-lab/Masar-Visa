@@ -18,7 +18,7 @@ ADMIN_USER, ADMIN_PASS = "ALI FETORY", "0925843353"
 
 if 'auth' not in st.session_state: st.session_state.auth = False
 if not st.session_state.auth:
-    st.markdown("<h2 style='text-align: center;'>🏛️ المسار الذهبي</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #1E293B;'>🏛️ المسار الذهبي</h2>", unsafe_allow_html=True)
     u_name = st.text_input("اسم المستخدم").upper().strip()
     u_pass = st.text_input("الرقم السري", type="password").strip()
     if st.button("دخول"):
@@ -27,44 +27,59 @@ if not st.session_state.auth:
             st.rerun()
     st.stop()
 
-# --- 🎨 لوحة تحكم الألوان (تم تصحيح الخطأ البرمجي هنا) ---
+# --- 🎨 لوحة تحكم الألوان (بقيم مودرن افتراضية) ---
 with st.sidebar:
-    st.header("🎨 إعدادات المظهر")
-    bg_color = st.color_picker("لون الخلفية", "#FFFFFF")
-    text_color = st.color_picker("لون النص والعناوين", "#1F2937")
-    input_bg = st.color_picker("لون خانات الكتابة", "#F3F4F6")
-    btn_color = st.color_picker("لون الأزرار", "#374151")
+    st.header("🎨 مظهر المنظومة")
+    bg_color = st.color_picker("خلفية الشاشة", "#F8FAFC") 
+    text_color = st.color_picker("لون النصوص", "#1E293B")
+    input_bg = st.color_picker("خلفية الخانات", "#FFFFFF")
+    btn_color = st.color_picker("لون زر الطباعة", "#0F172A")
+    st.divider()
+    st.write("💡 **نصيحة علي:** الألوان الهادئة تسرع الشغل.")
 
-# --- 🛠️ التنسيق لإزالة الخطوط والتداخل ---
+# --- 🛠️ تنسيق Modern UI ---
 st.markdown(f"""
     <style>
     .stApp {{ background-color: {bg_color} !important; }}
-    h1, h2, h3, p, label, .stMarkdown {{ color: {text_color} !important; font-weight: bold !important; }}
     
-    /* تنظيف خانات الإدخال */
+    h1, h2, h3, p, label {{ 
+        color: {text_color} !important; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    }}
+    
+    /* تصميم الخانات المودرن */
     input {{ 
         color: #000000 !important; 
         background-color: {input_bg} !important; 
-        border: 1px solid #D1D5DB !important;
-        border-radius: 5px !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 12px !important; /* حواف دائرية عصرية */
+        padding: 10px !important;
     }}
 
-    /* إزالة الخط المزعج في قائمة الاختيار (الجنس) */
+    /* تنظيف قائمة الجنس تماماً */
     div[data-baseweb="select"] {{
         background-color: {input_bg} !important;
-        border: none !important;
+        border-radius: 12px !important;
+        border: 1px solid #E2E8F0 !important;
     }}
     
     div[data-baseweb="select"] > div {{
         border: none !important;
-        outline: none !important;
         box-shadow: none !important;
     }}
 
+    /* زر الطباعة المودرن */
     .stButton>button {{ 
         background-color: {btn_color} !important; 
         color: white !important; 
-        border-radius: 5px !important;
+        border-radius: 12px !important;
+        padding: 12px 24px !important;
+        border: none !important;
+        transition: 0.3s;
+    }}
+    .stButton>button:hover {{
+        opacity: 0.8;
+        transform: translateY(-2px);
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -75,16 +90,15 @@ if 'data' not in st.session_state:
 st.title("⚖️ منظومة المسار الذهبي")
 
 # --- 1. قسم الجواز ---
-st.subheader("📸 1. بيانات الجواز")
+st.subheader("📸 الخطوة الأولى: بيانات الجواز")
 target_country = st.selectbox("وجهة السفر:", ["italy", "france", "germany"])
 uploaded_file = st.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
 
-if uploaded_file and st.button("🔍 قراءة بيانات الجواز"):
-    with st.spinner("جاري المسح..."):
+if uploaded_file and st.button("🔍 ابدأ المسح الضوئي"):
+    with st.spinner("جاري استخراج البيانات برقي..."):
         img = Image.open(uploaded_file)
         result = ocr_reader.readtext(np.array(img))
         text_list = [res[1].upper() for res in result]
-        
         st.session_state.data["sn"] = text_list[0] if len(text_list) > 0 else ""
         st.session_state.data["fn"] = text_list[1] if len(text_list) > 1 else ""
         
@@ -97,26 +111,22 @@ if uploaded_file and st.button("🔍 قراءة بيانات الجواز"):
         st.session_state.data["pno"] = found_pno
         st.rerun()
 
-st.markdown("---")
+st.divider()
 
 # --- 2. قسم التعبئة ---
-st.subheader("✍️ 2. مراجعة وتعبئة البيانات")
-col1, col2 = st.columns(2)
-
-with col1:
+st.subheader("✍️ الخطوة الثانية: مراجعة البيانات")
+c1, c2 = st.columns(2)
+with c1:
     sn = st.text_input("اللقب", value=st.session_state.data["sn"])
-    fn = st.text_input("اسم الشخص", value=st.session_state.data["fn"])
-    job = st.text_input("المهنة الحالية")
+    fn = st.text_input("الاسم", value=st.session_state.data["fn"])
+    job = st.text_input("المهنة")
+with c2:
+    pno = st.text_input("رقم الجواز", value=st.session_state.data["pno"])
+    mother = st.text_input("اسم الأم")
+    gender = st.selectbox("الجنس:", ["Male", "Female"])
 
-with col2:
-    pno = st.text_input("رقم وثيقة السفر", value=st.session_state.data["pno"])
-    mother = st.text_input("اسم الأم بالكامل")
-    gender = st.selectbox("الجنس المختارة:", ["Male", "Female"])
-
-st.markdown("---")
-
-# --- 3. زر الطباعة ---
-if st.button("🖨️ طباعة نموذج التأشيرة", use_container_width=True):
+# --- 3. الطباعة ---
+if st.button("🖨️ طباعة النموذج النهائي", use_container_width=True):
     try:
         existing_pdf = PdfReader(f"{target_country}.pdf")
         output = PdfWriter()
@@ -124,7 +134,7 @@ if st.button("🖨️ طباعة نموذج التأشيرة", use_container_wid
         can = canvas.Canvas(packet)
         can.setFont("Helvetica-Bold", 10)
         
-        # الإحداثيات التلقائية
+        # الطباعة التلقائية
         can.drawString(110, 715, sn)
         can.drawString(110, 687, fn)
         can.drawString(110, 659, pno)
@@ -141,6 +151,6 @@ if st.button("🖨️ طباعة نموذج التأشيرة", use_container_wid
         
         res_file = io.BytesIO()
         output.write(res_file)
-        st.download_button("📥 اضغط للتحميل الآن", res_file.getvalue(), f"{target_country}_final.pdf", use_container_width=True)
+        st.download_button("📥 جاهز للتحميل", res_file.getvalue(), f"{target_country}_visa.pdf", use_container_width=True)
     except Exception as e:
-        st.error(f"تأكد من وجود ملف {target_country}.pdf في المستودع")
+        st.error(f"تأكد من وجود ملف {target_country}.pdf")
