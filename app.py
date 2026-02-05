@@ -21,11 +21,11 @@ WALLPAPERS = {
     "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
 }
 
-# تهيئة حالة الجلسة (Session State)
+# تهيئة حالة الجلسة
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل المطور (تعديل الألوان وتناسق الخانات) ---
+# --- 🎨 الستايل (التعديل مستهدف لخانات الدخول فقط) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -41,7 +41,6 @@ st.markdown(f"""
         background-attachment: fixed;
     }}
 
-    /* العنوان الزجاجي النظيف - لون خط أبيض ناصع مع ظل خفيف ليتناسب مع كل الصور */
     .main-title {{
         background: rgba(255, 255, 255, 0.15); 
         backdrop-filter: blur(20px);
@@ -58,7 +57,6 @@ st.markdown(f"""
         border: 1px solid rgba(255, 255, 255, 0.3);
     }}
 
-    /* البطاقة الشفافة الموحدة - لون الخط داخلها يتناسب مع الخلفية */
     .glass-card {{
         background: rgba(0, 0, 0, 0.5); 
         backdrop-filter: blur(15px);
@@ -70,43 +68,39 @@ st.markdown(f"""
         color: white;
     }}
 
-    /* تنسيق الخانات (الاسم والرقم السري) - حجم متناسق ومريح للعين */
-    div[data-baseweb="input"] {{
-        margin-top: 10px !important;
-        margin-bottom: 10px !important;
-    }}
-
-    input {{ 
-        height: 50px !important; 
-        font-size: 18px !important; 
-        text-align: center !important; 
-        font-weight: bold !important; 
-        border-radius: 10px !important; 
-        background-color: rgba(255, 255, 255, 0.9) !important;
+    /* --- التعديل المطلوب على الخانات --- */
+    .stTextInput > div > div > input {{
+        height: 48px !important; /* حجم متناسق */
+        font-size: 18px !important;
+        border-radius: 10px !important;
+        background-color: rgba(255, 255, 255, 0.95) !important;
         color: #1e3a8a !important;
-        border: 2px solid rgba(255, 255, 255, 0.5) !important;
+        border: 1px solid #3b82f6 !important;
+        transition: all 0.3s ease;
+    }}
+    
+    .stTextInput > div > div > input:focus {{
+        border: 2px solid #1e3a8a !important;
+        box-shadow: 0 0 10px rgba(30, 58, 138, 0.2) !important;
     }}
 
-    /* لون تسمية الخانات (Labels) ليكون متناسق مع كل ثيم */
     label {{
         color: white !important;
         font-weight: bold !important;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        font-size: 16px !important;
+        font-size: 15px !important;
+        margin-bottom: 5px !important;
     }}
 
-    /* تنسيق الزر الأزرق الكبير */
     .stButton > button {{
         width: 100% !important; 
-        height: 55px !important; 
-        font-size: 20px !important;
+        height: 52px !important; 
+        font-size: 19px !important;
         font-weight: bold !important; 
         background: linear-gradient(90deg, #1e3a8a, #3b82f6) !important;
         color: white !important; 
         border-radius: 12px !important; 
         border: none !important;
         margin-top: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -114,15 +108,15 @@ st.markdown(f"""
 # --- منطق عرض الشاشات ---
 
 if not st.session_state.auth:
-    # --- 1. شاشة الدخول (المعدلة) ---
+    # --- 1. شاشة الدخول ---
     st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        # اختيار الثيم
         st.session_state.bg_choice = st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()))
         st.divider()
-        # خانات الاسم والرقم السري بحجم متناسق
+        
+        # التعديل تم هنا (الخانات أصبحت متناسقة ومرتبة)
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         
@@ -135,7 +129,7 @@ if not st.session_state.auth:
         st.markdown('</div>', unsafe_allow_html=True)
 
 else:
-    # --- 2. شاشة العمل (ثابتة كما هي بدون تغيير) ---
+    # --- 2. شاشة العمل (بدون أي تغيير) ---
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
