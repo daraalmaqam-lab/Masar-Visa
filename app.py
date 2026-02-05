@@ -20,7 +20,7 @@ WALLPAPERS = {
 ADMIN_U, ADMIN_P = "ALI FETORY", "0925843353"
 if 'auth' not in st.session_state: st.session_state.auth = False
 
-# --- 🎨 الستايل (إلغاء الإطار الأحمر والحدود نهائياً) ---
+# --- 🎨 الستايل (الحل النهائي للمؤشر والإطارات) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
@@ -32,37 +32,28 @@ st.markdown(f"""
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* --- تنظيف خانات الاختيار (Selectbox) من أي إطار ملون --- */
-    div[data-baseweb="select"] > div {{
+    /* --- 1. إخفاء مؤشر الكتابة (الخط الأبيض) في القوائم --- */
+    div[data-baseweb="select"] input {{
+        caret-color: transparent !important; /* هذا السطر يخفي الخط الأبيض */
+        cursor: pointer !important;
+    }}
+
+    /* --- 2. إزالة الإطار الملون تماماً عند الضغط --- */
+    div[data-baseweb="select"], div[data-baseweb="select"] > div {{
         border: none !important;
         outline: none !important;
         box-shadow: none !important;
     }}
     
-    /* إلغاء اللون اللي يظهر عند الضغط (Focus) */
     div[data-baseweb="select"]:focus-within {{
         border: none !important;
         outline: none !important;
         box-shadow: none !important;
     }}
 
-    /* تنظيف المدخلات العادية أيضاً */
-    input {{
-        background-color: white !important; color: #0F172A !important;
-        border-radius: 12px !important; border: none !important;
-        padding: 12px !important; font-weight: 700 !important;
-        outline: none !important;
-    }}
-    
-    input:focus {{
-        outline: none !important;
-        border: none !important;
-        box-shadow: none !important;
-    }}
-
-    /* تصميم البطاقات الزجاجية */
+    /* --- 3. تصميم البطاقات الزجاجية والشاشات --- */
     [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {{
-        background: rgba(15, 23, 42, 0.7) !important;
+        background: rgba(15, 23, 42, 0.72) !important;
         backdrop-filter: blur(15px);
         padding: 30px; border-radius: 25px;
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -71,6 +62,12 @@ st.markdown(f"""
 
     h1, h2, h3 {{ color: white !important; font-weight: 800 !important; text-align: center; }}
     label, p {{ color: #CBD5E1 !important; font-weight: 600 !important; }}
+
+    input {{
+        background-color: white !important; color: #0F172A !important;
+        border-radius: 12px !important; border: none !important;
+        padding: 12px !important; font-weight: 700 !important;
+    }}
 
     .stButton>button {{
         background: #3B82F6 !important; color: white !important;
@@ -96,7 +93,7 @@ with st.sidebar:
         st.session_state.auth = False
         st.rerun()
 
-# --- الدخول والواجهة ---
+# --- الدخول ---
 if not st.session_state.auth:
     st.markdown("<h1 style='margin-top: 100px;'>🏛️ GOLDEN PATH</h1>", unsafe_allow_html=True)
     with st.container():
@@ -108,6 +105,7 @@ if not st.session_state.auth:
                 st.rerun()
     st.stop()
 
+# --- الواجهة ---
 st.markdown("<h1>🌍 GLOBAL VISA GATEWAY</h1>", unsafe_allow_html=True)
 if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", "pno": ""}
 
