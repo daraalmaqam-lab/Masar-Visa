@@ -3,11 +3,11 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (روابط مباشرة تفتح فوراً) ---
+# --- 🌆 مكتبة الثيمات (روابط مباشرة ومضمونة لليبيا) ---
 WALLPAPERS = {
-    "ليبيا - طرابلس": "https://images.pexels.com/photos/16142643/pexels-photo-16142643.jpeg?auto=compress&cs=tinysrgb&w=1260", 
-    "ليبيا - لبدة": "https://images.pexels.com/photos/15119532/pexels-photo-15119532.jpeg?auto=compress&cs=tinysrgb&w=1260",
-    "ليبيا - بحيرة أوباري": "https://images.pexels.com/photos/450055/pexels-photo-450055.jpeg?auto=compress&cs=tinysrgb&w=1260",
+    "ليبيا - طرابلس": "https://images.pexels.com/photos/16142643/pexels-photo-16142643.jpeg", 
+    "ليبيا - لبدة": "https://images.pexels.com/photos/15119532/pexels-photo-15119532.jpeg",
+    "ليبيا - أوباري": "https://images.pexels.com/photos/450055/pexels-photo-450055.jpeg",
     "باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
@@ -22,7 +22,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "ليبيا
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (الخانات 50% والزر 85% ثابتة) ---
+# --- 🎨 الستايل (المقاسات 50% و 85% ثابتة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
