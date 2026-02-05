@@ -20,7 +20,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (تعديل حجم الخط 18 وتنسيق العناوين) ---
+# --- 🎨 الستايل (تعديل حجم الخط 25) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -47,17 +47,17 @@ st.markdown(f"""
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
     }}
 
-    /* تعديل حجم الخط المطلوب: 18 */
+    /* التعديل المطلوب: حجم الخط 25 للعناوين */
     label {{
         font-family: 'Cairo', sans-serif !important;
-        font-size: 18px !important; 
+        font-size: 25px !important; 
         font-weight: 700 !important;
         color: #ffffff !important;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
         text-align: center !important;
         display: block !important;
         width: 100% !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 10px !important;
     }}
 
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
@@ -91,7 +91,7 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        # تغيير المسمى إلى "ثيمات"
+        # ثيمات، اسم المستخدم، كلمة المرور بحجم 25
         st.selectbox("ثيمات", list(WALLPAPERS.keys()), 
                      index=0, key="new_bg", on_change=update_bg)
         
