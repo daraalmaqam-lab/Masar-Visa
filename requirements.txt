@@ -1,4 +1,5 @@
 streamlit
 pypdf
+reportlab
 pandas
 python-docx
