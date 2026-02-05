@@ -20,7 +20,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (الخانات 50% والزر 85% ثابتة) ---
+# --- 🎨 الستايل (التعديل الجديد على الخطوط والألوان) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -35,59 +35,70 @@ st.markdown(f"""
     }}
 
     .main-title {{
-        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
         padding: 15px; border-radius: 15px; text-align: center; max-width: 500px;
-        margin: 15px auto; color: white; font-family: 'Cairo'; font-size: 28px; font-weight: 900;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin: 20px auto; color: white; font-family: 'Cairo'; font-size: 32px; font-weight: 900;
+        border: 2px solid rgba(255, 255, 255, 0.4);
     }}
 
     .glass-card {{
         background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
-        padding: 35px; border-radius: 25px; max-width: 500px; margin: 0 auto;
+        padding: 40px; border-radius: 30px; max-width: 550px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
-        display: flex; flex-direction: column; align-items: center;
     }}
 
+    /* تكبير حجم الخط للعناوين (Labels) وتنسيق لونها */
+    label {{
+        font-family: 'Cairo', sans-serif !important;
+        font-size: 24px !important; /* تكبير الحجم بمقدار ضعفين */
+        font-weight: 900 !important;
+        color: #ffffff !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* ظل لضمان الوضوح مع أي خلفية */
+        background: rgba(0, 0, 0, 0.2); /* خلفية خفيفة جداً تحت النص */
+        border-radius: 5px;
+        padding: 2px 10px !important;
+        margin-bottom: 10px !important;
+        display: block !important;
+        text-align: center !important;
+        width: 100% !important;
+    }}
+
+    /* تعديل مدخلات النص */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
-        width: 50% !important; 
-        margin: 0 auto !important;
+        width: 60% !important; 
+        margin: 0 auto 20px auto !important;
     }}
 
     input {{
-        height: 42px !important; font-size: 16px !important; text-align: center !important;
-        border-radius: 8px !important; background-color: white !important; color: black !important;
+        height: 50px !important; font-size: 20px !important; text-align: center !important;
+        border-radius: 10px !important; background-color: rgba(255, 255, 255, 0.9) !important; color: black !important;
+        font-weight: bold !important;
     }}
 
-    label {{
-        color: white !important; font-weight: bold !important; font-size: 14px !important;
-        text-align: center !important; width: 50% !important; display: block !important; margin: 5px auto !important;
-    }}
-
+    /* الزر الرئيسي */
     .stButton > button {{
         width: 85% !important; 
-        height: 55px !important; 
-        font-size: 22px !important;
+        height: 60px !important; 
+        font-size: 24px !important;
         font-weight: 900 !important; 
         font-family: 'Cairo', sans-serif;
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
-        color: white !important; 
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important; /* لون ذهبي للزر ليتماشى مع الاسم */
+        color: #000 !important; 
         border-radius: 15px !important; 
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
         display: block !important; 
         margin: 30px auto !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
 if not st.session_state.auth:
-    # تعديل الأيقونة هنا يا علي
     st.markdown('<div class="main-title">🛂 طيران المسار الذهبي ✈️</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()), 
+        st.selectbox("🎨 اختر واجهة المنظومة", list(WALLPAPERS.keys()), 
                      index=0, key="new_bg", on_change=update_bg)
         
         user_input = st.text_input("اسم المستخدم").upper()
