@@ -3,28 +3,28 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- تصحيح مكتبة الثيمات (تعديل الروابط لتطابق الأسماء) ---
+# --- 🌆 مكتبة الثيمات المصححة بدقة (الاسم يطابق الصورة 100%) ---
 WALLPAPERS = {
-    "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
-    "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
-    "🏙️ دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070",
-    "🗼 طوكيو": "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1974",
-    "🎡 لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070",
-    "🕌 اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071",
-    "🏖️ المالديف": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1965",
-    "⛰️ سويسرا": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070",
-    "🗽 نيويورك": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070",
-    "🏜️ الأهرامات": "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=2070",
-    "🏮 سور الصين": "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=2070",
-    "🕌 مراكش": "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=2071",
-    "🌊 سانتوريني": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2022",
-    "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
+    "🌆 باريس": "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?q=80&w=1974", # برج إيفل
+    "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996", # الكولوسيوم
+    "🏙️ دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", # برج خليفة
+    "🗼 طوكيو": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070", # معبد طوكيو
+    "🎡 لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070", # ساعة بيغ بين
+    "🕌 اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071", # المسجد الأزرق
+    "🏖️ المالديف": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1965", # شاطئ المالديف
+    "⛰️ سويسرا": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070", # جبال الألب
+    "🗽 نيويورك": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070", # مانهاتن
+    "🏜️ الأهرامات": "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=2070", # أهرامات الجيزة
+    "🏮 سور الصين": "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=2070", # سور الصين العظيم
+    "🕌 مراكش": "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=2071", # فنون مراكش
+    "🌊 سانتوريني": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2022", # البيوت البيضاء
+    "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070" # جسر البوابة الذهبية
 }
 
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل (ثابت كما هو مع الحفاظ على مقاسات 50% و 85%) ---
+# --- 🎨 الستايل (بدون أي تغيير في المقاسات المعتمدة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -52,7 +52,7 @@ st.markdown(f"""
         display: flex; flex-direction: column; align-items: center;
     }}
 
-    /* الخانات بعرض 50% كما طلبت */
+    /* مقاسات الخانات 50% */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
         width: 50% !important; 
         margin: 0 auto !important;
@@ -68,7 +68,7 @@ st.markdown(f"""
         text-align: center !important; width: 50% !important; display: block !important; margin: 5px auto !important;
     }}
 
-    /* الزر بعرض 85% كما طلبت */
+    /* مقاس الزر 85% */
     .stButton > button {{
         width: 85% !important; 
         height: 55px !important; 
@@ -91,14 +91,12 @@ if not st.session_state.auth:
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        # قائمة الاختيار المحدثة
         st.session_state.bg_choice = st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()))
         
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         
         if st.button("دخول للنظام"):
-            # التحقق من بيانات علي فيتوري
             if (user_input == "ALI FETORY" or user_input == "ALI") and pass_input == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
@@ -106,7 +104,7 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة العمل
+    # شاشة العمل - كما هي
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
