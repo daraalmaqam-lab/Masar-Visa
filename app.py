@@ -16,14 +16,13 @@ WALLPAPERS = {
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس"
 
-# وظيفة التحديث الفوري
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (تعديل حجم الخط 25) ---
+# --- 🎨 الستايل (إجبار حجم الخط 25) ---
 st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
     
     header, footer, .stAppDeployButton, [data-testid="stHeader"], [data-testid="stSidebar"] {{
         display: none !important;
@@ -37,50 +36,50 @@ st.markdown(f"""
     .main-title {{
         background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
         padding: 15px; border-radius: 15px; text-align: center; max-width: 500px;
-        margin: 20px auto; color: white; font-family: 'Cairo'; font-size: 28px; font-weight: 900;
-        border: 1px solid rgba(255, 255, 255, 0.4);
+        margin: 20px auto; color: white; font-family: 'Cairo' !important; font-size: 30px !important; font-weight: 900 !important;
+        border: 2px solid rgba(255, 255, 255, 0.4);
     }}
 
     .glass-card {{
-        background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
-        padding: 40px; border-radius: 30px; max-width: 500px; margin: 0 auto;
+        background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(15px);
+        padding: 40px; border-radius: 30px; max-width: 550px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
     }}
 
-    /* التعديل المطلوب: حجم الخط 25 للعناوين */
-    label {{
-        font-family: 'Cairo', sans-serif !important;
-        font-size: 25px !important; 
+    /* التعديل الجذري لحجم الخط 25 */
+    [data-testid="stWidgetLabel"] p {{
+        font-size: 25px !important;
+        font-family: 'Cairo' !important;
         font-weight: 700 !important;
-        color: #ffffff !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+        color: white !important;
         text-align: center !important;
-        display: block !important;
-        width: 100% !important;
-        margin-bottom: 10px !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
+    }}
+
+    label {{
+        font-size: 25px !important;
+        font-family: 'Cairo' !important;
+        font-weight: 700 !important;
     }}
 
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
-        width: 60% !important; 
-        margin: 0 auto 15px auto !important;
+        width: 65% !important; 
+        margin: 0 auto 20px auto !important;
     }}
 
     input {{
-        height: 40px !important; font-size: 16px !important; text-align: center !important;
-        border-radius: 8px !important; background-color: white !important; color: black !important;
+        height: 45px !important; font-size: 18px !important; text-align: center !important;
+        border-radius: 8px !important; font-weight: bold !important;
     }}
 
     .stButton > button {{
         width: 85% !important; 
-        height: 55px !important; 
-        font-size: 20px !important;
+        height: 60px !important; 
+        font-size: 24px !important;
         font-weight: 900 !important; 
-        font-family: 'Cairo', sans-serif;
+        font-family: 'Cairo' !important;
         background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-        color: #000 !important; 
-        border-radius: 12px !important; 
-        display: block !important; 
-        margin: 25px auto !important;
+        color: black !important; border-radius: 12px !important; margin: 25px auto !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -91,10 +90,7 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        # ثيمات، اسم المستخدم، كلمة المرور بحجم 25
-        st.selectbox("ثيمات", list(WALLPAPERS.keys()), 
-                     index=0, key="new_bg", on_change=update_bg)
-        
+        st.selectbox("ثيمات", list(WALLPAPERS.keys()), index=0, key="new_bg", on_change=update_bg)
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         
@@ -106,7 +102,6 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة العمل
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
@@ -116,7 +111,6 @@ else:
         c1.text_input("الاسم الأول")
         c1.text_input("اللقب")
         c2.text_input("رقم الجواز")
-        c2.selectbox("دولة الوجهة", ["إيطاليا", "فرنسا", "ألمانيا"])
         st.divider()
         if st.button("🚪 تسجيل الخروج"):
             st.session_state.auth = False
