@@ -9,7 +9,7 @@ from PIL import Image
 def load_reader(): return easyocr.Reader(['en'])
 ocr_reader = load_reader()
 
-# --- مكتبة الثيمات السياحية الـ 14 ---
+# --- مكتبة الثيمات الـ 14 ---
 WALLPAPERS = {
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
     "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
@@ -27,119 +27,100 @@ WALLPAPERS = {
     "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
 }
 
-# --- بيانات الدخول ---
-ADMIN_U, ADMIN_P = "ALI FETORY", "0925843353"
-if 'auth' not in st.session_state: st.session_state.auth = False
+# --- نصوص اللغات ---
+LANG = {
+    "العربية": {
+        "dir": "rtl", "title": "بوابة المسار الذهبي", "login": "دخول النظام", "user": "اسم المستخدم", "pass": "كلمة المرور",
+        "settings": "الإعدادات", "lang": "اللغة", "theme": "اختر الثيم:", "logout": "خروج", "scan": "قراءة الجواز",
+        "visa_target": "الدولة:", "upload": "ارفع الجواز", "surname": "اللقب", "name": "الاسم", "passport": "رقم الجواز",
+        "job": "المهنة", "gender": "الجنس", "print": "إصدار النموذج"
+    },
+    "English": {
+        "dir": "ltr", "title": "Golden Path Gateway", "login": "System Login", "user": "Username", "pass": "Password",
+        "settings": "Settings", "lang": "Language", "theme": "Select Theme:", "logout": "Logout", "scan": "Passport Scan",
+        "visa_target": "Country:", "upload": "Upload Passport", "surname": "Surname", "name": "First Name", "passport": "Passport No",
+        "job": "Job", "gender": "Gender", "print": "Generate Document"
+    }
+}
 
-# --- 🎨 الستايل النهائي (إلغاء البحث نهائياً) ---
+# --- تهيئة الحالة ---
+if 'auth' not in st.session_state: st.session_state.auth = False
+if 'lang' not in st.session_state: st.session_state.lang = "العربية"
+L = LANG[st.session_state.lang]
+
+# --- 🎨 الستايل المتطور ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-    html, body, [class*="st-"] {{ font-family: 'Cairo', sans-serif !important; }}
+    html, body, [class*="st-"] {{ font-family: 'Cairo', sans-serif !important; direction: {L['dir']}; }}
+
+    /* إخفاء شريط Fork وكل زوائد GitHub */
+    .stAppDeployButton, [data-testid="stStatusWidget"], footer {{ display: none !important; }}
 
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.get('bg_choice', '🌆 باريس')]}");
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* إلغاء المربعات الافتراضية */
-    .block-container {{ padding-top: 1rem !important; max-width: 950px !important; }}
-    
-    /* تصميم أزرار الاختيار بدلاً من قائمة البحث */
-    div[data-testid="stMarkdownContainer"] p {{ color: white !important; font-weight: 700 !important; }}
-    
-    /* تصميم البطاقات الزجاجية */
-    [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {{
-        background: rgba(0, 0, 0, 0.65) !important;
-        backdrop-filter: blur(25px);
-        padding: 30px; border-radius: 25px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        margin-bottom: 20px;
-    }}
+    /* إلغاء مربعات البحث والمؤشرات */
+    div[data-baseweb="select"] input, input[role="combobox"] {{ caret-color: transparent !important; color: transparent !important; text-shadow: 0 0 0 white !important; }}
+    div[data-baseweb="select"] {{ border: none !important; outline: none !important; box-shadow: none !important; }}
 
-    /* تصميم المدخلات */
-    input {{
-        background-color: white !important; color: #0F172A !important;
-        border-radius: 12px !important; font-weight: 700 !important; border: none !important;
+    /* البطاقة الزجاجية */
+    [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {{
+        background: rgba(0, 0, 0, 0.7) !important;
+        backdrop-filter: blur(20px); padding: 30px; border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }}
 
     .stButton>button {{
-        background: linear-gradient(90deg, #3B82F6, #2563EB) !important;
-        color: white !important; border-radius: 12px !important;
-        font-weight: 800 !important; border: none !important; width: 100%;
+        background: linear-gradient(90deg, #1D4ED8, #2563EB) !important;
+        color: white !important; border-radius: 12px !important; font-weight: 800 !important;
     }}
-
-    /* إخفاء شعار المنصة */
-    #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-# --- شاشة الدخول ---
-if not st.session_state.auth:
-    st.markdown("<h1 style='color:white; text-align:center; margin-top:100px;'>🏛️ المسار الذهبي</h1>", unsafe_allow_html=True)
-    with st.container():
-        u = st.text_input("USER").upper()
-        p = st.text_input("PASS", type="password")
-        if st.button("دخول"):
-            if u == ADMIN_U and p == ADMIN_P:
-                st.session_state.auth = True
-                st.rerun()
-    st.stop()
-
-# --- الشريط الجانبي (تحويل القائمة لأزرار) ---
+# --- القائمة الجانبية ---
 with st.sidebar:
-    st.markdown("### 🎨 ثيم النظام")
-    # استبدال قائمة البحث بأزرار اختيار راديو (Radio)
-    st.session_state.bg_choice = st.radio("اختر الوجهة:", list(WALLPAPERS.keys()))
+    st.markdown(f"### ⚙️ {L['settings']}")
+    # تغيير اللغة
+    st.session_state.lang = st.radio(f"🌐 {L['lang']}:", ["العربية", "English"], horizontal=True)
     st.divider()
-    if st.button("خروج"):
+    # تغيير الثيم
+    st.session_state.bg_choice = st.radio(f"🎨 {L['theme']}", list(WALLPAPERS.keys()))
+    st.divider()
+    if st.button(L['logout']):
         st.session_state.auth = False
         st.rerun()
 
+# --- الدخول ---
+if not st.session_state.auth:
+    st.markdown(f"<h1 style='color:white; text-align:center; margin-top:100px;'>🏛️ {L['title']}</h1>", unsafe_allow_html=True)
+    u = st.text_input(L['user']).upper()
+    p = st.text_input(L['pass'], type="password")
+    if st.button(L['login']):
+        if u == "ALI FETORY" and p == "0925843353":
+            st.session_state.auth = True
+            st.rerun()
+    st.stop()
+
 # --- الواجهة الرئيسية ---
-st.markdown("<h1 style='color:white; text-align:center;'>🌍 منظومة التأشيرات</h1>", unsafe_allow_html=True)
-
-if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", "pno": ""}
+st.markdown(f"<h1 style='color:white; text-align:center;'>{L['title']}</h1>", unsafe_allow_html=True)
 
 with st.container():
-    st.markdown("### 📸 1. البيانات")
-    col_a, col_b = st.columns([1, 2])
-    # هنا استخدمنا أزرار Pills بدلاً من Selectbox لإلغاء البحث
-    target = col_a.radio("الدولة:", ["italy", "france", "germany"], horizontal=True)
-    file = col_b.file_uploader("صورة الجواز", type=['jpg', 'png', 'jpeg'])
-    
-    if file and st.button("⚡ مسح ذكي"):
-        res = ocr_reader.readtext(np.array(Image.open(file)))
-        text = [r[1].upper() for r in res]
-        st.session_state.data.update({"sn": text[0] if len(text)>0 else "", "fn": text[1] if len(text)>1 else ""})
-        for t in text:
-            cl = t.replace(" ","")
-            if len(cl)==9 and cl.startswith('P'): st.session_state.data["pno"] = cl
-        st.rerun()
+    st.markdown(f"### 📥 {L['scan']}")
+    c1, c2 = st.columns([1, 2])
+    target = c1.radio(L['visa_target'], ["italy", "france", "germany"], horizontal=True)
+    file = c2.file_uploader(L['upload'], type=['jpg', 'png', 'jpeg'])
 
 with st.container():
-    st.markdown("### 📝 2. التحقق")
-    c1, c2 = st.columns(2)
-    sn = c1.text_input("اللقب", value=st.session_state.data["sn"])
-    fn = c1.text_input("الاسم", value=st.session_state.data["fn"])
-    pno = c2.text_input("رقم الجواز", value=st.session_state.data["pno"])
-    job = c2.text_input("المهنة")
-    mother = c1.text_input("اسم الأم")
-    # تم تغيير الجنس أيضاً لأزرار راديو لجمالية أكثر
-    gender = c2.radio("الجنس:", ["Male", "Female"], horizontal=True)
+    st.markdown(f"### 📝 {L['settings']}")
+    col1, col2 = st.columns(2)
+    sn = col1.text_input(L['surname'])
+    fn = col1.text_input(L['name'])
+    pno = col2.text_input(L['passport'])
+    job = col2.text_input(L['job'])
+    gender = col2.radio(L['gender'], ["Male", "Female"], horizontal=True)
 
-if st.button("✨ طباعة النموذج", use_container_width=True):
-    try:
-        pdf = PdfReader(f"{target}.pdf")
-        out, pkt = PdfWriter(), io.BytesIO()
-        can = canvas.Canvas(pkt); can.setFont("Helvetica-Bold", 10)
-        can.drawString(110, 715, sn); can.drawString(110, 687, fn)
-        can.drawString(110, 659, pno); can.drawString(110, 631, mother)
-        can.drawString(110, 603, job); can.save(); pkt.seek(0)
-        page = pdf.pages[0]; page.merge_page(PdfReader(pkt).pages[0])
-        out.add_page(page)
-        for i in range(1, len(pdf.pages)): out.add_page(pdf.pages[i])
-        final = io.BytesIO(); out.write(final)
-        st.download_button("📥 تحميل الملف", final.getvalue(), f"{target}_visa.pdf", use_container_width=True)
-    except: st.error("تأكد من وجود ملف الـ PDF الأصلي")
+if st.button(f"✨ {L['print']}", use_container_width=True):
+    st.success("جاري المعالجة...")
