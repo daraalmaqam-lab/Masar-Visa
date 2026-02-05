@@ -3,111 +3,99 @@ import pandas as pd
 from pypdf import PdfReader, PdfWriter
 import io
 
-# --- إعدادات الصفحة وجو الشاشة ---
-st.set_page_config(page_title="المسار الذهبي - منظومة التأشيرات", layout="wide")
-
-# --- بيانات الدخول ---
+# --- بيانات الدخول الخاصة بك (ALI FETORY) ---
 ADMIN_USER = "ALI FETORY"
 ADMIN_PASS = "0925843353"
 
 if 'auth' not in st.session_state:
     st.session_state.auth = False
 
-# --- تنسيق الواجهة (CSS) لجعل الجو احترافي ---
-st.markdown("""
-    <style>
-    .main { background-color: #f5f7f9; }
-    .stButton>button { width: 100%; border-radius: 5px; height: 3em; background-color: #ff4b4b; color: white; }
-    .stTextInput>div>div>input { border-radius: 5px; }
-    </style>
-    """, unsafe_allow_html=True)
-
-# --- شاشة الدخول ---
+# --- بوابة الدخول ---
 if not st.session_state.auth:
-    col1, col2, col3 = st.columns([1,2,1])
-    with col2:
-        st.markdown("<h1 style='text-align: center; color: #1E3A8A;'>🏛️ Masar Gold</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center;'>الرجاء تسجيل الدخول للمتابعة</p>", unsafe_allow_html=True)
-        u_name = st.text_input("اسم المستخدم").strip().upper()
-        u_pass = st.text_input("الرقم السري", type="password").strip()
-        if st.button("دخول"):
-            if u_name == ADMIN_USER.upper() and u_pass == ADMIN_PASS:
-                st.session_state.auth = True
-                st.rerun()
-            else:
-                st.error("بيانات الدخول غير صحيحة")
+    st.markdown("<h2 style='text-align: center;'>🏛️ منظومة المسار الذهبي للتأشيرات</h2>", unsafe_allow_html=True)
+    u_name = st.text_input("اسم المستخدم").strip().upper()
+    u_pass = st.text_input("الرقم السري", type="password").strip()
+    if st.button("دخول للمنظومة", use_container_width=True):
+        if u_name == ADMIN_USER.upper() and u_pass == ADMIN_PASS:
+            st.session_state.auth = True
+            st.rerun()
+        else:
+            st.error("بيانات الدخول غير صحيحة")
     st.stop()
 
-# --- الواجهة الرئيسية بعد الدخول ---
-st.sidebar.title("🛂 قائمة التحكم")
-st.sidebar.info(f"المستخدم: {ADMIN_USER}")
+# --- واجهة العمل الرئيسية ---
+st.sidebar.title(f"مرحباً: {ADMIN_USER}")
+st.header("🛂 معالج النماذج المتعدد (تعبئة هجينة)")
+
+# قائمة السفارات - تأكد من رفع الملفات بهذه الأسماء في GitHub: italy.pdf, france.pdf, etc.
+target_country = st.selectbox("اختر دولة الوجهة (القالب الأصلي):", ["italy", "france", "germany", "spain", "malta"])
+
+# 1. سحب بيانات الجواز (القراءة الآلية)
+st.subheader("1️⃣ قراءة بيانات الجواز")
+uploaded_passport = st.file_uploader("ارفع صورة الجواز لسحب البيانات", type=['jpg', 'png', 'jpeg'])
+
+# هذه البيانات ستُسحب فعلياً من الصورة لاحقاً
+passport_data = {"surname": "AL-FETORY", "firstname": "ALI", "passport_no": "P0123456", "dob": "1985-10-20"}
+
+if uploaded_passport:
+    st.success("✅ تم التعرف على بيانات الجواز")
+    st.write(f"الاسم: {passport_data['firstname']} {passport_data['surname']}")
+
+    st.divider()
+
+    # 2. الخانات اليدوية (لإكمال باقي النموذج الأصلي)
+    st.subheader("2️⃣ إكمال باقي بيانات النموذج (يدوياً)")
+    col1, col2 = st.columns(2)
+    with col1:
+        mother = st.text_input("اسم الأم بالكامل")
+        address = st.text_input("عنوان السكن في ليبيا")
+        job = st.text_input("المهنة الحالية")
+    with col2:
+        phone = st.text_input("رقم الهاتف")
+        email = st.text_input("البريد الإلكتروني")
+        purpose = st.text_input("الغرض من السفر")
+
+    # 3. دمج البيانات في النموذج المختار
+    st.divider()
+    if st.button(f"🔥 إصدار نموذج {target_country} المعبأ", use_container_width=True):
+        try:
+            # السيستم يفتح ملف الـ PDF حسب الدولة المختارة
+            file_name = f"{target_country}.pdf"
+            reader = PdfReader(file_name)
+            writer = PdfWriter()
+            writer.add_page(reader.pages[0])
+            
+            # ربط البيانات المسحوبة واليدوية بالخانات الأصلية
+            fields = {
+                "Surname": passport_data["surname"],
+                "FirstName": passport_data["firstname"],
+                "Passport": passport_data["passport_no"],
+                "DOB": passport_data["dob"],
+                "Mother": mother,
+                "Address": address,
+                "Job": job,
+                "Phone": phone,
+                "Purpose": purpose
+            }
+            writer.update_page_form_field_values(writer.pages[0], fields)
+            
+            output = io.BytesIO()
+            writer.write(output)
+            
+            st.download_button(
+                label=f"📥 تحميل ملف {target_country} المكتمل (PDF)",
+                data=output.getvalue(),
+                file_name=f"Schengen_{target_country}_Filled.pdf",
+                mime="application/pdf"
+            )
+        except FileNotFoundError:
+            st.error(f"⚠️ تنبيه: ملف '{target_country}.pdf' غير موجود في GitHub. يرجى رفعه لتفعيله.")
+        except Exception as e:
+            st.error(f"حدث خطأ أثناء التعبئة: {e}")
+
+# --- أرشيف الإحصائيات (الداش بورد) ---
+st.sidebar.divider()
+st.sidebar.metric("مبيعاتك اليوم", "2850 د.ل")
 if st.sidebar.button("تسجيل الخروج"):
     st.session_state.auth = False
     st.rerun()
-
-st.markdown("<h2 style='text-align: right;'>📑 معالج نماذج السفارات الأصلية</h2>", unsafe_allow_html=True)
-
-# --- الخطوات العملية ---
-col_a, col_b = st.columns([1, 1])
-
-with col_a:
-    st.subheader("1️⃣ قراءة بيانات الجواز")
-    uploaded_file = st.file_uploader("ارفع صورة الجواز هنا", type=['jpg', 'png', 'jpeg'])
-    
-    # محاكاة القراءة التلقائية
-    passport_data = {"surname": "AL-FETORY", "firstname": "ALI", "passport_no": "P0123456"}
-    
-    if uploaded_file:
-        st.success("✅ تم سحب بيانات الجواز")
-        st.write(f"**الاسم:** {passport_data['firstname']} {passport_data['surname']}")
-        st.write(f"**رقم الجواز:** {passport_data['passport_no']}")
-
-with col_b:
-    st.subheader("2️⃣ إكمال البيانات يدوياً")
-    country = st.selectbox("اختر السفارة:", ["إيطاليا (Italy)", "فرنسا (France)", "ألمانيا (Germany)"])
-    mother = st.text_input("اسم الأم")
-    address = st.text_input("عنوان السكن في ليبيا")
-    job = st.text_input("المهنة")
-
-st.divider()
-
-# --- إصدار الملف النهائي ---
-st.subheader("3️⃣ إصدار ملف التأشيرة الكامل")
-if st.button("🚀 توليد وتعبئة النموذج الأصلي (PDF)"):
-    try:
-        # البحث عن ملف PDF المرفوع على GitHub
-        # ملاحظة: تأكد أن اسم الملف في GitHub هو italy_form.pdf
-        reader = PdfReader("italy_form.pdf")
-        writer = PdfWriter()
-        writer.add_page(reader.pages[0])
-        
-        # تعبئة الخانات (هنا نربط البيانات التلقائية واليدوية)
-        fields = {
-            "Surname": passport_data["surname"],
-            "GivenNames": passport_data["firstname"],
-            "PassportNo": passport_data["passport_no"],
-            "MotherName": mother,
-            "Address": address
-        }
-        writer.update_page_form_field_values(writer.pages[0], fields)
-        
-        output = io.BytesIO()
-        writer.write(output)
-        
-        st.download_button(
-            label=f"📥 تحميل نموذج {country} المعبأ جاهزاً للطباعة",
-            data=output.getvalue(),
-            file_name=f"Schengen_{country}.pdf",
-            mime="application/pdf"
-        )
-    except FileNotFoundError:
-        st.error("⚠️ لم نجد ملف 'italy_form.pdf' على GitHub. تأكد من رفعه بنفس الاسم.")
-    except Exception as e:
-        st.error(f"حدث خطأ فني: {e}")
-
-# --- الإحصائيات في الأسفل (جو الشاشة) ---
-st.divider()
-c1, c2, c3 = st.columns(3)
-c1.metric("مبيعات اليوم", "2850 د.ل")
-c2.metric("الجوازات المسحوبة", "12")
-c3.metric("الملفات المكتملة", "8")
