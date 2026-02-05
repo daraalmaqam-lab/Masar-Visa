@@ -3,8 +3,9 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (المصححة والمضمونة) ---
+# --- 🌆 مكتبة الثيمات (إضافة ليبيا في البداية) ---
 WALLPAPERS = {
+    "🇱🇾 ليبيا": "https://images.unsplash.com/photo-1595964270729-3877dc65f463?q=80&w=2070", # صورة احترافية لليبيا
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "🏛️ روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "🏙️ دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
@@ -23,13 +24,13 @@ WALLPAPERS = {
 
 # تهيئة حالة الجلسة
 if 'auth' not in st.session_state: st.session_state.auth = False
-if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
+if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🇱🇾 ليبيا"
 
-# --- وظيفة التحديث الفوري ---
+# وظيفة التحديث الفوري
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (المقاسات 50% و 85% ثابتة) ---
+# --- 🎨 الستايل (الخانات 50% والزر 85% ثابتة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -95,9 +96,9 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        # التعديل هنا: إضافة on_change للتحديث الفوري من أول ضغطة
+        # القائمة المحدثة مع ليبيا
         st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()), 
-                     key="new_bg", on_change=update_bg)
+                     index=0, key="new_bg", on_change=update_bg)
         
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
@@ -110,6 +111,7 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
+    # شاشة العمل
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
