@@ -20,34 +20,43 @@ WALLPAPERS = {
 ADMIN_U, ADMIN_P = "ALI FETORY", "0925843353"
 if 'auth' not in st.session_state: st.session_state.auth = False
 
-# --- 🎨 الستايل النهائي (إزالة المربع الأبيض الرئيسي) ---
+# --- 🎨 الستايل (تم إزالة الإطار الأحمر والمربعات) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
     
-    /* إزالة المربع الأبيض الكبير والحدود */
-    .block-container {{
-        padding-top: 2rem !important;
-        max-width: 900px !important;
-        background: transparent !important; /* جعل الحاوية شفافة تماماً */
-    }}
+    .block-container {{ padding-top: 2rem !important; max-width: 900px !important; background: transparent !important; }}
     
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.get('bg_choice', 'احترافي (باريس)')]}");
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* إزالة أي إطارات أو خلفيات افتراضية */
-    [data-testid="stAppViewContainer"] {{ background: transparent !important; }}
-    [data-testid="stHeader"] {{ background: transparent !important; }}
+    /* إزالة الإطار الأحمر أو الملون عند الضغط على أي خانة */
+    div[data-baseweb="select"] {{
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }}
+    
+    div[data-baseweb="select"] > div {{
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }}
 
-    /* تصميم البطاقات الزجاجية (عائمة فوق الخلفية) */
+    input:focus {{
+        outline: none !important;
+        border: none !important;
+        box-shadow: none !important;
+    }}
+
+    /* تصميم البطاقات الزجاجية */
     [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {{
         background: rgba(15, 23, 42, 0.7) !important;
         backdrop-filter: blur(15px);
         padding: 30px; border-radius: 25px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         margin-bottom: 25px;
     }}
 
@@ -61,13 +70,16 @@ st.markdown(f"""
         padding: 12px !important; font-weight: 700 !important;
     }}
 
-    /* الأزرار */
     .stButton>button {{
         background: #3B82F6 !important; color: white !important;
         border-radius: 12px !important; font-weight: 800 !important;
-        border: none !important; width: 100%; transition: 0.3s;
+        border: none !important; width: 100%;
     }}
-    .stButton>button:hover {{ transform: scale(1.02); background: #2563EB !important; }}
+
+    [data-testid="stSidebar"] {{
+        background-color: rgba(15, 23, 42, 0.85) !important;
+        backdrop-filter: blur(15px);
+    }}
 
     #MainMenu, footer {{visibility: hidden;}}
     </style>
@@ -76,13 +88,13 @@ st.markdown(f"""
 # --- الجانب ---
 with st.sidebar:
     st.markdown("### ⚙️ SETTINGS")
-    bg_choice = st.selectbox("Background Theme:", list(WALLPAPERS.keys()), key='bg_choice')
+    bg_choice = st.selectbox("Choose Background:", list(WALLPAPERS.keys()), key='bg_choice')
     st.divider()
     if st.button("LOGOUT"):
         st.session_state.auth = False
         st.rerun()
 
-# --- الدخول ---
+# --- الدخول والواجهة ---
 if not st.session_state.auth:
     st.markdown("<h1 style='margin-top: 100px;'>🏛️ GOLDEN PATH</h1>", unsafe_allow_html=True)
     with st.container():
@@ -94,9 +106,7 @@ if not st.session_state.auth:
                 st.rerun()
     st.stop()
 
-# --- الواجهة ---
 st.markdown("<h1>🌍 GLOBAL VISA GATEWAY</h1>", unsafe_allow_html=True)
-
 if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", "pno": ""}
 
 with st.container():
