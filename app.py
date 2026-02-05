@@ -25,7 +25,7 @@ WALLPAPERS = {
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل (التعديل مستهدف لخانات الدخول فقط) ---
+# --- 🎨 الستايل (تعديل حجم الخانات لتستوعب 15 حرفاً) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -68,39 +68,36 @@ st.markdown(f"""
         color: white;
     }}
 
-    /* --- التعديل المطلوب على الخانات --- */
+    /* --- التعديل المطلوب: حجم الخانات لتستوعب 15 حرفاً بوضوح --- */
     .stTextInput > div > div > input {{
-        height: 48px !important; /* حجم متناسق */
-        font-size: 18px !important;
-        border-radius: 10px !important;
+        height: 55px !important; 
+        font-size: 22px !important; /* تكبير الخط قليلاً ليكون مريحاً */
+        border-radius: 12px !important;
         background-color: rgba(255, 255, 255, 0.95) !important;
         color: #1e3a8a !important;
-        border: 1px solid #3b82f6 !important;
-        transition: all 0.3s ease;
+        border: 2px solid #3b82f6 !important;
+        padding: 10px !important; /* مساحة داخلية كافية */
+        min-width: 300px !important; /* ضمان عرض الخانة لاستيعاب النص الطويل */
     }}
     
-    .stTextInput > div > div > input:focus {{
-        border: 2px solid #1e3a8a !important;
-        box-shadow: 0 0 10px rgba(30, 58, 138, 0.2) !important;
-    }}
-
     label {{
         color: white !important;
         font-weight: bold !important;
-        font-size: 15px !important;
-        margin-bottom: 5px !important;
+        font-size: 17px !important;
+        margin-bottom: 8px !important;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     }}
 
     .stButton > button {{
         width: 100% !important; 
-        height: 52px !important; 
-        font-size: 19px !important;
+        height: 55px !important; 
+        font-size: 20px !important;
         font-weight: bold !important; 
         background: linear-gradient(90deg, #1e3a8a, #3b82f6) !important;
         color: white !important; 
         border-radius: 12px !important; 
         border: none !important;
-        margin-top: 20px;
+        margin-top: 25px;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -108,7 +105,7 @@ st.markdown(f"""
 # --- منطق عرض الشاشات ---
 
 if not st.session_state.auth:
-    # --- 1. شاشة الدخول ---
+    # --- 1. شاشة الدخول (المعدلة) ---
     st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
@@ -116,7 +113,7 @@ if not st.session_state.auth:
         st.session_state.bg_choice = st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()))
         st.divider()
         
-        # التعديل تم هنا (الخانات أصبحت متناسقة ومرتبة)
+        # الخانات بحجم جديد يستوعب من 8 إلى 15 خانة بوضوح
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         
@@ -129,7 +126,7 @@ if not st.session_state.auth:
         st.markdown('</div>', unsafe_allow_html=True)
 
 else:
-    # --- 2. شاشة العمل (بدون أي تغيير) ---
+    # --- 2. شاشة العمل (كما هي) ---
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
