@@ -20,7 +20,7 @@ WALLPAPERS = {
 ADMIN_U, ADMIN_P = "ALI FETORY", "0925843353"
 if 'auth' not in st.session_state: st.session_state.auth = False
 
-# --- 🎨 الستايل (تم إزالة الإطار الأحمر والمربعات) ---
+# --- 🎨 الستايل (إلغاء الإطار الأحمر والحدود نهائياً) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
@@ -32,19 +32,28 @@ st.markdown(f"""
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* إزالة الإطار الأحمر أو الملون عند الضغط على أي خانة */
-    div[data-baseweb="select"] {{
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-    }}
-    
+    /* --- تنظيف خانات الاختيار (Selectbox) من أي إطار ملون --- */
     div[data-baseweb="select"] > div {{
         border: none !important;
         outline: none !important;
         box-shadow: none !important;
     }}
+    
+    /* إلغاء اللون اللي يظهر عند الضغط (Focus) */
+    div[data-baseweb="select"]:focus-within {{
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }}
 
+    /* تنظيف المدخلات العادية أيضاً */
+    input {{
+        background-color: white !important; color: #0F172A !important;
+        border-radius: 12px !important; border: none !important;
+        padding: 12px !important; font-weight: 700 !important;
+        outline: none !important;
+    }}
+    
     input:focus {{
         outline: none !important;
         border: none !important;
@@ -62,13 +71,6 @@ st.markdown(f"""
 
     h1, h2, h3 {{ color: white !important; font-weight: 800 !important; text-align: center; }}
     label, p {{ color: #CBD5E1 !important; font-weight: 600 !important; }}
-
-    /* الخانات */
-    input {{
-        background-color: white !important; color: #0F172A !important;
-        border-radius: 12px !important; border: none !important;
-        padding: 12px !important; font-weight: 700 !important;
-    }}
 
     .stButton>button {{
         background: #3B82F6 !important; color: white !important;
