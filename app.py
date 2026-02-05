@@ -3,34 +3,29 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (إضافة ليبيا في البداية) ---
+# --- 🌆 مكتبة الثيمات (تم تحديث ثيمات ليبيا بروابط مباشرة) ---
 WALLPAPERS = {
-    "🇱🇾 ليبيا": "https://images.unsplash.com/photo-1595964270729-3877dc65f463?q=80&w=2070", # صورة احترافية لليبيا
-    "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
-    "🏛️ روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
-    "🏙️ دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
-    "🗼 طوكيو": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=2094", 
-    "🎡 لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070", 
-    "🕌 اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071", 
-    "🏖️ المالديف": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1965", 
-    "⛰️ سويسرا": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070", 
-    "🗽 نيويورك": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070", 
-    "🏜️ الأهرامات": "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=2070", 
-    "🏮 سور الصين": "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=2070", 
-    "🕌 مراكش": "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=2071", 
-    "🌊 سانتوريني": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2022", 
-    "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070" 
+    "ليبيا - آثار لبدة": "https://images.unsplash.com/photo-1595964270729-3877dc65f463?q=80&w=2070",
+    "ليبيا - الصحراء": "https://images.unsplash.com/photo-1505315573712-4299b9087593?q=80&w=2070",
+    "طرابلس - السراي الحمراء": "https://images.unsplash.com/photo-1595964270487-759086156e9c?q=80&w=2070",
+    "باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
+    "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
+    "دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
+    "لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070", 
+    "اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071", 
+    "المالديف": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1965", 
+    "سويسرا": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070"
 }
 
 # تهيئة حالة الجلسة
 if 'auth' not in st.session_state: st.session_state.auth = False
-if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🇱🇾 ليبيا"
+if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "ليبيا - آثار لبدة"
 
 # وظيفة التحديث الفوري
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (الخانات 50% والزر 85% ثابتة) ---
+# --- 🎨 الستايل (المقاسات 50% و 85% ثابتة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -96,7 +91,7 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        # القائمة المحدثة مع ليبيا
+        # القائمة المحدثة
         st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()), 
                      index=0, key="new_bg", on_change=update_bg)
         
