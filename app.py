@@ -1,9 +1,9 @@
 import streamlit as st
 
-# 1. إعدادات الصفحة الأساسية - إلغاء السايدبار لضمان نظافة الواجهة
+# 1. إعدادات الصفحة - إلغاء السايدبار نهائياً لضمان نظافة الواجهة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- مكتبة الثيمات الـ 14 كاملة (عشان ما يريح منك شي) ---
+# --- مكتبة الثيمات الـ 14 كاملة (ثابتة ولا تحذف) ---
 WALLPAPERS = {
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
     "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
@@ -21,16 +21,16 @@ WALLPAPERS = {
     "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
 }
 
-# تهيئة حالة الجلسة
+# تهيئة حالة الجلسة (Session State)
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل النهائي المعتمد (نظافة وتنسيق) ---
+# --- 🎨 الستايل النهائي المعتمد (ثابت ولا يحذف) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
     
-    /* حذف الزوائد والكلمات المزعجة */
+    /* إخفاء كل مسببات الكلمات الغريبة والزوائد */
     header, footer, .stAppDeployButton, [data-testid="stHeader"], [data-testid="stSidebar"] {{
         display: none !important;
     }}
@@ -55,7 +55,7 @@ st.markdown(f"""
         border: 1px solid rgba(255, 255, 255, 0.1); color: white;
     }}
 
-    /* تنسيق الخانات الكبيرة */
+    /* تنسيق الخانات الكبيرة والخط الواضح */
     input {{ 
         height: 55px !important; font-size: 20px !important; text-align: center !important; 
         font-weight: bold !important; border-radius: 12px !important; background-color: white !important;
@@ -70,10 +70,10 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- منطق عرض الشاشات ---
+# --- منطق عرض الشاشات (فصل كامل) ---
 
 if not st.session_state.auth:
-    # 1. شاشة الدخول
+    # --- 1. شاشة الدخول فقط ---
     st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
@@ -83,7 +83,7 @@ if not st.session_state.auth:
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         if st.button("دخول للنظام"):
-            # التحقق من بياناتك (علي فيتوري)
+            # التحقق من بياناتك المحفوظة
             if (user_input == "ALI FETORY" or user_input == "ALI") and pass_input == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
@@ -92,12 +92,12 @@ if not st.session_state.auth:
         st.markdown('</div>', unsafe_allow_html=True)
 
 else:
-    # 2. شاشة العمل (بعد الدخول)
+    # --- 2. شاشة العمل (تظهر فقط بعد نجاح الدخول) ---
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
         st.markdown('<div class="glass-card" style="max-width: 800px;">', unsafe_allow_html=True)
-        st.subheader("📝 بيانات النموذج المعتمد")
+        st.subheader("📝 نموذج إدخال البيانات")
         
         c1, c2 = st.columns(2)
         c1.text_input("الاسم الأول")
@@ -108,7 +108,7 @@ else:
         st.divider()
         col_btns = st.columns(2)
         if col_btns[0].button("✅ حفظ البيانات"):
-            st.success("تم الحفظ بنجاح!")
+            st.success("تم حفظ بيانات المسافر بنجاح!")
             
         if col_btns[1].button("🚪 تسجيل الخروج"):
             st.session_state.auth = False
