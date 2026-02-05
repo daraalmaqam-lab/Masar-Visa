@@ -1,18 +1,18 @@
 import streamlit as st
-import cv2
 import numpy as np
 from PIL import Image
-import pytesseract # قارئ سريع جداً وخفيف
+import cv2
+
+# محاولة تحميل مكتبة القراءة الذكية (PaddleOCR)
+try:
+    from paddleocr import PaddleOCR
+    # تهيئة القارئ للغة الإنجليزية (يشتغل مرة واحدة ويقعد في الذاكرة)
+    ocr = PaddleOCR(use_angle_cls=True, lang='en', show_log=False)
+except ImportError:
+    st.error("الرجاء إضافة paddleocr و paddlepaddle في ملف requirements.txt")
 
 # إعدادات الصفحة المعتمدة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
-
-# دالة معالجة الصورة لتحسين الدقة
-def preprocess_image(image):
-    img = np.array(image)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # تحويل لرمادي
-    gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1] # توضيح الحروف
-    return gray
 
 # --- الثيمات ---
 WALLPAPERS = {
@@ -23,9 +23,9 @@ WALLPAPERS = {
 
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
-if 'data' not in st.session_state: st.session_state.data = {"n": "", "s": "", "p": ""}
+if 'p_data' not in st.session_state: st.session_state.p_data = {"n": "", "s": "", "p": ""}
 
-# --- 🎨 الستايل الزجاجي ---
+# --- 🎨 الستايل الزجاجي النظيف ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -38,10 +38,11 @@ st.markdown(f"""
         border: 1px solid rgba(255, 255, 255, 0.2);
     }}
     .glass-card {{
-        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
-        padding: 25px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); color: white;
+        background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
+        padding: 30px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); color: white;
     }}
-    input {{ height: 45px !important; font-size: 16px !important; text-align: center !important; font-weight: bold !important; }}
+    input {{ height: 50px !important; font-size: 18px !important; text-align: center !important; font-weight: bold !important; border-radius: 10px !important; }}
+    .stButton > button {{ width: 100% !important; height: 50px !important; font-weight: bold !important; border-radius: 10px !important; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -54,14 +55,14 @@ if not st.session_state.auth:
         st.session_state.bg_choice = st.selectbox("🎨 اختر الثيم:", list(WALLPAPERS.keys()))
         u = st.text_input("اسم المستخدم").upper()
         p = st.text_input("كلمة المرور", type="password")
-        if st.button("دخول", use_container_width=True):
+        if st.button("دخول"):
             if (u == "ALI FETORY" or u == "ALI") and p == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 else:
     # شاشة العمل
-    st.markdown('<div class="main-title">🌍 قارئ بيانات الجواز الذكي</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">🌍 نظام قراءة بيانات الجواز</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 4, 1])
     with col_b:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
@@ -69,32 +70,32 @@ else:
         up_file = st.file_uploader("📷 ارفع صورة الجواز (واضحة)", type=['jpg', 'png', 'jpeg'])
         
         if up_file:
-            if st.button("⚡ قراءة سريعة الآن"):
-                # معالجة الصورة قبل القراءة لتحسين الدقة
-                raw_img = Image.open(up_file)
-                processed = preprocess_image(raw_img)
-                
-                # قراءة النص باستخدام محرك سريع
-                text = pytesseract.image_to_string(processed, lang='eng')
-                lines = [line.strip() for line in text.split('\n') if len(line.strip()) > 3]
-                
-                # توزيع البيانات بشكل ذكي
-                if len(lines) > 2:
-                    st.session_state.data["s"] = lines[0] # اللقب
-                    st.session_state.data["n"] = lines[1] # الاسم
-                    st.session_state.data["p"] = lines[2] # رقم الجواز
-                st.success("تمت القراءة بنجاح في ثواني!")
+            if st.button("⚡ بدء المسح الضوئي"):
+                with st.spinner('جاري التحليل بدقة عالية...'):
+                    img = Image.open(up_file)
+                    img_array = np.array(img)
+                    
+                    # القراءة باستخدام PaddleOCR
+                    result = ocr.ocr(img_array, cls=True)
+                    
+                    # استخراج النصوص المكتوبة
+                    texts = [line[1][0] for res in result for line in res]
+                    
+                    if len(texts) > 5:
+                        st.session_state.p_data["p"] = texts[0] # مثال لرقم الجواز
+                        st.session_state.p_data["s"] = texts[1] # اللقب
+                        st.session_state.p_data["n"] = texts[2] # الاسم
+                    st.success("تم استخراج البيانات!")
 
         st.divider()
-        st.subheader("📋 مراجعة البيانات")
+        st.subheader("📝 البيانات المستخرجة")
         c1, c2 = st.columns(2)
-        fname = c1.text_input("الاسم الأول", value=st.session_state.data["n"])
-        lname = c1.text_input("اللقب", value=st.session_state.data["s"])
-        pnum = c2.text_input("رقم الجواز", value=st.session_state.data["p"])
+        fname = c1.text_input("الاسم الأول", value=st.session_state.p_data["n"])
+        lname = c1.text_input("اللقب", value=st.session_state.p_data["s"])
+        pnum = c2.text_input("رقم الجواز", value=st.session_state.p_data["p"])
         job = c2.text_input("المهنة")
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🚪 خروج", use_container_width=True):
+        if st.button("🚪 تسجيل الخروج", use_container_width=True):
             st.session_state.auth = False
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
