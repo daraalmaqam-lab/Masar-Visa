@@ -1,9 +1,9 @@
 import streamlit as st
 
-# 1. إعدادات الصفحة - إلغاء السايدبار نهائياً لضمان نظافة الواجهة
+# 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- مكتبة الثيمات الـ 14 كاملة ---
+# --- تصحيح مكتبة الثيمات (الاسم مع الصورة الصحيحة) ---
 WALLPAPERS = {
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
     "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
@@ -24,7 +24,7 @@ WALLPAPERS = {
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل (تعديل عرض الزر فقط إلى 85%) ---
+# --- 🎨 الستايل (ثابت كما هو) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -52,7 +52,6 @@ st.markdown(f"""
         display: flex; flex-direction: column; align-items: center;
     }}
 
-    /* الخانات بعرض 50% */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
         width: 50% !important; 
         margin: 0 auto !important;
@@ -68,9 +67,8 @@ st.markdown(f"""
         text-align: center !important; width: 50% !important; display: block !important; margin: 5px auto !important;
     }}
 
-    /* --- التعديل المطلوب: عرض الزر 85% --- */
     .stButton > button {{
-        width: 85% !important; /* الزر عريض وواضح */
+        width: 85% !important; 
         height: 55px !important; 
         font-size: 22px !important;
         font-weight: 900 !important; 
@@ -80,14 +78,8 @@ st.markdown(f"""
         border-radius: 15px !important; 
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         display: block !important; 
-        margin: 30px auto !important; /* زيادة المسافة العلوية للزر */
+        margin: 30px auto !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
-        transition: transform 0.2s, box-shadow 0.2s !important;
-    }}
-    
-    .stButton > button:hover {{
-        transform: scale(1.02) !important;
-        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5) !important;
     }}
     </style>
     """, unsafe_allow_html=True)
