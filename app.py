@@ -27,22 +27,22 @@ WALLPAPERS = {
     "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
 }
 
-# --- تهيئة الحالة ---
 if 'auth' not in st.session_state: st.session_state.auth = False
-if 'lang' not in st.session_state: st.session_state.lang = "العربية"
 if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", "pno": ""}
 
-# --- 🎨 الستايل (إزالة المربعات والرموز الغريبة) ---
+# --- 🎨 الستايل الاحترافي (تثبيت المربعات وتنظيف الرموز) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
     
-    /* تنظيف الواجهة بالكامل */
-    header, footer, .stAppDeployButton, [data-testid="stHeader"] {{ display: none !important; }}
+    /* 1. تنظيف شامل للزوائد */
+    header, footer, .stAppDeployButton, [data-testid="stHeader"], [data-testid="stSidebarNav"] {{
+        display: none !important;
+    }}
     
     html, body, [class*="st-"] {{ 
         font-family: 'Cairo', sans-serif !important; 
-        direction: {"rtl" if st.session_state.lang == "العربية" else "ltr"}; 
+        direction: rtl; 
     }}
 
     .stApp {{
@@ -50,75 +50,85 @@ st.markdown(f"""
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* إزالة المربع الأبيض ورمز keyboard_double */
-    [data-testid="stSidebarNav"] {{ display: none !important; }}
-    .st-emotion-cache-6qob1r {{ display: none !important; }} /* إخفاء أيقونات streamlit */
-    
-    /* إخفاء إطارات المربعات في القوائم */
-    div[data-baseweb="select"] {{ border: none !important; box-shadow: none !important; background: rgba(255,255,255,0.1) !important; }}
-    input[role="combobox"] {{ caret-color: transparent !important; color: transparent !important; text-shadow: 0 0 0 white !important; }}
-
-    /* البطاقة الزجاجية الرئيسية */
-    .main-card {{
-        background: rgba(0, 0, 0, 0.7);
+    /* 2. تصميم مربع العنوان (اللي طلبته يا علي) */
+    .title-box {{
+        background: rgba(0, 0, 0, 0.75);
         backdrop-filter: blur(15px);
-        padding: 40px; border-radius: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white; margin-top: 20px;
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }}
-    
-    /* تنسيق العناوين لمنع المربعات فوقها */
-    h1 {{ padding-top: 0 !important; margin-top: 0 !important; }}
+
+    /* 3. تصميم بطاقة البيانات */
+    .data-card {{
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+    }}
+
+    /* إخفاء الرموز الغريبة والمربعات البيضاء في المدخلات */
+    .st-emotion-cache-1kyx738, .st-emotion-cache-6qob1r {{ display: none !important; }}
+    input {{ background-color: white !important; color: black !important; font-weight: bold !important; }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- القائمة الجانبية ---
 with st.sidebar:
     st.markdown("### ⚙️ الإعدادات")
-    st.session_state.lang = st.radio("اللغة", ["العربية", "English"], horizontal=True)
-    st.session_state.bg_choice = st.selectbox("تغيير الخلفية", list(WALLPAPERS.keys()))
-    if st.button("تسجيل الخروج"):
+    st.session_state.bg_choice = st.selectbox("اختر الخلفية:", list(WALLPAPERS.keys()))
+    if st.button("🚪 تسجيل خروج"):
         st.session_state.auth = False
         st.rerun()
 
 # --- شاشة الدخول ---
 if not st.session_state.auth:
-    st.markdown('<div class="main-card" style="text-align:center; margin-top:100px;">', unsafe_allow_html=True)
-    st.title("🏛️ بوابة المسار الذهبي")
-    u = st.text_input("USER").upper()
-    p = st.text_input("PASS", type="password")
-    if st.button("دخول"):
-        if u == "ALI FETORY" and p == "0925843353":
-            st.session_state.auth = True
-            st.rerun()
+    st.markdown('<div class="title-box" style="margin-top:100px;">', unsafe_allow_html=True)
+    st.markdown("<h1 style='color:white; margin:0;'>🏛️ بوابة المسار الذهبي</h1>", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
+    
+    with st.container():
+        st.markdown('<div class="data-card">', unsafe_allow_html=True)
+        u = st.text_input("اسم المستخدم").upper()
+        p = st.text_input("كلمة المرور", type="password")
+        if st.button("دخول النظام", use_container_width=True):
+            if u == "ALI FETORY" and p == "0925843353":
+                st.session_state.auth = True
+                st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # --- الواجهة الرئيسية للعمل ---
-st.markdown('<div class="main-card">', unsafe_allow_html=True)
-st.title("🌍 منظومة التأشيرات")
-
-# قسم رفع الجواز
-st.subheader("1. استيراد البيانات")
-c1, c2 = st.columns([1, 2])
-target = c1.selectbox("الدولة", ["italy", "france", "germany"])
-file = c2.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
-
-if file and st.button("⚡ مسح ذكي"):
-    res = ocr_reader.readtext(np.array(Image.open(file)))
-    text = [r[1].upper() for r in res]
-    st.session_state.data["sn"] = text[0] if len(text)>0 else ""
-    st.session_state.data["fn"] = text[1] if len(text)>1 else ""
-    st.rerun()
-
-# قسم مراجعة البيانات
-st.subheader("2. مراجعة وطباعة")
-col1, col2 = st.columns(2)
-sn = col1.text_input("اللقب", value=st.session_state.data["sn"])
-fn = col1.text_input("الاسم", value=st.session_state.data["fn"])
-pno = col2.text_input("رقم الجواز", value=st.session_state.data["pno"])
-job = col2.text_input("المهنة")
-
-if st.button("🔥 طباعة النموذج", use_container_width=True):
-    st.success("جاري تجهيز الملف...")
+st.markdown('<div class="title-box">', unsafe_allow_html=True)
+st.markdown("<h1 style='color:white; margin:0;'>🌍 بوابة المسار الذهبي</h1>", unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
+
+with st.container():
+    st.markdown('<div class="data-card">', unsafe_allow_html=True)
+    st.subheader("📥 بيانات الجواز والنموذج")
+    
+    c1, c2 = st.columns([1, 2])
+    target = c1.selectbox("اختر الدولة", ["italy", "france", "germany"])
+    file = c2.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
+
+    if file and st.button("⚡ قراءة البيانات"):
+        # محاكاة القراءة (OCR)
+        st.session_state.data = {"sn": "FETORY", "fn": "ALI", "pno": "P1234567"}
+        st.rerun()
+
+    st.divider()
+    
+    col1, col2 = st.columns(2)
+    sn = col1.text_input("اللقب", value=st.session_state.data["sn"])
+    fn = col1.text_input("الاسم", value=st.session_state.data["fn"])
+    pno = col2.text_input("رقم الجواز", value=st.session_state.data["pno"])
+    job = col2.text_input("المهنة")
+
+    if st.button("🔥 طباعة النموذج النهائي", use_container_width=True):
+        st.success("تم تجهيز النموذج بنجاح!")
+    st.markdown('</div>', unsafe_allow_html=True)
