@@ -27,46 +27,62 @@ if not st.session_state.auth:
             st.rerun()
     st.stop()
 
-# --- تنسيق واجهة المنظومة (CSS) ---
+# --- 🛠️ تعديل الألوان ليكون النص واضحاً جداً ---
 st.markdown("""
     <style>
-    .stApp { background-color: #F8FAFC; }
-    .stButton>button { background-color: #1E3A8A; color: white; border-radius: 8px; font-weight: bold; }
-    .stSelectbox, .stTextInput { border-radius: 10px; }
+    /* خلفية التطبيق بيضاء مريحة */
+    .stApp { background-color: #FFFFFF; }
+    
+    /* جعل خانات الكتابة بيضاء والنص داخلها أسود */
+    input { color: #000000 !important; background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important; }
+    
+    /* تعديل لون العناوين */
+    h1, h2, h3, p, label { color: #1E3A8A !important; font-weight: bold; }
+    
+    /* زر الطباعة - أزرق واضح */
+    .stButton>button { 
+        background-color: #1E3A8A !important; 
+        color: white !important; 
+        border-radius: 8px; 
+        padding: 10px;
+        font-size: 18px;
+    }
+    
+    /* خانات الاختيار */
+    .stSelectbox div { color: #000000 !important; }
     </style>
     """, unsafe_allow_html=True)
 
 st.title("📑 معالج نماذج التأشيرات")
 
-# --- تخزين البيانات لضمان عدم ضياعها ---
+# --- تخزين البيانات ---
 if 'data' not in st.session_state:
     st.session_state.data = {"sn": "", "fn": "", "pno": ""}
 
 # --- القسم الأول: الجواز ---
-with st.container():
-    st.markdown("### 1️⃣ بيانات الجواز")
-    target_country = st.selectbox("اختر وجهة السفر:", ["italy", "france", "germany"])
-    uploaded_file = st.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
+st.markdown("### 1️⃣ بيانات الجواز")
+target_country = st.selectbox("اختر وجهة السفر:", ["italy", "france", "germany"])
+uploaded_file = st.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
 
-    if uploaded_file and st.button("🔍 قراءة الجواز"):
-        with st.spinner("جاري سحب البيانات..."):
-            img = Image.open(uploaded_file)
-            result = ocr_reader.readtext(np.array(img))
-            text = " ".join([res[1].upper() for res in result])
-            # استخراج البيانات
-            st.session_state.data["sn"] = result[0][1] if len(result) > 0 else ""
-            st.session_state.data["fn"] = result[1][1] if len(result) > 1 else ""
-            st.session_state.data["pno"] = [t for t in text.split() if len(t) == 9 and t.startswith('P')][0] if 'P' in text else ""
-            st.rerun()
+if uploaded_file and st.button("🔍 قراءة الجواز"):
+    with st.spinner("جاري سحب البيانات..."):
+        img = Image.open(uploaded_file)
+        result = ocr_reader.readtext(np.array(img))
+        text = " ".join([res[1].upper() for res in result])
+        st.session_state.data["sn"] = result[0][1] if len(result) > 0 else ""
+        st.session_state.data["fn"] = result[1][1] if len(result) > 1 else ""
+        st.session_state.data["pno"] = [t for t in text.split() if len(t) == 9 and t.startswith('P')][0] if 'P' in text else ""
+        st.rerun()
+
+st.markdown("---")
 
 # --- القسم الثاني: البيانات التكميلية ---
-st.markdown("---")
-st.markdown("### 2️⃣ مراجعة البيانات")
+st.markdown("### 2️⃣ مراجعة وتكملة البيانات")
 col1, col2 = st.columns(2)
 
 with col1:
-    sn = st.text_input("اللقب", value=st.session_state.data["sn"])
-    fn = st.text_input("الاسم", value=st.session_state.data["fn"])
+    sn = st.text_input("اللقب (Surname)", value=st.session_state.data["sn"])
+    fn = st.text_input("الاسم (First Name)", value=st.session_state.data["fn"])
     gender = st.selectbox("الجنس:", ["Male", "Female"])
 
 with col2:
@@ -76,7 +92,7 @@ with col2:
 
 st.markdown("---")
 
-# --- الزر المختصر والمباشر ---
+# --- الزر المختصر ---
 if st.button("🖨️ طباعة النموذج", use_container_width=True):
     try:
         existing_pdf = PdfReader(f"{target_country}.pdf")
@@ -84,7 +100,7 @@ if st.button("🖨️ طباعة النموذج", use_container_width=True):
         packet = io.BytesIO()
         can = canvas.Canvas(packet)
         
-        # إحداثيات الطباعة (تلقائية)
+        # إحداثيات الطباعة (X, Y)
         x, y = 110, 715
         can.setFont("Helvetica-Bold", 10)
         can.drawString(x, y, sn)
@@ -107,11 +123,8 @@ if st.button("🖨️ طباعة النموذج", use_container_width=True):
         res_file = io.BytesIO()
         output.write(res_file)
         
-        st.download_button("📥 اضغط هنا لتحميل الملف المطبوع", res_file.getvalue(), f"{target_country}_final.pdf", use_container_width=True)
-        st.success("تم تجهيز النموذج بنجاح!")
+        st.download_button("📥 تحميل الملف المطبوع", res_file.getvalue(), f"{target_country}_final.pdf", use_container_width=True)
     except Exception as e:
-        st.error(f"تأكد من وجود ملف {target_country}.pdf في المستودع.")
+        st.error(f"خطأ: تأكد من وجود ملف {target_country}.pdf")
 
-# شريط جانبي بسيط
-st.sidebar.markdown(f"**المسار الذهبي**")
-st.sidebar.info(f"المستخدم: {ADMIN_USER}")
+st.sidebar.info(f"المستخدم المتصل: {ADMIN_USER}")
