@@ -3,7 +3,7 @@ import streamlit as st
 # 1. إعدادات الصفحة - إلغاء السايدبار نهائياً لضمان نظافة الواجهة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- مكتبة الثيمات الـ 14 كاملة ---
+# --- مكتبة الثيمات الـ 14 كاملة (ثابتة ولا تحذف) ---
 WALLPAPERS = {
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
     "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
@@ -24,7 +24,7 @@ WALLPAPERS = {
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل (تصغير العرض ليكون ملموم في النص) ---
+# --- 🎨 الستايل (تعديل العرض إلى 50% ليكون ملموم جداً) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -47,14 +47,14 @@ st.markdown(f"""
 
     .glass-card {{
         background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(15px);
-        padding: 35px; border-radius: 25px; max-width: 450px; margin: 0 auto;
+        padding: 35px; border-radius: 25px; max-width: 500px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
-        display: flex; flex-direction: column; align-items: center; /* توسيط المحتوى */
+        display: flex; flex-direction: column; align-items: center;
     }}
 
-    /* --- التعديل الأساسي: تصغير عرض الخانات --- */
+    /* --- التعديل المطلوب: العرض 50% --- */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
-        width: 85% !important; /* تصغير العرض باش ما تطلعش للخارج */
+        width: 50% !important; /* الخانات تأخذ نصف عرض البطاقة فقط */
         margin: 0 auto !important;
     }}
 
@@ -65,11 +65,12 @@ st.markdown(f"""
 
     label {{
         color: white !important; font-weight: bold !important; font-size: 14px !important;
-        text-align: right !important; width: 85% !important; display: block !important; margin: 5px auto !important;
+        text-align: center !important; width: 50% !important; display: block !important; margin: 5px auto !important;
     }}
 
     .stButton > button {{
-        width: 85% !important; height: 48px !important; font-size: 18px !important;
+        width: 50% !important; /* الزر أيضاً بنفس العرض 50% */
+        height: 48px !important; font-size: 18px !important;
         font-weight: bold !important; background: linear-gradient(90deg, #1e3a8a, #3b82f6) !important;
         color: white !important; border-radius: 10px !important; border: none !important;
         display: block !important; margin: 20px auto !important;
@@ -78,13 +79,14 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 if not st.session_state.auth:
+    # --- شاشة الدخول ---
     st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.session_state.bg_choice = st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()))
         
-        # الخانات توا ملمومة في النص وعرضها أصغر
+        # الخانات الآن بعرض 50% ملمومة جداً في النص
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         
@@ -96,7 +98,7 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة العمل قعدت ثابتة
+    # --- شاشة العمل (ثابتة بدون تغيير) ---
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
