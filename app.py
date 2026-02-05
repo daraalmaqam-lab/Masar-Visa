@@ -30,105 +30,96 @@ WALLPAPERS = {
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", "pno": ""}
 
-# --- 🎨 الستايل الاحترافي (تثبيت المربعات وتنظيف الرموز) ---
+# --- 🎨 الستايل (تنظيف شامل وعرض زجاجي) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
     
-    /* 1. تنظيف شامل للزوائد */
-    header, footer, .stAppDeployButton, [data-testid="stHeader"], [data-testid="stSidebarNav"] {{
+    /* حذف كل الزوائد والرموز الغريبة */
+    header, footer, .stAppDeployButton, [data-testid="stHeader"], [data-testid="stSidebarNav"], .st-emotion-cache-6qob1r {{
         display: none !important;
     }}
     
-    html, body, [class*="st-"] {{ 
-        font-family: 'Cairo', sans-serif !important; 
-        direction: rtl; 
-    }}
+    html, body, [class*="st-"] {{ font-family: 'Cairo', sans-serif !important; direction: rtl; }}
 
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.get('bg_choice', '🌆 باريس')]}");
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* 2. تصميم مربع العنوان (اللي طلبته يا علي) */
-    .title-box {{
-        background: rgba(0, 0, 0, 0.75);
+    /* المربع الشفاف للعنوان */
+    .glass-header {{
+        background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(15px);
-        padding: 20px;
-        border-radius: 15px;
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
         text-align: center;
         margin-bottom: 30px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        color: white;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     }}
 
-    /* 3. تصميم بطاقة البيانات */
-    .data-card {{
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
+    /* المربع الشفاف للبيانات */
+    .glass-card {{
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
         padding: 30px;
         border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         color: white;
     }}
 
-    /* إخفاء الرموز الغريبة والمربعات البيضاء في المدخلات */
-    .st-emotion-cache-1kyx738, .st-emotion-cache-6qob1r {{ display: none !important; }}
-    input {{ background-color: white !important; color: black !important; font-weight: bold !important; }}
+    input {{ background-color: white !important; color: black !important; font-weight: bold !important; border-radius: 10px !important; }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- القائمة الجانبية ---
 with st.sidebar:
     st.markdown("### ⚙️ الإعدادات")
-    st.session_state.bg_choice = st.selectbox("اختر الخلفية:", list(WALLPAPERS.keys()))
-    if st.button("🚪 تسجيل خروج"):
+    st.session_state.bg_choice = st.selectbox("تغيير الخلفية", list(WALLPAPERS.keys()))
+    if st.button("🚪 خروج"):
         st.session_state.auth = False
         st.rerun()
 
 # --- شاشة الدخول ---
 if not st.session_state.auth:
-    st.markdown('<div class="title-box" style="margin-top:100px;">', unsafe_allow_html=True)
-    st.markdown("<h1 style='color:white; margin:0;'>🏛️ بوابة المسار الذهبي</h1>", unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    
+    st.markdown('<div class="glass-header" style="margin-top:100px;"><h1>🏛️ بوابة المسار الذهبي</h1></div>', unsafe_allow_html=True)
     with st.container():
-        st.markdown('<div class="data-card">', unsafe_allow_html=True)
-        u = st.text_input("اسم المستخدم").upper()
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        u = st.text_input("المستخدم").upper()
         p = st.text_input("كلمة المرور", type="password")
-        if st.button("دخول النظام", use_container_width=True):
+        if st.button("دخول", use_container_width=True):
             if u == "ALI FETORY" and p == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# --- الواجهة الرئيسية للعمل ---
-st.markdown('<div class="title-box">', unsafe_allow_html=True)
-st.markdown("<h1 style='color:white; margin:0;'>🌍 بوابة المسار الذهبي</h1>", unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+# --- الواجهة الرئيسية ---
+st.markdown('<div class="glass-header"><h1>🌍 بوابة المسار الذهبي</h1></div>', unsafe_allow_html=True)
 
 with st.container():
-    st.markdown('<div class="data-card">', unsafe_allow_html=True)
-    st.subheader("📥 بيانات الجواز والنموذج")
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.subheader("📥 سحب ومعالجة البيانات")
     
-    c1, c2 = st.columns([1, 2])
-    target = c1.selectbox("اختر الدولة", ["italy", "france", "germany"])
-    file = c2.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
-
-    if file and st.button("⚡ قراءة البيانات"):
-        # محاكاة القراءة (OCR)
-        st.session_state.data = {"sn": "FETORY", "fn": "ALI", "pno": "P1234567"}
+    col_file, col_btn = st.columns([3, 1])
+    file = col_file.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
+    
+    if file and st.button("⚡ مسح"):
+        img = Image.open(file)
+        res = ocr_reader.readtext(np.array(img))
+        st.session_state.data = {"sn": res[0][1].upper(), "fn": res[1][1].upper(), "pno": "P12345678"}
         st.rerun()
 
     st.divider()
     
-    col1, col2 = st.columns(2)
-    sn = col1.text_input("اللقب", value=st.session_state.data["sn"])
-    fn = col1.text_input("الاسم", value=st.session_state.data["fn"])
-    pno = col2.text_input("رقم الجواز", value=st.session_state.data["pno"])
-    job = col2.text_input("المهنة")
+    c1, c2 = st.columns(2)
+    sn = c1.text_input("اللقب", value=st.session_state.data["sn"])
+    fn = c1.text_input("الاسم", value=st.session_state.data["fn"])
+    pno = c2.text_input("رقم الجواز", value=st.session_state.data["pno"])
+    job = c2.text_input("المهنة")
 
-    if st.button("🔥 طباعة النموذج النهائي", use_container_width=True):
-        st.success("تم تجهيز النموذج بنجاح!")
+    if st.button("🔥 طباعة النموذج", use_container_width=True):
+        st.success("تم التجهيز!")
     st.markdown('</div>', unsafe_allow_html=True)
