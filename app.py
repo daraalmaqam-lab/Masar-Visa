@@ -3,11 +3,11 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (تم تحديث ثيمات ليبيا بروابط مباشرة) ---
+# --- 🌆 مكتبة الثيمات (تم استبدال روابط ليبيا بروابط مباشرة تفتح 100%) ---
 WALLPAPERS = {
-    "ليبيا - آثار لبدة": "https://images.unsplash.com/photo-1595964270729-3877dc65f463?q=80&w=2070",
-    "ليبيا - الصحراء": "https://images.unsplash.com/photo-1505315573712-4299b9087593?q=80&w=2070",
-    "طرابلس - السراي الحمراء": "https://images.unsplash.com/photo-1595964270487-759086156e9c?q=80&w=2070",
+    "ليبيا - آثار لبدة": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Leptis_Magna_15.JPG/1280px-Leptis_Magna_15.JPG",
+    "ليبيا - الصحراء": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Ubari_Lakes_Libya.jpg/1280px-Ubari_Lakes_Libya.jpg",
+    "ليبيا - السراي الحمراء": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Red_Castle_Tripoli_Libya.jpg/1280px-Red_Castle_Tripoli_Libya.jpg",
     "باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
@@ -25,7 +25,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "ليبيا
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (المقاسات 50% و 85% ثابتة) ---
+# --- 🎨 الستايل (المقاسات 50% و 85% ثابتة كما هي) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -86,7 +86,7 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 if not st.session_state.auth:
-    st.markdown('<div class="main-title">🏛️ علي الفيتوري</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
@@ -106,7 +106,7 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة العمل
+    # شاشة العمل (ثابتة)
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
@@ -122,4 +122,3 @@ else:
             st.session_state.auth = False
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-
