@@ -5,3 +5,7 @@ easyocr
 opencv-python-headless
 Pillow
 numpy
+paddlepaddle
+paddleocr
+opencv-python-headless
+pillow
