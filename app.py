@@ -3,11 +3,11 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (روابط من ويكيبيديا - مضمونة تفتح في أي مكان) ---
+# --- 🌆 مكتبة الثيمات (روابط مباشرة تفتح فوراً) ---
 WALLPAPERS = {
-    "طرابلس - المدينة القديمة": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Red_Castle_Tripoli_Libya.jpg/1280px-Red_Castle_Tripoli_Libya.jpg",
-    "لبدة الكبرى": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Leptis_Magna_15.JPG/1280px-Leptis_Magna_15.JPG",
-    "جنوب ليبيا - أوباري": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Ubari_Lakes_Libya.jpg/1280px-Ubari_Lakes_Libya.jpg",
+    "طرابلس - المدينة القديمة": "https://p4.wallpaperbetter.com/wallpaper/705/170/364/libya-tripoli-castle-wallpaper-preview.jpg",
+    "لبدة الكبرى": "https://p4.wallpaperbetter.com/wallpaper/408/382/1000/leptis-magna-libya-wallpaper-preview.jpg",
+    "جنوب ليبيا - أوباري": "https://p4.wallpaperbetter.com/wallpaper/137/954/337/dunes-lake-libya-palm-trees-wallpaper-preview.jpg",
     "باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
@@ -22,7 +22,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "طرابل
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (المقاسات المعتمدة 50% و 85% ثابتة) ---
+# --- 🎨 الستايل (الخانات 50% والزر 85% ثابتة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -33,18 +33,20 @@ st.markdown(f"""
 
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
-        background-size: cover; background-position: center; background-attachment: fixed;
+        background-size: cover; 
+        background-position: center; 
+        background-attachment: fixed;
     }}
 
     .main-title {{
-        background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px);
+        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
         padding: 15px; border-radius: 15px; text-align: center; max-width: 500px;
         margin: 15px auto; color: white; font-family: 'Cairo'; font-size: 28px; font-weight: 900;
         border: 1px solid rgba(255, 255, 255, 0.3);
     }}
 
     .glass-card {{
-        background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(15px);
+        background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
         padding: 35px; border-radius: 25px; max-width: 500px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
         display: flex; flex-direction: column; align-items: center;
@@ -88,7 +90,7 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        # اختيار الثيم مع تحديث فوري
+        # اختيار الثيم وتحديث فوري
         st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()), 
                      index=0, key="new_bg", on_change=update_bg)
         
