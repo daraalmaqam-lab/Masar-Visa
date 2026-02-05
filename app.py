@@ -20,7 +20,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (التعديل الجديد على الخطوط والألوان) ---
+# --- 🎨 الستايل (تعديل حجم الخط 18 وتنسيق العناوين) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -37,57 +37,50 @@ st.markdown(f"""
     .main-title {{
         background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
         padding: 15px; border-radius: 15px; text-align: center; max-width: 500px;
-        margin: 20px auto; color: white; font-family: 'Cairo'; font-size: 32px; font-weight: 900;
-        border: 2px solid rgba(255, 255, 255, 0.4);
+        margin: 20px auto; color: white; font-family: 'Cairo'; font-size: 28px; font-weight: 900;
+        border: 1px solid rgba(255, 255, 255, 0.4);
     }}
 
     .glass-card {{
         background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
-        padding: 40px; border-radius: 30px; max-width: 550px; margin: 0 auto;
+        padding: 40px; border-radius: 30px; max-width: 500px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
     }}
 
-    /* تكبير حجم الخط للعناوين (Labels) وتنسيق لونها */
+    /* تعديل حجم الخط المطلوب: 18 */
     label {{
         font-family: 'Cairo', sans-serif !important;
-        font-size: 24px !important; /* تكبير الحجم بمقدار ضعفين */
-        font-weight: 900 !important;
+        font-size: 18px !important; 
+        font-weight: 700 !important;
         color: #ffffff !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* ظل لضمان الوضوح مع أي خلفية */
-        background: rgba(0, 0, 0, 0.2); /* خلفية خفيفة جداً تحت النص */
-        border-radius: 5px;
-        padding: 2px 10px !important;
-        margin-bottom: 10px !important;
-        display: block !important;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         text-align: center !important;
+        display: block !important;
         width: 100% !important;
+        margin-bottom: 5px !important;
     }}
 
-    /* تعديل مدخلات النص */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
         width: 60% !important; 
-        margin: 0 auto 20px auto !important;
+        margin: 0 auto 15px auto !important;
     }}
 
     input {{
-        height: 50px !important; font-size: 20px !important; text-align: center !important;
-        border-radius: 10px !important; background-color: rgba(255, 255, 255, 0.9) !important; color: black !important;
-        font-weight: bold !important;
+        height: 40px !important; font-size: 16px !important; text-align: center !important;
+        border-radius: 8px !important; background-color: white !important; color: black !important;
     }}
 
-    /* الزر الرئيسي */
     .stButton > button {{
         width: 85% !important; 
-        height: 60px !important; 
-        font-size: 24px !important;
+        height: 55px !important; 
+        font-size: 20px !important;
         font-weight: 900 !important; 
         font-family: 'Cairo', sans-serif;
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important; /* لون ذهبي للزر ليتماشى مع الاسم */
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
         color: #000 !important; 
-        border-radius: 15px !important; 
+        border-radius: 12px !important; 
         display: block !important; 
-        margin: 30px auto !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+        margin: 25px auto !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -98,7 +91,8 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        st.selectbox("🎨 اختر واجهة المنظومة", list(WALLPAPERS.keys()), 
+        # تغيير المسمى إلى "ثيمات"
+        st.selectbox("ثيمات", list(WALLPAPERS.keys()), 
                      index=0, key="new_bg", on_change=update_bg)
         
         user_input = st.text_input("اسم المستخدم").upper()
@@ -112,6 +106,7 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
+    # شاشة العمل
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
