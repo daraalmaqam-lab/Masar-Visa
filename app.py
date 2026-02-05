@@ -18,42 +18,40 @@ ADMIN_USER, ADMIN_PASS = "ALI FETORY", "0925843353"
 
 if 'auth' not in st.session_state: st.session_state.auth = False
 if not st.session_state.auth:
-    st.markdown("<h2 style='text-align: center; color: #374151;'>🏛️ المسار الذهبي</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>🏛️ المسار الذهبي</h2>", unsafe_allow_html=True)
     u_name = st.text_input("اسم المستخدم").upper().strip()
     u_pass = st.text_input("الرقم السري", type="password").strip()
-    if st.button("دخول", use_container_width=True):
+    if st.button("دخول"):
         if u_name == ADMIN_USER and u_pass == ADMIN_PASS:
             st.session_state.auth = True
             st.rerun()
     st.stop()
 
-# --- 🎨 التنسيق المطلوب: رصاصي وأبيض وأسود ---
-st.markdown("""
+# --- 🎨 لوحة تحكم الألوان في الشريط الجانبي ---
+with st.sidebar:
+    st.header("🎨 إعدادات المظهر")
+    bg_color = st.color_picker("لون الخلفية", "#FFFFFF") # افتراضي أبيض
+    text_color = st.color_picker("لون النص والعناوين", "#1F2937") # افتراضي رصاصي غامق
+    input_bg = st.color_picker("لون خانات الكتابة", "#F3F4F6") # افتراضي رصاصي فاتح
+    btn_color = st.color_picker("لون الأزرار", "#374151") # افتراضي رصاصي داكن
+    st.info("اختر الألوان التي تريح عينك يا علي.")
+
+# تطبيق التنسيق بناءً على اختيارك
+st.markdown(f"""
     <style>
-    /* خلفية التطبيق بيضاء */
-    .stApp { background-color: #FFFFFF !important; }
-    
-    /* العناوين باللون الرصاصي الداكن القريب للأسود */
-    h1, h2, h3, p, label { color: #1F2937 !important; font-weight: bold !important; }
-    
-    /* خانات الإدخال: خلفية رصاصي فاتح جداً، نص أسود، إطار رصاصي */
-    input { 
+    .stApp {{ background-color: {bg_color} !important; }}
+    h1, h2, h3, p, label, .stMarkdown {{ color: {text_color} !important; font-weight: bold !important; }}
+    input {{ 
         color: #000000 !important; 
-        background-color: #F3F4F6 !important; 
+        background-color: {input_bg} !important; 
         border: 1px solid #9CA3AF !important;
         border-radius: 5px !important;
-    }
-
-    /* الأزرار: رصاصي داكن (أسود خفيف) ونص أبيض */
-    .stButton>button { 
-        background-color: #374151 !important; 
+    }}
+    .stButton>button {{ 
+        background-color: {btn_color} !important; 
         color: white !important; 
         border-radius: 5px !important;
-        border: none !important;
-    }
-    
-    /* الفواصل */
-    hr { border-top: 1px solid #D1D5DB !important; }
+    }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -73,7 +71,6 @@ if uploaded_file and st.button("🔍 قراءة بيانات الجواز"):
         result = ocr_reader.readtext(np.array(img))
         text_list = [res[1].upper() for res in result]
         
-        # استخراج البيانات بأمان لتجنب الـ IndexError
         st.session_state.data["sn"] = text_list[0] if len(text_list) > 0 else ""
         st.session_state.data["fn"] = text_list[1] if len(text_list) > 1 else ""
         
@@ -104,7 +101,7 @@ with col2:
 
 st.markdown("---")
 
-# --- 3. زر الطباعة النهائي ---
+# --- 3. زر الطباعة ---
 if st.button("🖨️ طباعة النموذج", use_container_width=True):
     try:
         existing_pdf = PdfReader(f"{target_country}.pdf")
