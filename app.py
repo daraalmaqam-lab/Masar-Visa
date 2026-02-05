@@ -21,7 +21,7 @@ WALLPAPERS = {
     "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
 }
 
-# تهيئة حالة الجلسة (Session State)
+# تهيئة حالة الجلسة (Session State) لضمان عدم ضياع البيانات
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
@@ -30,47 +30,74 @@ st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
     
-    /* إخفاء كل مسببات الكلمات الغريبة والزوائد */
+    /* إخفاء كل مسببات الكلمات الغريبة والزوائد التقنية */
     header, footer, .stAppDeployButton, [data-testid="stHeader"], [data-testid="stSidebar"] {{
         display: none !important;
     }}
 
+    /* تطبيق الخلفية بناءً على خيار المستخدم */
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
-        background-size: cover; background-position: center; background-attachment: fixed;
+        background-size: cover; 
+        background-position: center; 
+        background-attachment: fixed;
     }}
 
-    /* العنوان الزجاجي النظيف */
+    /* تصميم العنوان الزجاجي */
     .main-title {{
-        background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
-        padding: 20px; border-radius: 15px; text-align: center; max-width: 550px;
-        margin: 20px auto; color: white; font-family: 'Cairo', sans-serif;
-        font-size: 30px; font-weight: 900; border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.1); 
+        backdrop-filter: blur(15px);
+        padding: 20px; 
+        border-radius: 15px; 
+        text-align: center; 
+        max-width: 550px;
+        margin: 20px auto; 
+        color: white; 
+        font-family: 'Cairo', sans-serif;
+        font-size: 30px; 
+        font-weight: 900; 
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }}
 
-    /* البطاقة الشفافة الموحدة */
+    /* تصميم البطاقة الشفافة الموحدة */
     .glass-card {{
-        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
-        padding: 40px; border-radius: 25px; max-width: 500px; margin: 0 auto;
-        border: 1px solid rgba(255, 255, 255, 0.1); color: white;
+        background: rgba(0, 0, 0, 0.4); 
+        backdrop-filter: blur(10px);
+        padding: 40px; 
+        border-radius: 25px; 
+        max-width: 500px; 
+        margin: 0 auto;
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        color: white;
     }}
 
     /* تنسيق الخانات الكبيرة والخط الواضح */
     input {{ 
-        height: 55px !important; font-size: 20px !important; text-align: center !important; 
-        font-weight: bold !important; border-radius: 12px !important; background-color: white !important;
+        height: 55px !important; 
+        font-size: 20px !important; 
+        text-align: center !important; 
+        font-weight: bold !important; 
+        border-radius: 12px !important; 
+        background-color: white !important;
+        color: black !important;
     }}
 
-    /* تنسيق الزر الأزرق */
+    /* تنسيق الزر الأزرق الكبير */
     .stButton > button {{
-        width: 100% !important; height: 55px !important; font-size: 20px !important;
-        font-weight: bold !important; background: linear-gradient(90deg, #1e3a8a, #3b82f6) !important;
-        color: white !important; border-radius: 12px !important; border: none !important;
+        width: 100% !important; 
+        height: 55px !important; 
+        font-size: 20px !important;
+        font-weight: bold !important; 
+        background: linear-gradient(90deg, #1e3a8a, #3b82f6) !important;
+        color: white !important; 
+        border-radius: 12px !important; 
+        border: none !important;
+        margin-top: 10px;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- منطق عرض الشاشات (فصل كامل) ---
+# --- منطق عرض الشاشات (فصل كامل لضمان نظافة الواجهة) ---
 
 if not st.session_state.auth:
     # --- 1. شاشة الدخول فقط ---
@@ -83,7 +110,7 @@ if not st.session_state.auth:
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         if st.button("دخول للنظام"):
-            # التحقق من بياناتك المحفوظة
+            # التحقق من بيانات علي فيتوري المحفوظة
             if (user_input == "ALI FETORY" or user_input == "ALI") and pass_input == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
@@ -97,18 +124,18 @@ else:
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
         st.markdown('<div class="glass-card" style="max-width: 800px;">', unsafe_allow_html=True)
-        st.subheader("📝 نموذج إدخال البيانات")
+        st.subheader("📝 نموذج إدخال بيانات المسافر")
         
         c1, c2 = st.columns(2)
         c1.text_input("الاسم الأول")
         c1.text_input("اللقب")
         c2.text_input("رقم الجواز")
-        c2.selectbox("دولة الوجهة", ["إيطاليا", "فرنسا", "ألمانيا", "بريطانيا"])
+        c2.selectbox("دولة الوجهة", ["إيطاليا", "فرنسا", "ألمانيا", "بريطانيا", "أمريكا"])
         
         st.divider()
         col_btns = st.columns(2)
         if col_btns[0].button("✅ حفظ البيانات"):
-            st.success("تم حفظ بيانات المسافر بنجاح!")
+            st.success("تم حفظ البيانات بنجاح!")
             
         if col_btns[1].button("🚪 تسجيل الخروج"):
             st.session_state.auth = False
