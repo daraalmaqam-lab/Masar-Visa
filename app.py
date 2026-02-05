@@ -13,12 +13,12 @@ def load_reader():
 
 ocr_reader = load_reader()
 
-# --- الدخول ---
+# --- بيانات الدخول ---
 ADMIN_USER, ADMIN_PASS = "ALI FETORY", "0925843353"
 
 if 'auth' not in st.session_state: st.session_state.auth = False
 if not st.session_state.auth:
-    st.markdown("<h2 style='text-align: center; color: #1E3A8A;'>🏛️ المسار الذهبي</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #374151;'>🏛️ المسار الذهبي</h2>", unsafe_allow_html=True)
     u_name = st.text_input("اسم المستخدم").upper().strip()
     u_pass = st.text_input("الرقم السري", type="password").strip()
     if st.button("دخول", use_container_width=True):
@@ -27,22 +27,33 @@ if not st.session_state.auth:
             st.rerun()
     st.stop()
 
-# --- 🎨 التنسيق الاحترافي (أبيض ناصع ونصوص واضحة) ---
+# --- 🎨 التنسيق المطلوب: رصاصي وأبيض وأسود ---
 st.markdown("""
     <style>
+    /* خلفية التطبيق بيضاء */
     .stApp { background-color: #FFFFFF !important; }
-    p, label, .stMarkdown { color: #1F2937 !important; font-weight: 600 !important; }
+    
+    /* العناوين باللون الرصاصي الداكن القريب للأسود */
+    h1, h2, h3, p, label { color: #1F2937 !important; font-weight: bold !important; }
+    
+    /* خانات الإدخال: خلفية رصاصي فاتح جداً، نص أسود، إطار رصاصي */
     input { 
         color: #000000 !important; 
-        background-color: #FFFFFF !important; 
-        border: 2px solid #D1D5DB !important;
-        border-radius: 8px !important;
+        background-color: #F3F4F6 !important; 
+        border: 1px solid #9CA3AF !important;
+        border-radius: 5px !important;
     }
+
+    /* الأزرار: رصاصي داكن (أسود خفيف) ونص أبيض */
     .stButton>button { 
-        background-color: #2563EB !important; 
+        background-color: #374151 !important; 
         color: white !important; 
-        font-weight: bold !important;
+        border-radius: 5px !important;
+        border: none !important;
     }
+    
+    /* الفواصل */
+    hr { border-top: 1px solid #D1D5DB !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -54,7 +65,7 @@ st.title("⚖️ منظومة المسار الذهبي")
 # --- 1. قسم الجواز ---
 st.subheader("📸 1. بيانات الجواز")
 target_country = st.selectbox("وجهة السفر:", ["italy", "france", "germany"])
-uploaded_file = st.file_uploader("ارفع الصورة هنا", type=['jpg', 'png', 'jpeg'])
+uploaded_file = st.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
 
 if uploaded_file and st.button("🔍 قراءة بيانات الجواز"):
     with st.spinner("جاري المسح..."):
@@ -62,11 +73,10 @@ if uploaded_file and st.button("🔍 قراءة بيانات الجواز"):
         result = ocr_reader.readtext(np.array(img))
         text_list = [res[1].upper() for res in result]
         
-        # استخراج اللقب والاسم بأمان
+        # استخراج البيانات بأمان لتجنب الـ IndexError
         st.session_state.data["sn"] = text_list[0] if len(text_list) > 0 else ""
         st.session_state.data["fn"] = text_list[1] if len(text_list) > 1 else ""
         
-        # حل مشكلة الـ IndexError: البحث عن رقم الجواز بأمان
         found_pno = ""
         for t in text_list:
             clean_t = t.replace(" ", "")
@@ -92,7 +102,9 @@ with col2:
     mother = st.text_input("اسم الأم")
     gender = st.selectbox("الجنس:", ["Male", "Female"])
 
-# --- 3. زر الطباعة ---
+st.markdown("---")
+
+# --- 3. زر الطباعة النهائي ---
 if st.button("🖨️ طباعة النموذج", use_container_width=True):
     try:
         existing_pdf = PdfReader(f"{target_country}.pdf")
@@ -101,7 +113,7 @@ if st.button("🖨️ طباعة النموذج", use_container_width=True):
         can = canvas.Canvas(packet)
         can.setFont("Helvetica-Bold", 10)
         
-        # إحداثيات الطباعة
+        # الطباعة التلقائية (X, Y)
         can.drawString(110, 715, sn)
         can.drawString(110, 687, fn)
         can.drawString(110, 659, pno)
@@ -118,6 +130,6 @@ if st.button("🖨️ طباعة النموذج", use_container_width=True):
         
         res_file = io.BytesIO()
         output.write(res_file)
-        st.download_button("📥 جاهز للتحميل", res_file.getvalue(), f"{target_country}_visa.pdf", use_container_width=True)
+        st.download_button("📥 تحميل الملف المطبوع", res_file.getvalue(), f"{target_country}_visa.pdf", use_container_width=True)
     except Exception as e:
         st.error(f"تأكد من وجود ملف {target_country}.pdf")
