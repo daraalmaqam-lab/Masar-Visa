@@ -9,102 +9,121 @@ from PIL import Image
 def load_reader(): return easyocr.Reader(['en'])
 ocr_reader = load_reader()
 
-# --- خيارات الخلفيات ---
+# --- مكتبة الثيمات السياحية الـ 14 ---
 WALLPAPERS = {
-    "احترافي (باريس)": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
-    "مودرن (تقني)": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
-    "فخم (مكتب)": "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop"
+    "🌆 باريس (فرنسا)": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
+    "🏛️ روما (إيطاليا)": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
+    "🎡 لندن (بريطانيا)": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070",
+    "🕌 اسطنبول (تركيا)": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071",
+    "🗼 طوكيو (اليابان)": "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1974",
+    "🏙️ دبي (الإمارات)": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070",
+    "🏖️ جزر المالديف": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1965",
+    "⛰️ سويسرا (الألب)": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070",
+    "🗽 نيويورك (أمريكا)": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070",
+    "🏜️ الأهرامات (مصر)": "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=2070",
+    "🏮 سور الصين العظيم": "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=2070",
+    "🕌 مراكش (المغرب)": "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=2071",
+    "🌊 سانتوريني (اليونان)": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2022",
+    "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
 }
 
-# --- بيانات الدخول ---
+# --- بيانات الدخول الخاصة بك يا علي ---
 ADMIN_U, ADMIN_P = "ALI FETORY", "0925843353"
 if 'auth' not in st.session_state: st.session_state.auth = False
 
-# --- 🎨 الستايل (الحل الجذري) ---
+# --- 🎨 الستايل الملكي (Glass UI + No Cursors) ---
 st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
     
+    html, body, [class*="st-"] {{ font-family: 'Cairo', sans-serif !important; }}
+
     .stApp {{
-        background-image: url("{WALLPAPERS[st.session_state.get('bg_choice', 'احترافي (باريس)')]}");
+        background-image: url("{WALLPAPERS[st.session_state.get('bg_choice', '🌆 باريس (فرنسا)')]}");
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* --- 🛑 إلغاء مؤشر الكتابة (الخط الأبيض) --- */
-    input[role="combobox"] {{
-        caret-color: transparent !important;
+    /* إخفاء المربع الأبيض ومؤشر البحث */
+    .block-container {{ padding-top: 1rem !important; max-width: 950px !important; background: transparent !important; }}
+    
+    div[data-baseweb="select"] input {{ 
+        caret-color: transparent !important; 
         cursor: pointer !important;
-        color: transparent !important; /* إخفاء النص أثناء الكتابة لمنع ظهور المؤشر */
-        text-shadow: 0 0 0 white !important; /* إظهار النص المختار فقط بدون مؤشر */
+        text-shadow: 0 0 0 white !important;
+        color: transparent !important;
     }}
 
-    /* --- 🛑 إلغاء الإطار الملون نهائياً عند الضغط --- */
-    div[data-baseweb="select"], 
-    div[data-baseweb="select"] > div,
-    div[data-baseweb="select"]:focus-within {{
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
+    /* إلغاء أي إطارات عند الضغط */
+    div[data-baseweb="select"], div[data-baseweb="select"] > div {{
+        border: none !important; outline: none !important; box-shadow: none !important;
     }}
 
-    /* تصميم البطاقات الزجاجية */
+    /* تصميم البطاقات الزجاجية الشفافة */
     [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {{
-        background: rgba(15, 23, 42, 0.75) !important;
-        backdrop-filter: blur(15px);
-        padding: 30px; border-radius: 25px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        margin-bottom: 25px;
+        background: rgba(0, 0, 0, 0.6) !important;
+        backdrop-filter: blur(20px);
+        padding: 35px; border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+        margin-bottom: 20px;
     }}
 
-    h1, h2, h3 {{ color: white !important; font-weight: 800 !important; text-align: center; }}
-    label, p {{ color: #CBD5E1 !important; font-weight: 600 !important; }}
+    h1, h2, h3 {{ color: #FFFFFF !important; font-weight: 900 !important; text-align: center; text-transform: uppercase; }}
+    label {{ color: #F8FAFC !important; font-size: 1rem !important; font-weight: 700 !important; }}
 
     input {{
-        background-color: white !important; color: #0F172A !important;
-        border-radius: 12px !important; border: none !important;
-        padding: 12px !important; font-weight: 700 !important;
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        color: #1E293B !important; border-radius: 12px !important;
+        padding: 12px !important; font-weight: 700 !important; border: none !important;
     }}
 
     .stButton>button {{
-        background: #3B82F6 !important; color: white !important;
-        border-radius: 12px !important; font-weight: 800 !important;
-        border: none !important; width: 100%;
+        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+        color: white !important; border-radius: 12px !important;
+        font-weight: 800 !important; border: none !important; width: 100%; height: 3.5em;
+    }}
+
+    [data-testid="stSidebar"] {{
+        background-color: rgba(15, 23, 42, 0.9) !important;
+        backdrop-filter: blur(10px);
     }}
 
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-# --- الجانب ---
+# --- الجانب (لوحة التحكم) ---
 with st.sidebar:
-    st.markdown("### ⚙️ SETTINGS")
-    bg_choice = st.selectbox("Choose Background:", list(WALLPAPERS.keys()), key='bg_choice')
+    st.markdown("### 🗺️ وجهات المسار الذهبي")
+    bg_choice = st.selectbox("اختر ثيم الرحلة:", list(WALLPAPERS.keys()), key='bg_choice')
     st.divider()
-    if st.button("LOGOUT"):
+    st.markdown(f"👤 **المسؤول:** {ADMIN_U}")
+    if st.button("تسجيل الخروج"):
         st.session_state.auth = False
         st.rerun()
 
-# --- الدخول ---
+# --- شاشة الدخول ---
 if not st.session_state.auth:
-    st.markdown("<h1 style='margin-top: 100px;'>🏛️ GOLDEN PATH</h1>", unsafe_allow_html=True)
-    u = st.text_input("USER").upper()
-    p = st.text_input("PASSWORD", type="password")
-    if st.button("LOGIN"):
-        if u == ADMIN_U and p == ADMIN_P:
-            st.session_state.auth = True
-            st.rerun()
+    st.markdown("<h1 style='margin-top: 80px;'>🏛️ المسار الذهبي للسفر</h1>", unsafe_allow_html=True)
+    with st.container():
+        u = st.text_input("اسم المستخدم").upper()
+        p = st.text_input("كلمة المرور", type="password")
+        if st.button("دخول النظام"):
+            if u == ADMIN_U and p == ADMIN_P:
+                st.session_state.auth = True
+                st.rerun()
     st.stop()
 
-# --- الواجهة ---
-st.markdown("<h1>🌍 GLOBAL VISA GATEWAY</h1>", unsafe_allow_html=True)
+# --- الواجهة الرئيسية ---
+st.markdown("<h1>🌍 منظومة التأشيرات العالمية</h1>", unsafe_allow_html=True)
 if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", "pno": ""}
 
 with st.container():
-    st.markdown("### 📥 1. DATA IMPORT")
+    st.markdown("### 📸 1. سحب بيانات الجواز")
     c1, c2 = st.columns([1, 2])
-    target = c1.selectbox("Country", ["italy", "france", "germany"]) 
-    file = c2.file_uploader("Upload Passport", type=['jpg', 'png', 'jpeg'])
-    if file and st.button("⚡ AUTO-SCAN"):
+    target = c1.selectbox("دولة التأشيرة", ["italy", "france", "germany"])
+    file = c2.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
+    if file and st.button("⚡ قراءة ذكية بالذكاء الاصطناعي"):
         res = ocr_reader.readtext(np.array(Image.open(file)))
         text = [r[1].upper() for r in res]
         st.session_state.data.update({"sn": text[0] if len(text)>0 else "", "fn": text[1] if len(text)>1 else ""})
@@ -114,16 +133,16 @@ with st.container():
         st.rerun()
 
 with st.container():
-    st.markdown("### 📝 2. VERIFICATION")
+    st.markdown("### 📝 2. مراجعة بيانات النموذج")
     col1, col2 = st.columns(2)
-    sn = col1.text_input("Surname", value=st.session_state.data["sn"])
-    fn = col1.text_input("First Name", value=st.session_state.data["fn"])
-    pno = col2.text_input("Passport No.", value=st.session_state.data["pno"])
-    job = col2.text_input("Occupation")
-    mother = col1.text_input("Mother's Name")
-    gender = col2.selectbox("Gender", ["Male", "Female"])
+    sn = col1.text_input("اللقب (Surname)", value=st.session_state.data["sn"])
+    fn = col1.text_input("الاسم (First Name)", value=st.session_state.data["fn"])
+    pno = col2.text_input("رقم الجواز", value=st.session_state.data["pno"])
+    job = col2.text_input("المهنة")
+    mother = col1.text_input("اسم الأم بالكامل")
+    gender = col2.selectbox("الجنس", ["Male", "Female"])
 
-if st.button("✨ GENERATE DOCUMENT", use_container_width=True):
+if st.button("🖨️ إصدار وطباعة النموذج النهائي", use_container_width=True):
     try:
         pdf = PdfReader(f"{target}.pdf")
         out, pkt = PdfWriter(), io.BytesIO()
@@ -135,5 +154,5 @@ if st.button("✨ GENERATE DOCUMENT", use_container_width=True):
         out.add_page(page)
         for i in range(1, len(pdf.pages)): out.add_page(pdf.pages[i])
         final = io.BytesIO(); out.write(final)
-        st.download_button("📥 DOWNLOAD PDF", final.getvalue(), f"{target}_visa.pdf", use_container_width=True)
-    except: st.error("PDF Missing!")
+        st.download_button("📥 تحميل الملف الجاهز للطباعة", final.getvalue(), f"{target}_final.pdf", use_container_width=True)
+    except: st.error("خطأ: ملف النموذج الأساسي غير موجود!")
