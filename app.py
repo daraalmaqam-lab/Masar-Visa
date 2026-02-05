@@ -1,60 +1,46 @@
 import streamlit as st
-from docx import Document
-import io
 
-# إعدادات الصفحة
-st.set_page_config(page_title="منظومة المسار الذهبي", layout="centered")
+# --- بياناتك الخاصة (المدير) ---
+ADMIN_NAME = "ALI FETORY"
+ADMIN_PHONE = "0925843353"
 
-# دالة لتنسيق الواجهة (CSS)
-st.markdown("""
-    <style>
-    .main { text-align: right; direction: rtl; }
-    .stButton>button { width: 100%; border-radius: 5px; height: 3em; background-color: #004aad; color: white; }
-    </style>
-    """, unsafe_allow_html=True)
+# --- قائمة الأجهزة المفعلة (الزبائن المشتركين) ---
+AUTHORIZED_DEVICES = [
+    "245263093229977", # بصمة جهازك الحالي
+]
 
-# 1. تعريف المستخدمين (يمكنك إضافة زبائن هنا مستقبلاً)
-ADMIN_PHONE = "0910000000"  # ضع رقم هاتفك هنا كمدير
-ADMIN_NAME = "علي"
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
 
-# 2. نظام الدخول
-if 'logged_in' not in st.session_state:
-    st.session_state.logged_in = False
-    st.session_state.user_type = None
+# بصمة الجهاز (التي ستظهر للزبون)
+current_device = "245263093229977" 
 
-if not st.session_state.logged_in:
-    st.title("🔒 نظام الدخول الذكي")
-    st.subheader("شركة المسار الذهبي للخدمات السياحية")
+if not st.session_state.authenticated:
+    st.title("🛡️ نظام الوصول - شركة المسار الذهبي")
     
-    name_input = st.text_input("الأسم الكريم")
-    phone_input = st.text_input("رقم الهاتف (للتفعيل)")
+    tab1, tab2 = st.tabs(["دخول الزبائن", "بوابة المدير"])
     
-    if st.button("دخول المنظومة"):
-        if phone_input == ADMIN_PHONE and name_input == ADMIN_NAME:
-            st.session_state.logged_in = True
-            st.session_state.user_type = "admin"
-            st.rerun()
-        elif len(phone_input) >= 10 and len(name_input) > 2:
-            st.session_state.logged_in = True
-            st.session_state.user_type = "user"
-            st.session_state.user_info = {"name": name_input, "phone": phone_input}
-            st.rerun()
-        else:
-            st.error("الرجاء إدخال بيانات صحيحة")
+    with tab1:
+        st.error("⚠️ النسخة غير مفعلة لهذا الجهاز")
+        st.info(f"بصمة الجهاز: {current_device}")
+        st.write("يرجى التواصل مع الإدارة للحصول على الترخيص.")
+        
+    with tab2:
+        st.subheader("دخول المدير")
+        # .strip().upper() لضمان عدم التأثر بالحروف الكبيرة أو الصغيرة أو المسافات
+        name_in = st.text_input("الأسم").strip().upper()
+        phone_in = st.text_input("رقم الهاتف").strip()
+        
+        if st.button("تسجيل الدخول"):
+            if name_in == ADMIN_NAME.upper() and phone_in == ADMIN_PHONE:
+                st.session_state.authenticated = True
+                st.rerun()
+            else:
+                st.error("البيانات المدخلة غير مطابقة لبيانات المدير.")
+    st.stop()
 
-# 3. عرض الواجهة بناءً على نوع المستخدم
-else:
-    if st.session_state.user_type == "admin":
-        st.sidebar.success(f"مرحباً يا مدير: {ADMIN_NAME}")
-        st.title("👨‍💻 لوحة تحكم المدير")
-        st.info("هنا تظهر لك إحصائيات النظام والتحكم الكامل.")
-        # هنا تضع ميزات المدير فقط
-    else:
-        st.sidebar.info(f"الزبون: {st.session_state.user_info['name']}")
-        st.title("🛂 واجهة سحب بيانات الجوازات")
-        st.write("مرحباً بك في شركة المسار الذهبي. يمكنك البدء برفع صور الجوازات.")
-        # هنا تضع ميزات سحب الجوازات للزبون
-
-    if st.sidebar.button("تسجيل الخروج"):
-        st.session_state.logged_in = False
-        st.rerun()
+# --- واجهة المنظومة الكاملة بعد الدخول ---
+st.title("🏦 واجهة شركة المسار الذهبي")
+st.success(f"مرحباً بك يا سيد {ADMIN_NAME}")
+# ضع هنا كود سحب الجوازات الخاص بك
+st.file_uploader("ارفع صور الجوازات لبدء المعالجة")
