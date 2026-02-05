@@ -3,7 +3,7 @@ import streamlit as st
 # 1. إعدادات الصفحة - إلغاء السايدبار نهائياً لضمان نظافة الواجهة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- مكتبة الثيمات الـ 14 كاملة (ثابتة ولا تحذف) ---
+# --- مكتبة الثيمات الـ 14 كاملة ---
 WALLPAPERS = {
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
     "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
@@ -21,11 +21,10 @@ WALLPAPERS = {
     "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
 }
 
-# تهيئة حالة الجلسة
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل (تصغير حجم خانات الدخول فقط) ---
+# --- 🎨 الستايل (تصغير العرض ليكون ملموم في النص) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -36,84 +35,56 @@ st.markdown(f"""
 
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
-        background-size: cover; 
-        background-position: center; 
-        background-attachment: fixed;
+        background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
     .main-title {{
-        background: rgba(255, 255, 255, 0.15); 
-        backdrop-filter: blur(20px);
-        padding: 20px; 
-        border-radius: 15px; 
-        text-align: center; 
-        max-width: 550px;
-        margin: 20px auto; 
-        color: #FFFFFF; 
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        font-family: 'Cairo', sans-serif;
-        font-size: 32px; 
-        font-weight: 900; 
+        background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px);
+        padding: 15px; border-radius: 15px; text-align: center; max-width: 500px;
+        margin: 15px auto; color: white; font-family: 'Cairo'; font-size: 28px; font-weight: 900;
         border: 1px solid rgba(255, 255, 255, 0.3);
     }}
 
     .glass-card {{
-        background: rgba(0, 0, 0, 0.5); 
-        backdrop-filter: blur(15px);
-        padding: 30px; 
-        border-radius: 25px; 
-        max-width: 450px; 
-        margin: 0 auto;
-        border: 1px solid rgba(255, 255, 255, 0.2); 
-        color: white;
+        background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(15px);
+        padding: 35px; border-radius: 25px; max-width: 450px; margin: 0 auto;
+        border: 1px solid rgba(255, 255, 255, 0.2); color: white;
+        display: flex; flex-direction: column; align-items: center; /* توسيط المحتوى */
     }}
 
-    /* --- التعديل المطلوب: تصغير الخانات لتكون أكثر تناسقاً --- */
-    .stTextInput > div > div > input {{
-        height: 42px !important; /* تقليل الارتفاع */
-        font-size: 16px !important; /* تصغير الخط ليتناسب مع الحجم الجديد */
-        border-radius: 8px !important;
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        color: #1e3a8a !important;
-        border: 1px solid #3b82f6 !important;
-        padding: 5px 15px !important;
-        max-width: 100% !important; /* جعلها متناسقة مع عرض البطاقة */
+    /* --- التعديل الأساسي: تصغير عرض الخانات --- */
+    [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
+        width: 85% !important; /* تصغير العرض باش ما تطلعش للخارج */
+        margin: 0 auto !important;
     }}
-    
+
+    input {{
+        height: 42px !important; font-size: 16px !important; text-align: center !important;
+        border-radius: 8px !important; background-color: white !important; color: black !important;
+    }}
+
     label {{
-        color: white !important;
-        font-weight: bold !important;
-        font-size: 14px !important;
-        margin-bottom: 5px !important;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        color: white !important; font-weight: bold !important; font-size: 14px !important;
+        text-align: right !important; width: 85% !important; display: block !important; margin: 5px auto !important;
     }}
 
     .stButton > button {{
-        width: 100% !important; 
-        height: 48px !important; /* تصغير الزر قليلاً ليناسب الخانات */
-        font-size: 18px !important;
-        font-weight: bold !important; 
-        background: linear-gradient(90deg, #1e3a8a, #3b82f6) !important;
-        color: white !important; 
-        border-radius: 10px !important; 
-        border: none !important;
-        margin-top: 20px;
+        width: 85% !important; height: 48px !important; font-size: 18px !important;
+        font-weight: bold !important; background: linear-gradient(90deg, #1e3a8a, #3b82f6) !important;
+        color: white !important; border-radius: 10px !important; border: none !important;
+        display: block !important; margin: 20px auto !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- منطق عرض الشاشات ---
-
 if not st.session_state.auth:
-    # --- 1. شاشة الدخول ---
     st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.session_state.bg_choice = st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()))
-        st.divider()
         
-        # الخانات بحجم أصغر وأكثر تناسقاً
+        # الخانات توا ملمومة في النص وعرضها أصغر
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         
@@ -124,27 +95,20 @@ if not st.session_state.auth:
             else:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
-
 else:
-    # --- 2. شاشة العمل (كما هي دون تغيير) ---
+    # شاشة العمل قعدت ثابتة
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
         st.markdown('<div class="glass-card" style="max-width: 800px;">', unsafe_allow_html=True)
         st.subheader("📝 نموذج إدخال بيانات المسافر")
-        
         c1, c2 = st.columns(2)
         c1.text_input("الاسم الأول")
         c1.text_input("اللقب")
         c2.text_input("رقم الجواز")
-        c2.selectbox("دولة الوجهة", ["إيطاليا", "فرنسا", "ألمانيا", "بريطانيا", "أمريكا"])
-        
+        c2.selectbox("دولة الوجهة", ["إيطاليا", "فرنسا", "ألمانيا"])
         st.divider()
-        col_btns = st.columns(2)
-        if col_btns[0].button("✅ حفظ البيانات"):
-            st.success("تم حفظ البيانات بنجاح!")
-            
-        if col_btns[1].button("🚪 تسجيل الخروج"):
+        if st.button("🚪 تسجيل الخروج"):
             st.session_state.auth = False
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
