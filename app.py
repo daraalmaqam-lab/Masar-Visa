@@ -3,20 +3,19 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (روابط مباشرة تفتح فوراً) ---
+# --- 🌆 مكتبة الثيمات العالمية ---
 WALLPAPERS = {
-    "طرابلس - المدينة القديمة": "https://p4.wallpaperbetter.com/wallpaper/705/170/364/libya-tripoli-castle-wallpaper-preview.jpg",
-    "لبدة الكبرى": "https://p4.wallpaperbetter.com/wallpaper/408/382/1000/leptis-magna-libya-wallpaper-preview.jpg",
-    "جنوب ليبيا - أوباري": "https://p4.wallpaperbetter.com/wallpaper/137/954/337/dunes-lake-libya-palm-trees-wallpaper-preview.jpg",
     "باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
-    "لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070"
+    "لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070",
+    "اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071",
+    "سويسرا": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070"
 }
 
 # تهيئة حالة الجلسة
 if 'auth' not in st.session_state: st.session_state.auth = False
-if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "طرابلس - المدينة القديمة"
+if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس"
 
 # وظيفة التحديث الفوري
 def update_bg():
@@ -33,9 +32,7 @@ st.markdown(f"""
 
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
-        background-size: cover; 
-        background-position: center; 
-        background-attachment: fixed;
+        background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
     .main-title {{
@@ -90,7 +87,7 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        # اختيار الثيم وتحديث فوري
+        # القائمة المحدثة
         st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()), 
                      index=0, key="new_bg", on_change=update_bg)
         
