@@ -5,12 +5,26 @@ from PIL import Image
 # إعدادات الصفحة الأساسية لإلغاء أي هوامش
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- مكتبة الخلفيات ---
+# --- مكتبة الثيمات الـ 14 (رجعتها لك كاملة) ---
 WALLPAPERS = {
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
     "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
-    "🏙️ دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070"
+    "🎡 لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070",
+    "🕌 اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071",
+    "🗼 طوكيو": "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1974",
+    "🏙️ دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070",
+    "🏖️ المالديف": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1965",
+    "⛰️ سويسرا": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070",
+    "🗽 نيويورك": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070",
+    "🏜️ الأهرامات": "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=2070",
+    "🏮 سور الصين": "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=2070",
+    "🕌 مراكش": "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=2071",
+    "🌊 سانتوريني": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2022",
+    "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070"
 }
+
+# تهيئة الحالة
+if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
 # --- 🎨 الستايل النهائي (القضاء على الرموز والمربعات السوداء) ---
 st.markdown(f"""
@@ -34,31 +48,30 @@ st.markdown(f"""
 
     /* 3. تعيين الخلفية */
     .stApp {{
-        background-image: url("{WALLPAPERS[st.session_state.get('bg_choice', '🌆 باريس')]}");
+        background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }}
 
-    /* 4. المربع الشفاف للعنوان (بدون سواد) */
+    /* 4. المربع الشفاف للعنوان (بدون سواد وبدون رموز) */
     .main-title {{
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        padding: 30px;
+        padding: 25px;
         border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.2);
         text-align: center;
-        max-width: 800px;
+        max-width: 700px;
         margin: 40px auto;
-        font-size: 32px;
+        font-size: 30px;
         font-weight: 900;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }}
 
     /* 5. المربع الشفاف للبيانات */
     .content-card {{
-        background: rgba(0, 0, 0, 0.4);
+        background: rgba(0, 0, 0, 0.3); /* خففت السواد جداً */
         backdrop-filter: blur(10px);
         padding: 30px;
         border-radius: 25px;
@@ -77,7 +90,16 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- منطق الدخول (بسيط ونظيف) ---
+# --- القائمة الجانبية (للثيمات واللغة) ---
+with st.sidebar:
+    st.markdown("### ⚙️ الإعدادات")
+    st.session_state.bg_choice = st.selectbox("🎨 اختر الثيم:", list(WALLPAPERS.keys()))
+    st.divider()
+    if st.button("🚪 خروج"):
+        st.session_state.auth = False
+        st.rerun()
+
+# --- منطق الدخول ---
 if 'auth' not in st.session_state: st.session_state.auth = False
 
 if not st.session_state.auth:
@@ -105,7 +127,6 @@ with col2:
     st.text_input("رقم الجواز")
     st.selectbox("الدولة", ["إيطاليا", "فرنسا", "ألمانيا"])
 
-if st.button("🚪 خروج", use_container_width=True):
-    st.session_state.auth = False
-    st.rerun()
+if st.button("تحميل النموذج", use_container_width=True):
+    st.success("تم التجهيز")
 st.markdown('</div>', unsafe_allow_html=True)
