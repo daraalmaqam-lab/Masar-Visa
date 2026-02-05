@@ -86,7 +86,7 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 if not st.session_state.auth:
-    st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">🏛️ علي الفيتوري</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
@@ -122,3 +122,4 @@ else:
             st.session_state.auth = False
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
+
