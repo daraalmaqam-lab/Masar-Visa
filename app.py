@@ -3,14 +3,13 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (تم تحديث الروابط من اسطنبول وما بعدها) ---
+# --- 🌆 مكتبة الثيمات (المصححة والمضمونة) ---
 WALLPAPERS = {
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "🏛️ روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "🏙️ دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
     "🗼 طوكيو": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=2094", 
     "🎡 لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070", 
-    # الروابط الجديدة والمضمونة من هنا:
     "🕌 اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071", 
     "🏖️ المالديف": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1965", 
     "⛰️ سويسرا": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070", 
@@ -22,10 +21,15 @@ WALLPAPERS = {
     "🌉 سان فرانسيسكو": "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?q=80&w=2070" 
 }
 
+# تهيئة حالة الجلسة
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل (الخانات 50% والزر 85% ثابتة) ---
+# --- وظيفة التحديث الفوري ---
+def update_bg():
+    st.session_state.bg_choice = st.session_state.new_bg
+
+# --- 🎨 الستايل (المقاسات 50% و 85% ثابتة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -90,7 +94,10 @@ if not st.session_state.auth:
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        st.session_state.bg_choice = st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()))
+        
+        # التعديل هنا: إضافة on_change للتحديث الفوري من أول ضغطة
+        st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()), 
+                     key="new_bg", on_change=update_bg)
         
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
