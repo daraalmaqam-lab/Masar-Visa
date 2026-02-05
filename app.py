@@ -3,16 +3,15 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (باستخدام الصور التي أرفقتها يا علي) ---
+# --- 🌆 مكتبة الثيمات (روابط مباشرة تفتح فوراً) ---
 WALLPAPERS = {
-    "ليبيا - طرابلس": "https://raw.githubusercontent.com/Alifetory/img/main/tripoli.jpg", # صوره طرابلس
-    "ليبيا - لبدة": "https://raw.githubusercontent.com/Alifetory/img/main/leptis.jpg", # صوره لبدة
-    "ليبيا - بحيرة أوباري": "https://raw.githubusercontent.com/Alifetory/img/main/ubari.jpg", # صوره أوباري
+    "ليبيا - طرابلس": "https://images.pexels.com/photos/16142643/pexels-photo-16142643.jpeg?auto=compress&cs=tinysrgb&w=1260", 
+    "ليبيا - لبدة": "https://images.pexels.com/photos/15119532/pexels-photo-15119532.jpeg?auto=compress&cs=tinysrgb&w=1260",
+    "ليبيا - بحيرة أوباري": "https://images.pexels.com/photos/450055/pexels-photo-450055.jpeg?auto=compress&cs=tinysrgb&w=1260",
     "باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
-    "لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070", 
-    "اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071"
+    "لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070"
 }
 
 # تهيئة حالة الجلسة
@@ -23,7 +22,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "ليبيا
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (المقاسات 50% و 85% ثابتة) ---
+# --- 🎨 الستايل (الخانات 50% والزر 85% ثابتة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -51,6 +50,7 @@ st.markdown(f"""
         display: flex; flex-direction: column; align-items: center;
     }}
 
+    /* مقاس الخانات 50% */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
         width: 50% !important; 
         margin: 0 auto !important;
@@ -66,6 +66,7 @@ st.markdown(f"""
         text-align: center !important; width: 50% !important; display: block !important; margin: 5px auto !important;
     }}
 
+    /* مقاس الزر 85% */
     .stButton > button {{
         width: 85% !important; 
         height: 55px !important; 
@@ -89,7 +90,7 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        # القائمة المحدثة بصورك
+        # القائمة المحدثة
         st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()), 
                      index=0, key="new_bg", on_change=update_bg)
         
