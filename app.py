@@ -18,7 +18,7 @@ ADMIN_USER, ADMIN_PASS = "ALI FETORY", "0925843353"
 
 if 'auth' not in st.session_state: st.session_state.auth = False
 if not st.session_state.auth:
-    st.markdown("<h2 style='text-align: center; color: #1E3A8A;'>🏛️ المسار الذهبي - تسجيل الدخول</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #1E3A8A;'>🏛️ المسار الذهبي</h2>", unsafe_allow_html=True)
     u_name = st.text_input("اسم المستخدم").upper().strip()
     u_pass = st.text_input("الرقم السري", type="password").strip()
     if st.button("دخول", use_container_width=True):
@@ -27,40 +27,31 @@ if not st.session_state.auth:
             st.rerun()
     st.stop()
 
-# --- 🎨 التنسيق الجديد (ألوان مريحة وعملية) ---
+# --- 🎨 التنسيق الاحترافي (أبيض ناصع ونصوص واضحة) ---
 st.markdown("""
     <style>
-    /* جعل الخلفية بيضاء بالكامل */
     .stApp { background-color: #FFFFFF !important; }
-    
-    /* جعل النصوص واضحة باللون الأسود */
-    p, label, .stMarkdown { color: #1F2937 !important; font-weight: 500 !important; }
-    
-    /* تنسيق خانات الإدخال: خلفية بيضاء، نص أسود، إطار رمادي */
+    p, label, .stMarkdown { color: #1F2937 !important; font-weight: 600 !important; }
     input { 
         color: #000000 !important; 
-        background-color: #F9FAFB !important; 
-        border: 2px solid #E5E7EB !important;
+        background-color: #FFFFFF !important; 
+        border: 2px solid #D1D5DB !important;
         border-radius: 8px !important;
     }
-
-    /* زر الطباعة - أزرق احترافي */
     .stButton>button { 
         background-color: #2563EB !important; 
         color: white !important; 
-        border: none !important;
-        padding: 12px !important;
-        font-size: 18px !important;
+        font-weight: bold !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚖️ منظومة المسار الذهبي")
-
 if 'data' not in st.session_state:
     st.session_state.data = {"sn": "", "fn": "", "pno": ""}
 
-# --- القسم الأول ---
+st.title("⚖️ منظومة المسار الذهبي")
+
+# --- 1. قسم الجواز ---
 st.subheader("📸 1. بيانات الجواز")
 target_country = st.selectbox("وجهة السفر:", ["italy", "france", "germany"])
 uploaded_file = st.file_uploader("ارفع الصورة هنا", type=['jpg', 'png', 'jpeg'])
@@ -69,15 +60,25 @@ if uploaded_file and st.button("🔍 قراءة بيانات الجواز"):
     with st.spinner("جاري المسح..."):
         img = Image.open(uploaded_file)
         result = ocr_reader.readtext(np.array(img))
-        text = " ".join([res[1].upper() for res in result])
-        st.session_state.data["sn"] = result[0][1] if len(result) > 0 else ""
-        st.session_state.data["fn"] = result[1][1] if len(result) > 1 else ""
-        st.session_state.data["pno"] = [t for t in text.split() if len(t) == 9 and t.startswith('P')][0] if 'P' in text else ""
+        text_list = [res[1].upper() for res in result]
+        
+        # استخراج اللقب والاسم بأمان
+        st.session_state.data["sn"] = text_list[0] if len(text_list) > 0 else ""
+        st.session_state.data["fn"] = text_list[1] if len(text_list) > 1 else ""
+        
+        # حل مشكلة الـ IndexError: البحث عن رقم الجواز بأمان
+        found_pno = ""
+        for t in text_list:
+            clean_t = t.replace(" ", "")
+            if len(clean_t) == 9 and clean_t.startswith('P'):
+                found_pno = clean_t
+                break
+        st.session_state.data["pno"] = found_pno
         st.rerun()
 
 st.markdown("---")
 
-# --- القسم الثاني ---
+# --- 2. قسم التعبئة ---
 st.subheader("✍️ 2. مراجعة وتعبئة البيانات")
 col1, col2 = st.columns(2)
 
@@ -91,18 +92,16 @@ with col2:
     mother = st.text_input("اسم الأم")
     gender = st.selectbox("الجنس:", ["Male", "Female"])
 
-st.markdown("---")
-
-# --- الزر النهائي ---
-if st.button("🖨️ طباعة النموذج النهائي", use_container_width=True):
+# --- 3. زر الطباعة ---
+if st.button("🖨️ طباعة النموذج", use_container_width=True):
     try:
         existing_pdf = PdfReader(f"{target_country}.pdf")
         output = PdfWriter()
         packet = io.BytesIO()
         can = canvas.Canvas(packet)
-        
-        # الطباعة التلقائية (X, Y)
         can.setFont("Helvetica-Bold", 10)
+        
+        # إحداثيات الطباعة
         can.drawString(110, 715, sn)
         can.drawString(110, 687, fn)
         can.drawString(110, 659, pno)
@@ -119,6 +118,6 @@ if st.button("🖨️ طباعة النموذج النهائي", use_container_w
         
         res_file = io.BytesIO()
         output.write(res_file)
-        st.download_button("📥 جاهز! اضغط هنا للتحميل", res_file.getvalue(), f"{target_country}_visa.pdf", use_container_width=True)
+        st.download_button("📥 جاهز للتحميل", res_file.getvalue(), f"{target_country}_visa.pdf", use_container_width=True)
     except Exception as e:
-        st.error(f"تأكد من وجود ملف {target_country}.pdf في المستودع")
+        st.error(f"تأكد من وجود ملف {target_country}.pdf")
