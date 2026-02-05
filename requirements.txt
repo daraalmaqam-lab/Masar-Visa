@@ -2,4 +2,6 @@ streamlit
 pypdf
 reportlab
 pandas
-python-docx
+easyocr
+opencv-python-headless
+Pillow
