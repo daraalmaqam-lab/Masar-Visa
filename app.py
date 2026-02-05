@@ -9,8 +9,7 @@ WALLPAPERS = {
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
     "لندن": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070",
-    "اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071",
-    "سويسرا": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070"
+    "اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071"
 }
 
 # تهيئة حالة الجلسة
@@ -82,12 +81,12 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 if not st.session_state.auth:
-    st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
+    # تعديل الأيقونة هنا يا علي
+    st.markdown('<div class="main-title">🛂 طيران المسار الذهبي ✈️</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
-        # القائمة المحدثة
         st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()), 
                      index=0, key="new_bg", on_change=update_bg)
         
@@ -102,7 +101,6 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة العمل
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
