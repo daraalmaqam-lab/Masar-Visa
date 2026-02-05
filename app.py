@@ -20,40 +20,40 @@ WALLPAPERS = {
 ADMIN_U, ADMIN_P = "ALI FETORY", "0925843353"
 if 'auth' not in st.session_state: st.session_state.auth = False
 
-# --- 🎨 الستايل (الحل النهائي للمؤشر والإطارات) ---
+# --- 🎨 الستايل (تنظيف شامل للمؤشر والإطارات) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
-    
-    .block-container {{ padding-top: 2rem !important; max-width: 900px !important; background: transparent !important; }}
     
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.get('bg_choice', 'احترافي (باريس)')]}");
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* --- 1. إخفاء مؤشر الكتابة (الخط الأبيض) في القوائم --- */
-    div[data-baseweb="select"] input {{
-        caret-color: transparent !important; /* هذا السطر يخفي الخط الأبيض */
-        cursor: pointer !important;
+    /* --- 🛑 الحل الجذري للخط الأبيض (المؤشر) --- */
+    /* إخفاء المؤشر في كل القوائم وفي حالة التركيز */
+    div[data-baseweb="select"] input, 
+    div[data-baseweb="select"] div,
+    .stSelectbox div[role="button"] {{
+        caret-color: transparent !important;
+        user-select: none !important;
+        pointer-events: auto !important;
     }}
 
-    /* --- 2. إزالة الإطار الملون تماماً عند الضغط --- */
-    div[data-baseweb="select"], div[data-baseweb="select"] > div {{
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-    }}
-    
+    /* إزالة الإطار الملون عند الضغط نهائياً */
+    div[data-baseweb="select"], 
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="select"]:focus,
     div[data-baseweb="select"]:focus-within {{
         border: none !important;
         outline: none !important;
         box-shadow: none !important;
+        background-color: white !important; /* لضمان بقاء الخلفية بيضاء ونظيفة */
     }}
 
-    /* --- 3. تصميم البطاقات الزجاجية والشاشات --- */
+    /* تصميم البطاقات الزجاجية */
     [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {{
-        background: rgba(15, 23, 42, 0.72) !important;
+        background: rgba(15, 23, 42, 0.75) !important;
         backdrop-filter: blur(15px);
         padding: 30px; border-radius: 25px;
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -68,16 +68,13 @@ st.markdown(f"""
         border-radius: 12px !important; border: none !important;
         padding: 12px !important; font-weight: 700 !important;
     }}
+    
+    input:focus {{ outline: none !important; border: none !important; box-shadow: none !important; }}
 
     .stButton>button {{
         background: #3B82F6 !important; color: white !important;
         border-radius: 12px !important; font-weight: 800 !important;
         border: none !important; width: 100%;
-    }}
-
-    [data-testid="stSidebar"] {{
-        background-color: rgba(15, 23, 42, 0.85) !important;
-        backdrop-filter: blur(15px);
     }}
 
     #MainMenu, footer {{visibility: hidden;}}
@@ -96,13 +93,12 @@ with st.sidebar:
 # --- الدخول ---
 if not st.session_state.auth:
     st.markdown("<h1 style='margin-top: 100px;'>🏛️ GOLDEN PATH</h1>", unsafe_allow_html=True)
-    with st.container():
-        u = st.text_input("USER").upper()
-        p = st.text_input("PASSWORD", type="password")
-        if st.button("LOGIN"):
-            if u == ADMIN_U and p == ADMIN_P:
-                st.session_state.auth = True
-                st.rerun()
+    u = st.text_input("USER").upper()
+    p = st.text_input("PASSWORD", type="password")
+    if st.button("LOGIN"):
+        if u == ADMIN_U and p == ADMIN_P:
+            st.session_state.auth = True
+            st.rerun()
     st.stop()
 
 # --- الواجهة ---
@@ -112,7 +108,7 @@ if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", 
 with st.container():
     st.markdown("### 📥 1. DATA IMPORT")
     c1, c2 = st.columns([1, 2])
-    target = c1.selectbox("Country", ["italy", "france", "germany"])
+    target = c1.selectbox("Country", ["italy", "france", "germany"]) # جرب اضغط هنا
     file = c2.file_uploader("Upload Passport", type=['jpg', 'png', 'jpeg'])
     if file and st.button("⚡ AUTO-SCAN"):
         res = ocr_reader.readtext(np.array(Image.open(file)))
