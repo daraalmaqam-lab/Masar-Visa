@@ -1,7 +1,7 @@
 import streamlit as st
-import pandas as pd
 from pypdf import PdfReader, PdfWriter
-from pypdf.generic import NameObject, DictionaryObject
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 import io
 
 # --- بيانات الدخول الخاصة بعلي ---
@@ -23,72 +23,75 @@ if not st.session_state.auth:
             st.error("بيانات الدخول غير صحيحة")
     st.stop()
 
-# --- الواجهة الرئيسية ---
-st.header("🛂 معالج النماذج الأصلي (إصدار الدقة)")
+# --- الواجهة الرئيسية للمنظومة ---
+st.header("🛂 نظام الطباعة المباشرة فوق النماذج")
 
-# اختيار الدولة (يجب رفع ملفات بأسماء italy.pdf, france.pdf على GitHub)
+# اختيار الدولة (يجب رفع ملفات مثل italy.pdf على GitHub)
 target_country = st.selectbox("اختر دولة الوجهة:", ["italy", "france", "germany"])
 
 # 1. سحب بيانات الجواز
 uploaded_passport = st.file_uploader("ارفع صورة الجواز للقراءة", type=['jpg', 'png', 'jpeg'])
 
-# بيانات الجواز المسحوبة (ستكون حقيقية عند ربط OCR)
-passport_data = {"Surname": "AL-FETORY", "FirstName": "ALI", "PassportNo": "P0123456"}
+# بيانات الجواز (ستصبح تلقائية عند ربط محرك القراءة)
+passport_data = {"Surname": "AL-FETORY", "FirstName": "ALI"}
 
 if uploaded_passport:
     st.success("✅ تم استلام بيانات الجواز")
     
-    # 2. الخانات اليدوية لإكمال النموذج
+    # 2. الخانات اليدوية (لإكمال النموذج)
     st.subheader("📝 إكمال بيانات النموذج الأصلي")
     col1, col2 = st.columns(2)
     with col1:
-        mother = st.text_input("اسم الأم")
-        job = st.text_input("المهنة")
+        mother_name = st.text_input("اسم الأم بالكامل")
+        current_job = st.text_input("المهنة الحالية")
     with col2:
-        address = st.text_input("العنوان الحالي")
-        phone = st.text_input("رقم الهاتف")
+        passport_no = st.text_input("رقم الجواز", value=passport_data["PassportNo"] if "PassportNo" in passport_data else "")
+        phone_no = st.text_input("رقم الهاتف")
 
-    # 3. معالجة وتعبئة الملف الأصلي
-    if st.button(f"إصدار نموذج {target_country} النهائي"):
+    # 3. دمج البيانات بنظام "الطباعة الفوقية"
+    if st.button(f"🚀 إصدار ملف {target_country} المطبوع"):
         try:
-            file_path = f"{target_country}.pdf"
-            reader = PdfReader(file_path)
-            writer = PdfWriter()
-            
-            # محاولة حل مشكلة الـ AcroForm برمجياً
-            writer.add_page(reader.pages[0])
-            if "/AcroForm" not in writer.root_object:
-                writer.root_object.update({
-                    NameObject("/AcroForm"): DictionaryObject()
-                })
+            # قراءة القالب الأصلي من GitHub
+            existing_pdf = PdfReader(f"{target_country}.pdf")
+            output = PdfWriter()
 
-            # قائمة البيانات المراد تعبئتها (يجب أن تطابق أسماء الخانات في الـ PDF)
-            fields = {
-                "Surname": passport_data["Surname"],
-                "GivenNames": passport_data["FirstName"],
-                "PassportNumber": passport_data["PassportNo"],
-                "MotherName": mother,
-                "Occupation": job,
-                "Address": address,
-                "Phone": phone
-            }
+            # إنشاء طبقة شفافة للكتابة فوقها
+            packet = io.BytesIO()
+            can = canvas.Canvas(packet, pagesize=letter)
             
-            # التعبئة
-            writer.update_page_form_field_values(writer.pages[0], fields)
+            # ضبط أماكن النص (الإحداثيات) - يمكنك تعديل الأرقام لتناسب المربعات
+            can.setFont("Helvetica", 10)
+            can.drawString(100, 715, passport_data["Surname"]) # خانة اللقب
+            can.drawString(100, 695, passport_data["FirstName"]) # خانة الاسم
+            can.drawString(100, 675, mother_name) # خانة اسم الأم
+            can.drawString(100, 655, current_job) # خانة المهنة
+            can.save()
+
+            packet.seek(0)
+            new_pdf = PdfReader(packet)
             
-            output = io.BytesIO()
-            writer.write(output)
+            # دمج الطبقة الجديدة مع الصفحة الأولى من النموذج
+            page = existing_pdf.pages[0]
+            page.merge_page(new_pdf.pages[0])
+            output.add_page(page)
+
+            # إضافة باقي الصفحات كما هي
+            for i in range(1, len(existing_pdf.pages)):
+                output.add_page(existing_pdf.pages[i])
+
+            final_output = io.BytesIO()
+            output.write(final_output)
             
             st.download_button(
-                label=f"📥 تحميل نموذج {target_country} المعبأ (PDF)",
-                data=output.getvalue(),
-                file_name=f"Visa_{target_country}_Form.pdf",
+                label=f"📥 تحميل نموذج {target_country} الجاهز للطباعة",
+                data=final_output.getvalue(),
+                file_name=f"Visa_{target_country}_Final.pdf",
                 mime="application/pdf"
             )
         except FileNotFoundError:
-            st.error(f"❌ ملف '{target_country}.pdf' غير موجود على GitHub.")
+            st.error(f"❌ لم نجد ملف '{target_country}.pdf' على GitHub.")
         except Exception as e:
             st.error(f"حدث خطأ أثناء المعالجة: {e}")
 
-# إحصائياتك من الصور السابقة
-st.sidebar.metric("إجمالي المبيعات", "2850 د.ل")
+# الإحصائيات (من صور فواتيرك السابقة)
+st.sidebar.metric("مبيعاتك اليوم", "2850 د.ل")
