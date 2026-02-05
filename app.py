@@ -3,7 +3,7 @@ import streamlit as st
 # 1. إعدادات الصفحة - إلغاء السايدبار نهائياً لضمان نظافة الواجهة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- مكتبة الثيمات الـ 14 كاملة (ثابتة ولا تحذف) ---
+# --- مكتبة الثيمات الـ 14 كاملة ---
 WALLPAPERS = {
     "🌆 باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
     "🏛️ روما": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
@@ -24,7 +24,7 @@ WALLPAPERS = {
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل (تعديل العرض إلى 50% ليكون ملموم جداً) ---
+# --- 🎨 الستايل (تعديل حجم الزر وتنسيقه) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -52,9 +52,8 @@ st.markdown(f"""
         display: flex; flex-direction: column; align-items: center;
     }}
 
-    /* --- التعديل المطلوب: العرض 50% --- */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
-        width: 50% !important; /* الخانات تأخذ نصف عرض البطاقة فقط */
+        width: 50% !important; 
         margin: 0 auto !important;
     }}
 
@@ -68,25 +67,38 @@ st.markdown(f"""
         text-align: center !important; width: 50% !important; display: block !important; margin: 5px auto !important;
     }}
 
+    /* --- التعديل المطلوب: تكبير زر الدخول وجعله متناسقاً --- */
     .stButton > button {{
-        width: 50% !important; /* الزر أيضاً بنفس العرض 50% */
-        height: 48px !important; font-size: 18px !important;
-        font-weight: bold !important; background: linear-gradient(90deg, #1e3a8a, #3b82f6) !important;
-        color: white !important; border-radius: 10px !important; border: none !important;
-        display: block !important; margin: 20px auto !important;
+        width: 55% !important; /* أكبر بقليل من عرض الخانات (50%) ليعطي طابعاً قوياً */
+        height: 55px !important; /* زيادة الارتفاع لسهولة الضغط */
+        font-size: 22px !important; /* تكبير الخط داخل الزر */
+        font-weight: 900 !important; 
+        font-family: 'Cairo', sans-serif;
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+        color: white !important; 
+        border-radius: 15px !important; 
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        display: block !important; 
+        margin: 25px auto !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+        transition: transform 0.2s, box-shadow 0.2s !important;
+    }}
+    
+    .stButton > button:hover {{
+        transform: scale(1.02) !important;
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5) !important;
+        border: 1px solid white !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
 if not st.session_state.auth:
-    # --- شاشة الدخول ---
     st.markdown('<div class="main-title">🏛️ بوابة المسار الذهبي</div>', unsafe_allow_html=True)
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.session_state.bg_choice = st.selectbox("🎨 اختر واجهة المنظومة:", list(WALLPAPERS.keys()))
         
-        # الخانات الآن بعرض 50% ملمومة جداً في النص
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         
@@ -98,7 +110,6 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # --- شاشة العمل (ثابتة بدون تغيير) ---
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
