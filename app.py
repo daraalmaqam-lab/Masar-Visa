@@ -28,91 +28,125 @@ WALLPAPERS = {
 }
 
 # --- نصوص اللغات ---
-LANG = {
-    "العربية": {
-        "dir": "rtl", "title": "بوابة المسار الذهبي", "login": "دخول", "user": "المستخدم", "pass": "كلمة المرور",
-        "settings": "إعدادات النظام", "lang": "اللغة", "theme": "ثيم المنظومة", "logout": "خروج"
-    },
-    "English": {
-        "dir": "ltr", "title": "Golden Path Gateway", "login": "Login", "user": "User", "pass": "Pass",
-        "settings": "Settings", "lang": "Language", "theme": "Theme", "logout": "Logout"
-    }
+LANGS = {
+    "العربية": {"dir": "rtl", "title": "بوابة المسار الذهبي", "user": "المستخدم", "pass": "كلمة المرور", "login": "دخول", "settings": "إعدادات"},
+    "English": {"dir": "ltr", "title": "Golden Path Gateway", "user": "Username", "pass": "Password", "login": "Login", "settings": "Settings"}
 }
 
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'lang' not in st.session_state: st.session_state.lang = "العربية"
-L = LANG[st.session_state.lang]
+if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", "pno": ""}
+cur_l = LANGS[st.session_state.lang]
 
-# --- 🎨 الستايل (تنظيف القمة وإزالة المربعات) ---
+# --- 🎨 الستايل النهائي (حل مشكلة المربعات والـ Fork) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+    html, body, [class*="st-"] {{ font-family: 'Cairo', sans-serif !important; direction: {cur_l['dir']}; }}
     
-    /* 1. إخفاء العناصر العلوية تماماً (الشريط الأسود والزوائد) */
-    header, [data-testid="stHeader"], .stAppDeployButton, [data-testid="stStatusWidget"], footer {{
-        display: none !important;
-        visibility: hidden !important;
-    }}
-
-    /* 2. إزالة الفراغ والمربعات فوق العنوان الرئيسي */
-    .block-container {{
-        padding-top: 0rem !important;
-        margin-top: -50px !important;
-        max-width: 950px !important;
-    }}
-
-    html, body, [class*="st-"] {{ font-family: 'Cairo', sans-serif !important; direction: {L['dir']}; }}
+    /* إخفاء Fork و footer */
+    header, footer, .stAppDeployButton, [data-testid="stStatusWidget"] {{ visibility: hidden !important; height: 0 !important; }}
 
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.get('bg_choice', '🌆 باريس')]}");
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* 3. إخفاء حدود صناديق اللغة والاختيارات */
-    div[data-testid="stVerticalBlockBorderWrapper"] > div {{ border: none !important; }}
-    div[data-baseweb="select"] {{ border: none !important; background: rgba(255,255,255,0.15) !important; border-radius: 10px; }}
-    div[data-baseweb="select"] input {{ caret-color: transparent !important; color: transparent !important; text-shadow: 0 0 0 white !important; }}
+    /* إخفاء المربع الأبيض (المؤشر) في القوائم */
+    input[role="combobox"] {{ caret-color: transparent !important; color: transparent !important; text-shadow: 0 0 0 white !important; }}
+    div[data-baseweb="select"] {{ border: none !important; box-shadow: none !important; background: rgba(255,255,255,0.1) !important; }}
 
-    /* 4. البطاقة الزجاجية */
-    [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {{
+    /* البطاقات الزجاجية */
+    .glass-card {{
         background: rgba(0, 0, 0, 0.6) !important;
-        backdrop-filter: blur(25px); padding: 30px; border-radius: 20px;
+        backdrop-filter: blur(20px);
+        padding: 25px; border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-    }}
-
-    input {{ background-color: white !important; color: black !important; border-radius: 10px !important; border: none !important; }}
-    
-    .stButton>button {{
-        background: linear-gradient(90deg, #1D4ED8, #3B82F6) !important;
-        border: none !important; color: white !important; border-radius: 10px !important; font-weight: 800 !important;
+        margin-bottom: 20px;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- محتوى المنظومة (كما سبق مع تعديلات اللغة) ---
-with st.sidebar:
-    st.markdown(f"### ⚙️ {L['settings']}")
-    st.session_state.lang = st.radio(f"{L['lang']}:", ["العربية", "English"], horizontal=True)
-    st.divider()
-    st.session_state.bg_choice = st.selectbox(f"🎨 {L['theme']}", list(WALLPAPERS.keys()))
-    if st.button(L['logout']):
-        st.session_state.auth = False
-        st.rerun()
-
+# --- تسجيل الدخول ---
 if not st.session_state.auth:
-    st.markdown(f"<h1 style='color:white; text-align:center; padding-top:100px;'>🏛️ {L['title']}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h1 style='color:white; text-align:center; padding-top:50px;'>🏛️ {cur_l['title']}</h1>", unsafe_allow_html=True)
     with st.container():
-        u = st.text_input(L['user']).upper()
-        p = st.text_input(L['pass'], type="password")
-        if st.button(L['login']):
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        u = st.text_input(cur_l['user']).upper()
+        p = st.text_input(cur_l['pass'], type="password")
+        if st.button(cur_l['login']):
             if u == "ALI FETORY" and p == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-st.markdown(f"<h1 style='color:white; text-align:center; margin-bottom:20px;'>{L['title']}</h1>", unsafe_allow_html=True)
+# --- القائمة الجانبية ---
+with st.sidebar:
+    st.markdown(f"### ⚙️ {cur_l['settings']}")
+    st.session_state.lang = st.radio("Language / اللغة", ["العربية", "English"], horizontal=True)
+    st.session_state.bg_choice = st.selectbox("🎨 الثيم", list(WALLPAPERS.keys()))
+    if st.button("Logout | خروج"):
+        st.session_state.auth = False
+        st.rerun()
 
-# استكمال باقي المنظومة بنفس الترتيب...
+# --- الواجهة الرئيسية (النموذج اللي كان مختفي) ---
+st.markdown(f"<h1 style='color:white; text-align:center;'>{cur_l['title']}</h1>", unsafe_allow_html=True)
+
 with st.container():
-    st.write("جاهز للعمل يا علي")
-    # (باقي كود الإدخال والـ OCR والتحميل هنا)
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.subheader("📸 1. سحب بيانات الجواز")
+    col_a, col_b = st.columns([1, 2])
+    target_country = col_a.radio("الوجهة:", ["italy", "france", "germany"])
+    uploaded_file = col_b.file_uploader("ارفع صورة الجواز هنا", type=['jpg', 'png', 'jpeg'])
+    
+    if uploaded_file and st.button("⚡ بدء المسح الضوئي"):
+        with st.spinner('جاري القراءة...'):
+            img = Image.open(uploaded_file)
+            res = ocr_reader.readtext(np.array(img))
+            text = [r[1].upper() for r in res]
+            # استخراج ذكي
+            st.session_state.data["sn"] = text[0] if len(text) > 0 else ""
+            st.session_state.data["fn"] = text[1] if len(text) > 1 else ""
+            for t in text:
+                clean_t = t.replace(" ", "")
+                if len(clean_t) == 9 and clean_t.startswith('P'):
+                    st.session_state.data["pno"] = clean_t
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with st.container():
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.subheader("📝 2. مراجعة البيانات")
+    c1, c2 = st.columns(2)
+    final_sn = c1.text_input("اللقب", value=st.session_state.data["sn"])
+    final_fn = c1.text_input("الاسم", value=st.session_state.data["fn"])
+    final_pno = c2.text_input("رقم الجواز", value=st.session_state.data["pno"])
+    job = c2.text_input("المهنة")
+    
+    if st.button("✨ إصدار ملف PDF المعبأ", use_container_width=True):
+        try:
+            pdf_path = f"{target_country}.pdf"
+            existing_pdf = PdfReader(pdf_path)
+            output = PdfWriter()
+            packet = io.BytesIO()
+            can = canvas.Canvas(packet)
+            can.setFont("Helvetica-Bold", 11)
+            # إحداثيات افتراضية (عدلها حسب ملفك)
+            can.drawString(100, 700, final_sn)
+            can.drawString(100, 680, final_fn)
+            can.drawString(100, 660, final_pno)
+            can.save()
+            packet.seek(0)
+            new_pdf = PdfReader(packet)
+            page = existing_pdf.pages[0]
+            page.merge_page(new_pdf.pages[0])
+            output.add_page(page)
+            for i in range(1, len(existing_pdf.pages)): output.add_page(existing_pdf.pages[i])
+            
+            final_buffer = io.BytesIO()
+            output.write(final_buffer)
+            st.download_button("📥 تحميل طلب التأشيرة", final_buffer.getvalue(), f"{final_sn}_visa.pdf")
+        except Exception as e:
+            st.error(f"تأكد من وجود ملف {target_country}.pdf في المجلد")
+    st.markdown('</div>', unsafe_allow_html=True)
