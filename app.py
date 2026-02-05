@@ -20,7 +20,7 @@ WALLPAPERS = {
 ADMIN_U, ADMIN_P = "ALI FETORY", "0925843353"
 if 'auth' not in st.session_state: st.session_state.auth = False
 
-# --- 🎨 الستايل (تنظيف شامل للمؤشر والإطارات) ---
+# --- 🎨 الستايل (الحل الجذري) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
@@ -30,25 +30,21 @@ st.markdown(f"""
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* --- 🛑 الحل الجذري للخط الأبيض (المؤشر) --- */
-    /* إخفاء المؤشر في كل القوائم وفي حالة التركيز */
-    div[data-baseweb="select"] input, 
-    div[data-baseweb="select"] div,
-    .stSelectbox div[role="button"] {{
+    /* --- 🛑 إلغاء مؤشر الكتابة (الخط الأبيض) --- */
+    input[role="combobox"] {{
         caret-color: transparent !important;
-        user-select: none !important;
-        pointer-events: auto !important;
+        cursor: pointer !important;
+        color: transparent !important; /* إخفاء النص أثناء الكتابة لمنع ظهور المؤشر */
+        text-shadow: 0 0 0 white !important; /* إظهار النص المختار فقط بدون مؤشر */
     }}
 
-    /* إزالة الإطار الملون عند الضغط نهائياً */
+    /* --- 🛑 إلغاء الإطار الملون نهائياً عند الضغط --- */
     div[data-baseweb="select"], 
     div[data-baseweb="select"] > div,
-    div[data-baseweb="select"]:focus,
     div[data-baseweb="select"]:focus-within {{
         border: none !important;
         outline: none !important;
         box-shadow: none !important;
-        background-color: white !important; /* لضمان بقاء الخلفية بيضاء ونظيفة */
     }}
 
     /* تصميم البطاقات الزجاجية */
@@ -68,8 +64,6 @@ st.markdown(f"""
         border-radius: 12px !important; border: none !important;
         padding: 12px !important; font-weight: 700 !important;
     }}
-    
-    input:focus {{ outline: none !important; border: none !important; box-shadow: none !important; }}
 
     .stButton>button {{
         background: #3B82F6 !important; color: white !important;
@@ -108,7 +102,7 @@ if 'data' not in st.session_state: st.session_state.data = {"sn": "", "fn": "", 
 with st.container():
     st.markdown("### 📥 1. DATA IMPORT")
     c1, c2 = st.columns([1, 2])
-    target = c1.selectbox("Country", ["italy", "france", "germany"]) # جرب اضغط هنا
+    target = c1.selectbox("Country", ["italy", "france", "germany"]) 
     file = c2.file_uploader("Upload Passport", type=['jpg', 'png', 'jpeg'])
     if file and st.button("⚡ AUTO-SCAN"):
         res = ocr_reader.readtext(np.array(Image.open(file)))
