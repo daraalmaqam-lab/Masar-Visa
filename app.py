@@ -3,11 +3,11 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات (تم استبدال روابط ليبيا بروابط مباشرة تفتح 100%) ---
+# --- 🌆 مكتبة الثيمات (تم استخدام روابط CDN عالمية مباشرة) ---
 WALLPAPERS = {
-    "ليبيا - آثار لبدة": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Leptis_Magna_15.JPG/1280px-Leptis_Magna_15.JPG",
-    "ليبيا - الصحراء": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Ubari_Lakes_Libya.jpg/1280px-Ubari_Lakes_Libya.jpg",
-    "ليبيا - السراي الحمراء": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Red_Castle_Tripoli_Libya.jpg/1280px-Red_Castle_Tripoli_Libya.jpg",
+    "ليبيا - لبدة العظيمة": "https://img.freepik.com/free-photo/ancient-leptis-magna-city-libya_23-2148813351.jpg?w=1380",
+    "ليبيا - بحيرة أوباري": "https://images.pexels.com/photos/450055/pexels-photo-450055.jpeg?auto=compress&cs=tinysrgb&w=1260",
+    "ليبيا - العاصمة": "https://images.pexels.com/photos/1000000/pexels-photo-1000000.jpeg?auto=compress&cs=tinysrgb&w=1260",
     "باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
     "دبي": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070", 
@@ -19,13 +19,13 @@ WALLPAPERS = {
 
 # تهيئة حالة الجلسة
 if 'auth' not in st.session_state: st.session_state.auth = False
-if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "ليبيا - آثار لبدة"
+if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "ليبيا - لبدة العظيمة"
 
 # وظيفة التحديث الفوري
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (المقاسات 50% و 85% ثابتة كما هي) ---
+# --- 🎨 الستايل (الخانات 50% والزر 85% ثابتة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -106,7 +106,7 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة العمل (ثابتة)
+    # شاشة العمل
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
