@@ -13,59 +13,60 @@ def load_reader():
 
 ocr_reader = load_reader()
 
-# --- بيانات الدخول الخاصة بعلي الفيتوري ---
+# --- الدخول ---
 ADMIN_USER, ADMIN_PASS = "ALI FETORY", "0925843353"
 
 if 'auth' not in st.session_state: st.session_state.auth = False
 if not st.session_state.auth:
-    st.markdown("<h2 style='text-align: center; color: #1E3A8A;'>🏛️ المسار الذهبي - دخول</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #1E3A8A;'>🏛️ المسار الذهبي - تسجيل الدخول</h2>", unsafe_allow_html=True)
     u_name = st.text_input("اسم المستخدم").upper().strip()
     u_pass = st.text_input("الرقم السري", type="password").strip()
-    if st.button("دخول للمنظومة", use_container_width=True):
+    if st.button("دخول", use_container_width=True):
         if u_name == ADMIN_USER and u_pass == ADMIN_PASS:
             st.session_state.auth = True
             st.rerun()
     st.stop()
 
-# --- 🛠️ تعديل الألوان ليكون النص واضحاً جداً ---
+# --- 🎨 التنسيق الجديد (ألوان مريحة وعملية) ---
 st.markdown("""
     <style>
-    /* خلفية التطبيق بيضاء مريحة */
-    .stApp { background-color: #FFFFFF; }
+    /* جعل الخلفية بيضاء بالكامل */
+    .stApp { background-color: #FFFFFF !important; }
     
-    /* جعل خانات الكتابة بيضاء والنص داخلها أسود */
-    input { color: #000000 !important; background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important; }
+    /* جعل النصوص واضحة باللون الأسود */
+    p, label, .stMarkdown { color: #1F2937 !important; font-weight: 500 !important; }
     
-    /* تعديل لون العناوين */
-    h1, h2, h3, p, label { color: #1E3A8A !important; font-weight: bold; }
-    
-    /* زر الطباعة - أزرق واضح */
-    .stButton>button { 
-        background-color: #1E3A8A !important; 
-        color: white !important; 
-        border-radius: 8px; 
-        padding: 10px;
-        font-size: 18px;
+    /* تنسيق خانات الإدخال: خلفية بيضاء، نص أسود، إطار رمادي */
+    input { 
+        color: #000000 !important; 
+        background-color: #F9FAFB !important; 
+        border: 2px solid #E5E7EB !important;
+        border-radius: 8px !important;
     }
-    
-    /* خانات الاختيار */
-    .stSelectbox div { color: #000000 !important; }
+
+    /* زر الطباعة - أزرق احترافي */
+    .stButton>button { 
+        background-color: #2563EB !important; 
+        color: white !important; 
+        border: none !important;
+        padding: 12px !important;
+        font-size: 18px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("📑 معالج نماذج التأشيرات")
+st.title("⚖️ منظومة المسار الذهبي")
 
-# --- تخزين البيانات ---
 if 'data' not in st.session_state:
     st.session_state.data = {"sn": "", "fn": "", "pno": ""}
 
-# --- القسم الأول: الجواز ---
-st.markdown("### 1️⃣ بيانات الجواز")
-target_country = st.selectbox("اختر وجهة السفر:", ["italy", "france", "germany"])
-uploaded_file = st.file_uploader("ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
+# --- القسم الأول ---
+st.subheader("📸 1. بيانات الجواز")
+target_country = st.selectbox("وجهة السفر:", ["italy", "france", "germany"])
+uploaded_file = st.file_uploader("ارفع الصورة هنا", type=['jpg', 'png', 'jpeg'])
 
-if uploaded_file and st.button("🔍 قراءة الجواز"):
-    with st.spinner("جاري سحب البيانات..."):
+if uploaded_file and st.button("🔍 قراءة بيانات الجواز"):
+    with st.spinner("جاري المسح..."):
         img = Image.open(uploaded_file)
         result = ocr_reader.readtext(np.array(img))
         text = " ".join([res[1].upper() for res in result])
@@ -76,55 +77,48 @@ if uploaded_file and st.button("🔍 قراءة الجواز"):
 
 st.markdown("---")
 
-# --- القسم الثاني: البيانات التكميلية ---
-st.markdown("### 2️⃣ مراجعة وتكملة البيانات")
+# --- القسم الثاني ---
+st.subheader("✍️ 2. مراجعة وتعبئة البيانات")
 col1, col2 = st.columns(2)
 
 with col1:
-    sn = st.text_input("اللقب (Surname)", value=st.session_state.data["sn"])
-    fn = st.text_input("الاسم (First Name)", value=st.session_state.data["fn"])
-    gender = st.selectbox("الجنس:", ["Male", "Female"])
+    sn = st.text_input("اللقب", value=st.session_state.data["sn"])
+    fn = st.text_input("الاسم", value=st.session_state.data["fn"])
+    job = st.text_input("المهنة")
 
 with col2:
     pno = st.text_input("رقم الجواز", value=st.session_state.data["pno"])
     mother = st.text_input("اسم الأم")
-    job = st.text_input("المهنة")
+    gender = st.selectbox("الجنس:", ["Male", "Female"])
 
 st.markdown("---")
 
-# --- الزر المختصر ---
-if st.button("🖨️ طباعة النموذج", use_container_width=True):
+# --- الزر النهائي ---
+if st.button("🖨️ طباعة النموذج النهائي", use_container_width=True):
     try:
         existing_pdf = PdfReader(f"{target_country}.pdf")
         output = PdfWriter()
         packet = io.BytesIO()
         can = canvas.Canvas(packet)
         
-        # إحداثيات الطباعة (X, Y)
-        x, y = 110, 715
+        # الطباعة التلقائية (X, Y)
         can.setFont("Helvetica-Bold", 10)
-        can.drawString(x, y, sn)
-        can.drawString(x, y - 28, fn)
-        can.drawString(x, y - 56, pno)
-        can.drawString(x, y - 84, mother)
-        can.drawString(x, y - 112, job)
+        can.drawString(110, 715, sn)
+        can.drawString(110, 687, fn)
+        can.drawString(110, 659, pno)
+        can.drawString(110, 631, mother)
+        can.drawString(110, 603, job)
         
         can.save()
         packet.seek(0)
-        
         new_pdf = PdfReader(packet)
         page = existing_pdf.pages[0]
         page.merge_page(new_pdf.pages[0])
         output.add_page(page)
-        
-        for i in range(1, len(existing_pdf.pages)): 
-            output.add_page(existing_pdf.pages[i])
+        for i in range(1, len(existing_pdf.pages)): output.add_page(existing_pdf.pages[i])
         
         res_file = io.BytesIO()
         output.write(res_file)
-        
-        st.download_button("📥 تحميل الملف المطبوع", res_file.getvalue(), f"{target_country}_final.pdf", use_container_width=True)
+        st.download_button("📥 جاهز! اضغط هنا للتحميل", res_file.getvalue(), f"{target_country}_visa.pdf", use_container_width=True)
     except Exception as e:
-        st.error(f"خطأ: تأكد من وجود ملف {target_country}.pdf")
-
-st.sidebar.info(f"المستخدم المتصل: {ADMIN_USER}")
+        st.error(f"تأكد من وجود ملف {target_country}.pdf في المستودع")
