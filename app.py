@@ -1,50 +1,48 @@
 import streamlit as st
 
-# --- بيانات المدير (أنت) ---
-ADMIN_DATA = {
-    "NAME": "ALI FETORY",
-    "PHONE": "0925843353"
-}
+# --- إعدادات الأمان الخاصة بك ---
+ADMIN_NAME = "ALI FETORY"
+ADMIN_PHONE = "0925843353"
+MASTER_KEY = "MASAR2026" # كود سري إضافي لك إذا أردت
 
-# --- حالة الجلسة ---
-if 'auth_level' not in st.session_state:
-    st.session_state.auth_level = None
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
 
-# --- شاشة الدخول الذكية ---
-if st.session_state.auth_level is None:
-    st.title("🏦 شركة المسار الذهبي")
-    st.subheader("بوابة الدخول للمنظومة")
+# --- واجهة الدخول الموحدة ---
+if not st.session_state.authenticated:
+    st.markdown("<h1 style='text-align: center;'>🏛️ شركة المسار الذهبي</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>بوابة الدخول للمنظومة</h3>", unsafe_allow_html=True)
     
-    name_input = st.text_input("الأسم الكريم").strip().upper()
-    phone_input = st.text_input("رقم الهاتف").strip()
+    # خانة واحدة ذكية تقبل (الاسم أو رقم الهاتف أو كود التفعيل)
+    user_input = st.text_input("أدخل كود التفعيل أو اسم المدير الخاص بك:", type="password").strip().upper()
     
     if st.button("دخول"):
-        # التحقق إذا كان الداخل هو أنت (المدير)
-        if name_input == ADMIN_DATA["NAME"] and phone_input == ADMIN_DATA["PHONE"]:
-            st.session_state.auth_level = "admin"
+        # التحقق إذا كان الداخل هو أنت (عن طريق الاسم أو الهاتف)
+        if user_input == ADMIN_NAME or user_input == ADMIN_PHONE or user_input == MASTER_KEY:
+            st.session_state.authenticated = True
+            st.session_state.user_type = "admin"
             st.rerun()
-        # التحقق إذا كان زبوناً (يجب أن يدخل بياناته)
-        elif len(name_input) > 2 and len(phone_input) >= 10:
-            st.session_state.auth_level = "user"
-            st.session_state.user_name = name_input
+        # التحقق إذا كان زبوناً لديه كود تفعيل (مثال لكود زبون)
+        elif user_input == "USER123":
+            st.session_state.authenticated = True
+            st.session_state.user_type = "user"
             st.rerun()
         else:
-            st.error("الرجاء التأكد من إدخال البيانات بشكل صحيح")
+            st.error("❌ الكود غير صحيح أو غير مفعل")
     st.stop()
 
-# --- بعد الدخول السليم ---
-if st.session_state.auth_level == "admin":
-    st.sidebar.success(f"مرحباً بالقائد: {ADMIN_DATA['NAME']}")
-    st.title("📊 لوحة تحكم المدير")
-    # هنا تظهر الإحصائيات (مثل صورة Invoice Dashboard التي أرفقتها)
-    st.write("إحصائيات العمليات والمبيعات تظهر هنا...")
+# --- واجهة المنظومة بعد الدخول (لوحة التحكم التي ظهرت في صورك) ---
+if st.session_state.user_type == "admin":
+    st.title("📊 Invoice Dashboard - لوحة تحكم المدير")
+    st.sidebar.success(f"مرحباً بالقائد: {ADMIN_NAME}")
     
+    # هنا تظهر بيانات الإحصائيات التي رأيناها في صورتك
+    st.info("إحصائية: 2025-05-03 بمبلغ إجمالي 2850")
+    # ... باقي كود الإحصائيات والرسم البياني ...
 else:
-    st.sidebar.info(f"الزبون: {st.session_state.user_name}")
-    st.title("🛂 واجهة سحب بيانات الجوازات")
-    # هنا تظهر واجهة الزبون البسيطة لسحب الجوازات فقط
-    st.file_uploader("ارفع صورة الجواز هنا")
+    st.title("🛂 واجهة سحب الجوازات")
+    st.write("مرحباً بك في نظام شركة المسار الذهبي.")
 
-if st.sidebar.button("خروج"):
-    st.session_state.auth_level = None
+if st.sidebar.button("تسجيل الخروج"):
+    st.session_state.authenticated = False
     st.rerun()
