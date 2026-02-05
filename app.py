@@ -1,46 +1,50 @@
 import streamlit as st
 
-# --- بياناتك الخاصة (المدير) ---
-ADMIN_NAME = "ALI FETORY"
-ADMIN_PHONE = "0925843353"
+# --- بيانات المدير (أنت) ---
+ADMIN_DATA = {
+    "NAME": "ALI FETORY",
+    "PHONE": "0925843353"
+}
 
-# --- قائمة الأجهزة المفعلة (الزبائن المشتركين) ---
-AUTHORIZED_DEVICES = [
-    "245263093229977", # بصمة جهازك الحالي
-]
+# --- حالة الجلسة ---
+if 'auth_level' not in st.session_state:
+    st.session_state.auth_level = None
 
-if 'authenticated' not in st.session_state:
-    st.session_state.authenticated = False
-
-# بصمة الجهاز (التي ستظهر للزبون)
-current_device = "245263093229977" 
-
-if not st.session_state.authenticated:
-    st.title("🛡️ نظام الوصول - شركة المسار الذهبي")
+# --- شاشة الدخول الذكية ---
+if st.session_state.auth_level is None:
+    st.title("🏦 شركة المسار الذهبي")
+    st.subheader("بوابة الدخول للمنظومة")
     
-    tab1, tab2 = st.tabs(["دخول الزبائن", "بوابة المدير"])
+    name_input = st.text_input("الأسم الكريم").strip().upper()
+    phone_input = st.text_input("رقم الهاتف").strip()
     
-    with tab1:
-        st.error("⚠️ النسخة غير مفعلة لهذا الجهاز")
-        st.info(f"بصمة الجهاز: {current_device}")
-        st.write("يرجى التواصل مع الإدارة للحصول على الترخيص.")
-        
-    with tab2:
-        st.subheader("دخول المدير")
-        # .strip().upper() لضمان عدم التأثر بالحروف الكبيرة أو الصغيرة أو المسافات
-        name_in = st.text_input("الأسم").strip().upper()
-        phone_in = st.text_input("رقم الهاتف").strip()
-        
-        if st.button("تسجيل الدخول"):
-            if name_in == ADMIN_NAME.upper() and phone_in == ADMIN_PHONE:
-                st.session_state.authenticated = True
-                st.rerun()
-            else:
-                st.error("البيانات المدخلة غير مطابقة لبيانات المدير.")
+    if st.button("دخول"):
+        # التحقق إذا كان الداخل هو أنت (المدير)
+        if name_input == ADMIN_DATA["NAME"] and phone_input == ADMIN_DATA["PHONE"]:
+            st.session_state.auth_level = "admin"
+            st.rerun()
+        # التحقق إذا كان زبوناً (يجب أن يدخل بياناته)
+        elif len(name_input) > 2 and len(phone_input) >= 10:
+            st.session_state.auth_level = "user"
+            st.session_state.user_name = name_input
+            st.rerun()
+        else:
+            st.error("الرجاء التأكد من إدخال البيانات بشكل صحيح")
     st.stop()
 
-# --- واجهة المنظومة الكاملة بعد الدخول ---
-st.title("🏦 واجهة شركة المسار الذهبي")
-st.success(f"مرحباً بك يا سيد {ADMIN_NAME}")
-# ضع هنا كود سحب الجوازات الخاص بك
-st.file_uploader("ارفع صور الجوازات لبدء المعالجة")
+# --- بعد الدخول السليم ---
+if st.session_state.auth_level == "admin":
+    st.sidebar.success(f"مرحباً بالقائد: {ADMIN_DATA['NAME']}")
+    st.title("📊 لوحة تحكم المدير")
+    # هنا تظهر الإحصائيات (مثل صورة Invoice Dashboard التي أرفقتها)
+    st.write("إحصائيات العمليات والمبيعات تظهر هنا...")
+    
+else:
+    st.sidebar.info(f"الزبون: {st.session_state.user_name}")
+    st.title("🛂 واجهة سحب بيانات الجوازات")
+    # هنا تظهر واجهة الزبون البسيطة لسحب الجوازات فقط
+    st.file_uploader("ارفع صورة الجواز هنا")
+
+if st.sidebar.button("خروج"):
+    st.session_state.auth_level = None
+    st.rerun()
