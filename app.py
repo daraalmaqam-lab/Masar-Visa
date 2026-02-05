@@ -19,7 +19,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (إجبار حجم الخط 25) ---
+# --- 🎨 الستايل (العناوين على اليمين بحجم 25) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -31,6 +31,7 @@ st.markdown(f"""
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
         background-size: cover; background-position: center; background-attachment: fixed;
+        direction: rtl; /* توجيه الصفحة بالكامل من اليمين لليسار */
     }}
 
     .main-title {{
@@ -44,22 +45,19 @@ st.markdown(f"""
         background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(15px);
         padding: 40px; border-radius: 30px; max-width: 550px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
+        text-align: right;
     }}
 
-    /* التعديل الجذري لحجم الخط 25 */
+    /* جلب الكلمات لليمين بحجم 25 */
     [data-testid="stWidgetLabel"] p {{
         font-size: 25px !important;
         font-family: 'Cairo' !important;
         font-weight: 700 !important;
         color: white !important;
-        text-align: center !important;
+        text-align: right !important; /* المحاذاة لليمين */
+        direction: rtl !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
-    }}
-
-    label {{
-        font-size: 25px !important;
-        font-family: 'Cairo' !important;
-        font-weight: 700 !important;
+        margin-right: 18% !important; /* تنسيق النص ليبدأ مع بداية الخانة */
     }}
 
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
