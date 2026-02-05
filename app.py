@@ -24,7 +24,7 @@ WALLPAPERS = {
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "🌆 باريس"
 
-# --- 🎨 الستايل (تعديل حجم الزر وتنسيقه) ---
+# --- 🎨 الستايل (تعديل عرض الزر فقط إلى 85%) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -52,6 +52,7 @@ st.markdown(f"""
         display: flex; flex-direction: column; align-items: center;
     }}
 
+    /* الخانات بعرض 50% */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
         width: 50% !important; 
         margin: 0 auto !important;
@@ -67,11 +68,11 @@ st.markdown(f"""
         text-align: center !important; width: 50% !important; display: block !important; margin: 5px auto !important;
     }}
 
-    /* --- التعديل المطلوب: تكبير زر الدخول وجعله متناسقاً --- */
+    /* --- التعديل المطلوب: عرض الزر 85% --- */
     .stButton > button {{
-        width: 55% !important; /* أكبر بقليل من عرض الخانات (50%) ليعطي طابعاً قوياً */
-        height: 55px !important; /* زيادة الارتفاع لسهولة الضغط */
-        font-size: 22px !important; /* تكبير الخط داخل الزر */
+        width: 85% !important; /* الزر عريض وواضح */
+        height: 55px !important; 
+        font-size: 22px !important;
         font-weight: 900 !important; 
         font-family: 'Cairo', sans-serif;
         background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
@@ -79,7 +80,7 @@ st.markdown(f"""
         border-radius: 15px !important; 
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         display: block !important; 
-        margin: 25px auto !important;
+        margin: 30px auto !important; /* زيادة المسافة العلوية للزر */
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
         transition: transform 0.2s, box-shadow 0.2s !important;
     }}
@@ -87,7 +88,6 @@ st.markdown(f"""
     .stButton > button:hover {{
         transform: scale(1.02) !important;
         box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5) !important;
-        border: 1px solid white !important;
     }}
     </style>
     """, unsafe_allow_html=True)
