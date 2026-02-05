@@ -1,50 +1,37 @@
 import streamlit as st
 
-# --- إعدادات الحساب الخاص بك (المدير) ---
-ADMIN_USERNAME = "ALI FETORY"
-ADMIN_PASSWORD = "0925843353"
+# --- بيانات الدخول الخاصة بك (المدير) ---
+ADMIN_USER = "ALI FETORY"
+ADMIN_PASS = "0925843353"
 
 # --- إدارة حالة الدخول ---
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
-# --- شاشة تسجيل الدخول ---
+# --- شاشة تسجيل الدخول بخانتين ---
 if not st.session_state.authenticated:
     st.markdown("<h1 style='text-align: center;'>🏛️ شركة المسار الذهبي</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center;'>تسجيل دخول المستخدم</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>بوابة الدخول للمنظومة</h3>", unsafe_allow_html=True)
     
-    # الخانتين اللتين طلبتهما
+    # الخانة الأولى: اسم المستخدم
     user_name = st.text_input("اسم المستخدم").strip().upper()
-    user_pass = st.text_input("الرقم السري", type="password").strip()
+    
+    # الخانة الثانية: الرقم السري (تظهر كنجوم)
+    user_password = st.text_input("الرقم السري", type="password").strip()
     
     if st.button("دخول"):
-        # التحقق من بياناتك (لا تهم حالة الأحرف في الاسم)
-        if user_name == ADMIN_USERNAME.upper() and user_pass == ADMIN_PASSWORD:
+        # التحقق من بياناتك (علي فيتوري)
+        if user_name == ADMIN_USER.upper() and user_password == ADMIN_PASS:
             st.session_state.authenticated = True
-            st.session_state.user_role = "admin"
-            st.rerun()
-        # هنا يمكنك إضافة مستخدمين آخرين مستقبلاً
-        elif user_name == "USER1" and user_pass == "12345":
-            st.session_state.authenticated = True
-            st.session_state.user_role = "user"
+            st.session_state.user_type = "admin"
             st.rerun()
         else:
             st.error("❌ اسم المستخدم أو الرقم السري غير صحيح")
     st.stop()
 
-# --- واجهة المنظومة بعد الدخول الناجح ---
-if st.session_state.user_role == "admin":
-    st.sidebar.success(f"مرحباً بالمدير: {ADMIN_USERNAME}")
-    st.title("📊 لوحة تحكم شركة المسار الذهبي")
-    
-    # هنا تضع كود الإحصائيات (Invoice Dashboard)
-    st.write("أهلاً بك يا علي، يمكنك الآن رؤية كافة التقارير والبيانات.")
-    
-else:
-    st.sidebar.info("واجهة المستخدم")
-    st.title("🛂 نظام سحب الجوازات")
-    st.write("يمكنك البدء برفع الملفات الآن.")
+# --- ما يظهر بعد الدخول الناجح (لوحة التحكم) ---
+st.title("📊 Invoice Dashboard")
+st.sidebar.success(f"مرحباً بك: {ADMIN_USER}")
 
-if st.sidebar.button("تسجيل الخروج"):
-    st.session_state.authenticated = False
-    st.rerun()
+# هنا تظهر الإحصائيات التي كانت في صورتك السابقة
+st.write("إحصائية أعلى فاتورة: 2025-05-03 بمبلغ 2850")
