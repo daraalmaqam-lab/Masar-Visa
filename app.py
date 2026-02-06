@@ -18,7 +18,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل المصلح ---
+# --- 🎨 الستايل (ضبط اليمين والخط 23) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -30,6 +30,7 @@ st.markdown(f"""
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
         background-size: cover; background-position: center; background-attachment: fixed;
+        direction: rtl !important;
     }}
 
     .main-title {{
@@ -43,27 +44,29 @@ st.markdown(f"""
         background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(15px);
         padding: 40px; border-radius: 30px; max-width: 550px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
+        text-align: right !important; /* إجبار المحاذاة لليمين */
     }}
 
-    /* حل مشكلة تداخل الكلمات */
+    /* تعديل العناوين: حجم 23، يمين، سطر واحد */
     [data-testid="stWidgetLabel"] p {{
         font-size: 23px !important;
         font-family: 'Cairo' !important;
         font-weight: 700 !important;
         color: white !important;
-        text-align: right !important; /* محاذاة لليمين */
+        text-align: right !important;
         direction: rtl !important;
-        width: 100% !important; /* جعل النص يأخذ العرض الكامل لمنع النزول لسطر جديد */
-        white-space: nowrap !important; /* إجبار الكلمات على البقاء في سطر واحد */
-        margin-bottom: 5px !important;
+        width: 100% !important;
+        display: block !important;
+        white-space: nowrap !important;
+        margin-bottom: 8px !important;
     }}
 
-    /* محاذاة حاوية الخانة لليمين لتناسب النص */
-    [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
-        width: 70% !important; 
-        margin-left: auto !important; /* دفع الخانة لليمين */
-        margin-right: 0 !important;
-        margin-bottom: 20px !important;
+    /* محاذاة حاويات الإدخال لليمين */
+    [data-testid="stTextInput"], [data-testid="stSelectbox"], .stSelectbox {{
+        width: 80% !important; 
+        margin-right: 0 !important; /* الالتصاق باليمين */
+        margin-left: auto !important;
+        text-align: right !important;
     }}
 
     input {{
@@ -89,6 +92,7 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
+        # التأكد من الترتيب من اليمين
         st.selectbox("ثيمات", list(WALLPAPERS.keys()), index=0, key="new_bg", on_change=update_bg)
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
@@ -102,4 +106,4 @@ if not st.session_state.auth:
         st.markdown('</div>', unsafe_allow_html=True)
 else:
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
-    # باقي كود لوحة التحكم...
+    # كود الصفحة الداخلية...
