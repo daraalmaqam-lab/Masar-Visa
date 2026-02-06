@@ -17,7 +17,7 @@ def get_passport_data(file):
     processed = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     return reader.readtext(processed, detail=0)
 
-# --- 🎨 الستايل الذهبي (توسيع المربعات لتناسب حجم العنوان) ---
+# --- 🎨 الستايل الذهبي (تطبيق مقاسات المربعات الحمراء في الصورة) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -29,18 +29,7 @@ st.markdown("""
         background-size: cover; background-attachment: fixed;
     }
 
-    /* العنوان الرئيسي */
-    .main-title {
-        text-align: center; 
-        color: #fbbf24; 
-        font-family: 'Cairo', sans-serif; 
-        font-size: 45px; 
-        font-weight: 900;
-        text-shadow: 3px 3px 6px black;
-        margin-bottom: 20px;
-    }
-
-    /* 🏷️ العناوين (اسم المستخدم / كلمة المرور): يمين، حجم 23، حافة سوداء */
+    /* 🏷️ العناوين (اسم المستخدم / كلمة المرور): حجم 23، حافة سوداء، يمين */
     [data-testid="stWidgetLabel"] p { 
         color: white !important; 
         text-align: right !important; 
@@ -49,45 +38,46 @@ st.markdown("""
         font-size: 23px !important; 
         font-weight: 900 !important;
         text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000 !important;
-        margin-bottom: 8px !important;
     }
 
-    /* ✍️ تكبير وتوسيع المربعات لتناسب فخامة العنوان */
+    /* ✍️ تعديل المربعات لتكون "نحيفة وعريضة" زي الصورة */
     div[data-baseweb="input"] {
-        height: 60px !important; /* زيادة الارتفاع ليكون واضح ومريح */
-        background-color: white !important;
-        border-radius: 15px !important;
-        border: 2px solid #fbbf24 !important;
+        height: 40px !important; /* الارتفاع النحيف زي المربع الأحمر */
+        background-color: #1e2129 !important; /* لون داكن زي الصورة */
+        border-radius: 10px !important;
+        border: 1px solid #fbbf24 !important; /* حافة ذهبية رقيقة */
     }
     
     input {
-        height: 60px !important;
-        font-size: 22px !important; /* تكبير الخط داخل المربع */
+        height: 40px !important;
+        font-size: 18px !important;
         text-align: right !important;
-        direction: rtl !important;
+        color: white !important;
         font-weight: bold !important;
-        color: black !important;
     }
 
-    /* ستايل الأزرار */
+    /* الزر الأصفر الصغير (نفس اللي في الصورة) */
     .stButton button {
-        height: 60px !important;
-        border-radius: 15px !important;
+        height: 45px !important;
+        width: 150px !important; /* حجم صغير زي الصورة */
+        border-radius: 10px !important;
         background-color: #fbbf24 !important;
         color: black !important;
-        font-size: 22px !important;
         font-weight: bold !important;
         font-family: 'Cairo' !important;
-        width: 100% !important;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.5) !important;
+        float: right !important; /* يجي عاليمين تحت المربعات */
     }
 
     .glass-box { 
-        background: rgba(0, 0, 0, 0.5); 
-        padding: 40px; 
-        border-radius: 30px; 
-        border: 1px solid rgba(255, 255, 255, 0.2); 
-        margin-bottom: 20px; 
+        background: transparent !important; /* إخفاء الصندوق الكبير باش تبرز المربعات */
+        padding: 20px;
+        margin-top: 50px;
+    }
+
+    .main-title {
+        text-align: center; color: #fbbf24; font-family: 'Cairo'; 
+        font-size: 50px; font-weight: 900; text-shadow: 3px 3px 6px black;
+        margin-bottom: 40px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -97,43 +87,42 @@ if 'auth' not in st.session_state:
     st.session_state.auth = False
 
 if not st.session_state.auth:
-    _, col, _ = st.columns([1, 2, 1]) # جعل العمود أوسع ليناسب التصميم الجديد
+    _, col, _ = st.columns([0.5, 2, 0.5]) # توسيع العمود ليعطي عرض للمربعات
     with col:
-        st.markdown('<div class="glass-box" style="margin-top:80px;">', unsafe_allow_html=True)
+        st.markdown('<div class="glass-box">', unsafe_allow_html=True)
         st.markdown('<div class="main-title">طيران المسار الذهبي</div>', unsafe_allow_html=True)
+        
         u = st.text_input("اسم المستخدم", key="u_login").upper()
         p = st.text_input("كلمة المرور", type="password", key="p_login")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
         if st.button("دخول للنظام"):
             if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة التحكم
-    st.markdown('<div class="main-title" style="text-align:right;">🌍 لوحة التحكم الذكية</div>', unsafe_allow_html=True)
+    # شاشة التحكم (ثابتة بنفس المقاسات الرشيقة)
+    st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo;'>لوحة التحكم</h2>", unsafe_allow_html=True)
     
     s_name, s_pass = "", ""
-    st.markdown('<div class="glass-box">', unsafe_allow_html=True)
     up_file = st.file_uploader("📸 ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
     
     if up_file:
-        with st.spinner('جاري المسح...'):
-            try:
-                res = get_passport_data(up_file)
-                raw = "".join(res).upper().replace(" ", "")
-                p_match = re.search(r'[A-Z][0-9]{7,9}', raw)
-                if p_match: s_pass = p_match.group()
-                if "LBY" in raw:
-                    s_name = raw.split("LBY")[1].split("<<")[0].replace("<", " ").strip()
-                else: s_name = res[0] if res else ""
-            except: pass
-    st.markdown('</div>', unsafe_allow_html=True)
+        try:
+            res = get_passport_data(up_file)
+            raw = "".join(res).upper().replace(" ", "")
+            p_match = re.search(r'[A-Z][0-9]{7,9}', raw)
+            if p_match: s_pass = p_match.group()
+            if "LBY" in raw:
+                s_name = raw.split("LBY")[1].split("<<")[0].replace("<", " ").strip()
+            else: s_name = res[0] if res else ""
+        except: pass
 
-    st.markdown('<div class="glass-box">', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
-    with c1: st.text_input("الاسم واللقب", value=s_name, key="sc_name")
+    with c1: st.text_input("الاسم", value=s_name, key="sc_name")
     with c2: st.text_input("رقم الجواز", value=s_pass, key="sc_pass")
-    if st.button("خروج 🚪"):
+    
+    if st.button("خروج"):
         st.session_state.auth = False
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
