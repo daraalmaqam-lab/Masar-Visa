@@ -18,13 +18,21 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (ضبط اليمين والخط 23) ---
+# --- 🎨 الستايل المحدث ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
     
     header, footer, .stAppDeployButton, [data-testid="stHeader"], [data-testid="stSidebar"] {{
         display: none !important;
+    }}
+
+    /* 🛑 كود إخفاء المربعات الفارغة والمسافات الزائدة تحت العنوان */
+    [data-testid="stVerticalBlock"] > div:empty {{
+        display: none !important;
+    }}
+    .stAlert {{
+        margin-top: -20px !important;
     }}
 
     .stApp {{
@@ -36,7 +44,7 @@ st.markdown(f"""
     .main-title {{
         background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
         padding: 15px; border-radius: 15px; text-align: center; max-width: 500px;
-        margin: 20px auto; color: white; font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
+        margin: 20px auto 10px auto; color: white; font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
         border: 2px solid rgba(255, 255, 255, 0.4);
     }}
 
@@ -44,10 +52,9 @@ st.markdown(f"""
         background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(15px);
         padding: 40px; border-radius: 30px; max-width: 550px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
-        text-align: right !important; /* إجبار المحاذاة لليمين */
+        text-align: right !important;
     }}
 
-    /* تعديل العناوين: حجم 23، يمين، سطر واحد */
     [data-testid="stWidgetLabel"] p {{
         font-size: 23px !important;
         font-family: 'Cairo' !important;
@@ -56,17 +63,15 @@ st.markdown(f"""
         text-align: right !important;
         direction: rtl !important;
         width: 100% !important;
-        display: block !important;
         white-space: nowrap !important;
         margin-bottom: 8px !important;
     }}
 
-    /* محاذاة حاويات الإدخال لليمين */
-    [data-testid="stTextInput"], [data-testid="stSelectbox"], .stSelectbox {{
+    [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
         width: 80% !important; 
-        margin-right: 0 !important; /* الالتصاق باليمين */
+        margin-right: 0 !important;
         margin-left: auto !important;
-        text-align: right !important;
+        margin-bottom: 20px !important;
     }}
 
     input {{
@@ -88,11 +93,11 @@ st.markdown(f"""
 
 if not st.session_state.auth:
     st.markdown('<div class="main-title">🛂 طيران المسار الذهبي ✈️</div>', unsafe_allow_html=True)
+    
+    # استخدام حاوية واحدة لتقليل المسافات الفارغة
     col1, col_mid, col2 = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        
-        # التأكد من الترتيب من اليمين
         st.selectbox("ثيمات", list(WALLPAPERS.keys()), index=0, key="new_bg", on_change=update_bg)
         user_input = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
@@ -106,4 +111,3 @@ if not st.session_state.auth:
         st.markdown('</div>', unsafe_allow_html=True)
 else:
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
-    # كود الصفحة الداخلية...
