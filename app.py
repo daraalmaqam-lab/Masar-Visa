@@ -18,7 +18,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (نصوص بظل أسود وتنسيق يمين) ---
+# --- 🎨 الستايل الموحد مع إصلاح خانة الوجهة ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -47,16 +47,16 @@ st.markdown(f"""
         font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
         color: #fbbf24; text-align: center; margin-bottom: 25px; border-bottom: 2px solid #fbbf24;
         padding-bottom: 15px;
-        text-shadow: 2px 2px 5px rgba(0,0,0,1); /* تحديد أسود قوي للعنوان */
+        text-shadow: 2px 2px 5px rgba(0,0,0,1);
     }}
 
-    /* جعل كل النصوص بيضاء بظل أسود وتنسيق يمين */
+    /* نصوص بظل أسود ويمين */
     h3, p, span, label, .stMarkdown, [data-testid="stWidgetLabel"] p {{
         color: white !important;
         text-align: right !important;
         direction: rtl !important;
         font-family: 'Cairo' !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,1) !important; /* ظل أسود للنصوص */
+        text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
     }}
 
     [data-testid="stWidgetLabel"] p {{
@@ -65,7 +65,6 @@ st.markdown(f"""
         margin-bottom: 8px !important;
     }}
 
-    /* تنسيق العناوين الفرعية (1، 2، 3) */
     .section-head {{
         font-size: 24px !important;
         font-weight: 800 !important;
@@ -73,14 +72,21 @@ st.markdown(f"""
         margin: 20px 0 !important;
         border-right: 5px solid #fbbf24;
         padding-right: 15px;
+        text-align: right !important;
     }}
 
-    input {{
-        height: 45px !important; font-size: 18px !important; text-align: center !important;
+    /* 🛑 إصلاح خانة الوجهة (selectbox) وباقي الخانات لتكون يمين تماماً 🛑 */
+    [data-testid="stSelectbox"], [data-testid="stTextInput"], .stSelectbox {{
+        direction: rtl !important;
+        text-align: right !important;
+    }}
+
+    input, [data-baseweb="select"] {{
+        height: 45px !important; font-size: 18px !important; 
+        text-align: right !important; /* الكتابة تبدأ من اليمين */
         border-radius: 8px !important;
         background: rgba(255, 255, 255, 0.95) !important;
         color: black !important;
-        text-shadow: none !important; /* إلغاء الظل داخل خانات الكتابة لسهولة القراءة */
     }}
 
     .stButton > button {{
@@ -88,40 +94,33 @@ st.markdown(f"""
         font-weight: 900 !important; font-family: 'Cairo' !important;
         background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
         color: black !important; border-radius: 12px !important;
-        text-shadow: none !important;
     }}
 
-    hr {{
-        border: 0; height: 1px;
-        background-image: linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,0.75), rgba(255,255,255,0));
-        margin: 20px 0;
-    }}
+    hr {{ border: 0; height: 1px; background-image: linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,0.75), rgba(255,255,255,0)); margin: 20px 0; }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- الشاشة 1 والـ 2 ---
 if not st.session_state.auth:
     _, col_mid, _ = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card" style="max-width: 500px;">', unsafe_allow_html=True)
         st.markdown('<div class="inner-title">🛂 طيران المسار الذهبي ✈️</div>', unsafe_allow_html=True)
         st.selectbox("ثيمات", list(WALLPAPERS.keys()), index=0, key="new_bg", on_change=update_bg)
-        user_input = st.text_input("اسم المستخدم").upper()
+        user_input_val = st.text_input("اسم المستخدم").upper()
         pass_input = st.text_input("كلمة المرور", type="password")
         if st.button("دخول للنظام"):
-            if (user_input == "ALI FETORY" or user_input == "ALI") and pass_input == "0925843353":
+            if (user_input_val == "ALI FETORY" or user_input_val == "ALI") and pass_input == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
             else:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    _, col_main, _ = st.columns([1, 10, 1]) # زيادة العرض لتنسيق أفضل
+    _, col_main, _ = st.columns([1, 10, 1])
     with col_main:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.markdown('<div class="inner-title">🌍 لوحة التحكم - تجهيز ملف التأشيرة الكامل</div>', unsafe_allow_html=True)
         
-        # 1. بيانات الجواز والمسافر
         st.markdown('<p class="section-head">1️⃣ بيانات الجواز والمسافر</p>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -131,12 +130,12 @@ else:
             st.text_input("رقم الجواز")
             st.date_input("تاريخ انتهاء الجواز")
         with c3:
+            # هنا الوجهة توا حتطلع يمين مظبوط
             st.selectbox("الوجهة", ["إيطاليا", "فرنسا", "تركيا", "إسبانيا"])
             st.text_input("رقم الهاتف")
 
         st.divider()
 
-        # 2. الحجوزات المبدئية
         st.markdown('<p class="section-head">2️⃣ الحجوزات المبدئية (Dummy Bookings)</p>', unsafe_allow_html=True)
         air, hotel = st.columns(2)
         with air:
@@ -146,7 +145,6 @@ else:
 
         st.divider()
 
-        # 3. مستندات ملف التأشيرة
         st.markdown('<p class="section-head">3️⃣ مستندات ملف التأشيرة</p>', unsafe_allow_html=True)
         ch1, ch2, ch3 = st.columns(3)
         with ch1:
