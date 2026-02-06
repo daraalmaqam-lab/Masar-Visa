@@ -17,7 +17,7 @@ def get_passport_data(file):
     processed = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     return reader.readtext(processed, detail=0)
 
-# --- 🎨 الستايل الذهبي الاحترافي (نفس تصميم الصورة 1) ---
+# --- 🎨 الستايل الذهبي (إجبار الترتيب زي الصورة 1) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -29,37 +29,42 @@ st.markdown("""
         background-size: cover; background-attachment: fixed;
     }
 
-    /* العنوان الرئيسي */
     .main-title {
         text-align: center; color: #fbbf24; font-family: 'Cairo'; 
         font-size: 50px; font-weight: 900; text-shadow: 3px 3px 6px black;
-        margin-top: 50px; margin-bottom: 30px;
+        margin-top: 50px; margin-bottom: 40px;
     }
 
-    /* حاوية التنسيق: الكلمة يمين المربع */
-    .input-row {
+    /* الحاوية المركزية - تلم كل شيء في النص */
+    .central-auth {
+        max-width: 500px;
+        margin: 0 auto;
+        direction: rtl;
+    }
+
+    /* ستايل السطر (الكلمة + المربع) */
+    .auth-row {
         display: flex;
-        justify-content: center;
         align-items: center;
-        gap: 15px;
-        margin-bottom: 20px;
-        direction: rtl; /* ضمان الترتيب العربي */
+        justify-content: flex-start;
+        gap: 20px;
+        margin-bottom: 15px;
     }
 
-    .label-text {
+    .auth-label {
         color: white;
         font-family: 'Cairo', sans-serif;
         font-size: 23px;
         font-weight: 900;
         text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
-        width: 150px; /* توحيد عرض الكلمات */
+        min-width: 140px;
         text-align: right;
     }
 
-    /* المربعات */
+    /* إجبار مقاس المربع */
     div[data-baseweb="input"] {
         height: 40px !important; 
-        width: 300px !important; /* الطول المطلوب في الصورة 1 */
+        width: 300px !important; 
         background-color: #1e2129 !important; 
         border-radius: 8px !important;
         border: 1px solid #fbbf24 !important;
@@ -72,23 +77,20 @@ st.markdown("""
         color: white !important;
     }
 
-    /* الزر */
-    .btn-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-        padding-right: 165px; /* موازنته ليكون تحت المربعات */
+    /* الزر يجي تحت المربعات */
+    .btn-row {
+        margin-right: 160px; /* يخلي الزر يبدأ مع بداية المربعات */
+        margin-top: 10px;
     }
 
     .stButton button {
-        height: 45px !important;
-        width: 140px !important; 
-        border-radius: 10px !important;
+        height: 42px !important;
+        width: 130px !important; 
         background-color: #fbbf24 !important;
         color: black !important;
         font-weight: bold !important;
         font-family: 'Cairo' !important;
-        border: none !important;
+        border-radius: 8px !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -99,28 +101,32 @@ if 'auth' not in st.session_state:
 
 if not st.session_state.auth:
     st.markdown('<div class="main-title">طيران المسار الذهبي</div>', unsafe_allow_html=True)
-
-    # صف اسم المستخدم
-    st.markdown('<div class="input-row"><div class="label-text">اسم المستخدم</div>', unsafe_allow_html=True)
+    
+    # بداية الحاوية المركزية
+    st.markdown('<div class="central-auth">', unsafe_allow_html=True)
+    
+    # سطر اسم المستخدم
+    st.markdown('<div class="auth-row"><div class="auth-label">اسم المستخدم</div>', unsafe_allow_html=True)
     u = st.text_input("u", label_visibility="collapsed", key="u_field").upper()
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # صف كلمة المرور
-    st.markdown('<div class="input-row"><div class="label-text">كلمة المرور</div>', unsafe_allow_html=True)
+    # سطر كلمة المرور
+    st.markdown('<div class="auth-row"><div class="auth-label">كلمة المرور</div>', unsafe_allow_html=True)
     p = st.text_input("p", type="password", label_visibility="collapsed", key="p_field")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # الزر
-    _, btn_col, _ = st.columns([1, 1, 1])
-    with btn_col:
-        if st.button("دخول للنظام"):
-            if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
-                st.session_state.auth = True
-                st.rerun()
+    # سطر الزر
+    st.markdown('<div class="btn-row">', unsafe_allow_html=True)
+    if st.button("دخول للنظام"):
+        if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
+            st.session_state.auth = True
+            st.rerun()
+    st.markdown('</div></div>', unsafe_allow_html=True) # نهاية الحاوية
+
 else:
     # شاشة التحكم
     st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم الذكية</h2>", unsafe_allow_html=True)
-    
+    # باقي الكود...
     s_name, s_pass = "", ""
     up_file = st.file_uploader("📸 ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
     if up_file:
@@ -133,7 +139,6 @@ else:
                 s_name = raw.split("LBY")[1].split("<<")[0].replace("<", " ").strip()
             else: s_name = res[0] if res else ""
         except: pass
-
     st.text_input("الاسم", value=s_name, key="sc_name")
     st.text_input("رقم الجواز", value=s_pass, key="sc_pass")
     if st.button("خروج"):
