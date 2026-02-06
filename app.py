@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ================== 🎨 CSS التوسيط المطلق المحسن ==================
+# ================== 🎨 CSS التوسيط الكامل ==================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -34,50 +34,48 @@ st.markdown("""
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 500px !important; 
-    text-align: center;
+    width: 100% !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
     background-color: transparent !important;
     z-index: 9999;
 }
 
-/* العنوان (تأشيرات    أو VISA) */
+/* 🏷️ تنسيق كلمة تأشيرات في الوسط */
 .main-title {
     color: #fbbf24;
     font-family: 'Cairo', sans-serif;
-    font-size: 60px;
+    font-size: 70px; /* حجم كبير وواضح */
     font-weight: 900;
-    text-shadow: 4px 4px 10px black;
-    margin-bottom: 30px;
-}
-
-/* سطر الإدخال لضمان التوسط */
-.input-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    text-shadow: 4px 4px 15px black;
+    margin-bottom: 20px;
+    text-align: center;
     width: 100%;
 }
 
-/* مربعات الإدخال */
+/* ⌨️ مربعات الإدخال في الوسط */
 div[data-baseweb="input"] {
-    width: 350px !important;
+    width: 380px !important; /* عرض متناسق */
     background-color: #1e2129 !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     border: 2px solid #fbbf24 !important;
-    margin: 10px auto !important;
+    margin-bottom: 15px !important;
 }
 
 input {
-    text-align: center !important; /* النص داخل الخانة في الوسط */
+    text-align: center !important; /* النص اللي تكتبه يجي في نص الخانة */
     color: white !important;
     font-size: 20px !important;
+    height: 45px !important;
 }
 
-/* زر الدخول في الوسط */
+/* 🔘 زر الدخول في الوسط */
 .stButton {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    width: 100%;
 }
 
 .stButton button {
@@ -89,8 +87,15 @@ input {
     font-family: 'Cairo';
     border-radius: 12px;
     border: none;
-    font-size: 20px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
+    font-size: 22px;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.6);
+}
+
+/* تحسين شكل الفراغات */
+.stTextInput {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -100,14 +105,14 @@ if "auth" not in st.session_state:
     st.session_state.auth = False
 
 if not st.session_state.auth:
-    # كلمة تأشيرات في الوسط
+    # 1. كلمة تأشيرات في السنتر
     st.markdown('<div class="main-title">تأشيرات</div>', unsafe_allow_html=True)
 
-    # الخانات (اسم المستخدم وكلمة المرور)
+    # 2. الخانات في السنتر (بدون ليبل خارجي)
     u = st.text_input("اسم المستخدم", placeholder="اسم المستخدم", label_visibility="collapsed", key="u_login").upper()
     p = st.text_input("كلمة المرور", placeholder="كلمة المرور", type="password", label_visibility="collapsed", key="p_login")
 
-    # زر الدخول
+    # 3. زر الدخول في السنتر
     if st.button("دخول للنظام"):
         if (u in ["ALI", "ALI FETORY"]) and p == "0925843353":
             st.session_state.auth = True
@@ -116,8 +121,7 @@ if not st.session_state.auth:
 # ================== لوحة التحكم ==================
 else:
     st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم الذكية</h2>", unsafe_allow_html=True)
+    # باقي الكود الخاص بك...
     if st.button("خروج"):
         st.session_state.auth = False
         st.rerun()
-
-
