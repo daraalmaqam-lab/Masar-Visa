@@ -36,7 +36,7 @@ st.markdown("""
         margin-bottom: 30px;
     }
 
-    /* 🏷️ العناوين: حجم 23، حافة سوداء، يمين */
+    /* 🏷️ العناوين: حجم 20، حافة سوداء، يمين */
     [data-testid="stWidgetLabel"] p { 
         color: white !important; 
         text-align: right !important; 
@@ -134,3 +134,4 @@ else:
             if st.button("خروج"):
                 st.session_state.auth = False
                 st.rerun()
+
