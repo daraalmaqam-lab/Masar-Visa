@@ -18,7 +18,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (توحيد الألوان والتنسيق) ---
+# --- 🎨 الستايل المحدث لإزالة المربعات البيضاء تحت الكلمات ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -45,12 +45,17 @@ st.markdown(f"""
 
     .inner-title {{
         font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
-        color: #fbbf24; text-align: center; margin-bottom: 25px; border-bottom: 2px solid #fbbf24;
+        color: #fbbf24; text-align: center; 
+        background: transparent !important;
+        margin-bottom: 25px; border-bottom: 2px solid #fbbf24;
         padding-bottom: 15px;
         text-shadow: 2px 2px 5px rgba(0,0,0,1);
     }}
 
-    h3, p, span, label, .stMarkdown, [data-testid="stWidgetLabel"] p {{
+    /* 🛑 حذف المربع الأبيض تحت كلمة الوجهة وباقي العناوين 🛑 */
+    [data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] > div, [data-testid="stWidgetLabel"] p {{
+        background-color: transparent !important;
+        background: transparent !important;
         color: white !important;
         text-align: right !important;
         direction: rtl !important;
@@ -61,7 +66,6 @@ st.markdown(f"""
     [data-testid="stWidgetLabel"] p {{
         font-size: 23px !important; 
         font-weight: 700 !important;
-        margin-bottom: 8px !important;
     }}
 
     .section-head {{
@@ -71,20 +75,17 @@ st.markdown(f"""
         margin: 20px 0 !important;
         border-right: 5px solid #fbbf24;
         padding-right: 15px;
-        text-align: right !important;
+        background: transparent !important;
     }}
 
-    /* 🛑 توحيد لون كل الخانات (نصوص واختيارات وتاريخ) 🛑 */
+    /* توحيد الخانات */
     input, [data-baseweb="select"], [data-baseweb="input"], .stSelectbox div {{
-        background-color: #FFFFFF !important; /* لون أبيض ناصع */
-        background: #FFFFFF !important;
+        background-color: #FFFFFF !important;
         color: black !important;
         border-radius: 8px !important;
         text-align: right !important;
-        height: 45px !important;
     }}
 
-    /* إصلاح لون نص الاختيار المختار */
     [data-baseweb="select"] div {{
         color: black !important;
         font-weight: bold !important;
@@ -95,7 +96,6 @@ st.markdown(f"""
         font-weight: 900 !important; font-family: 'Cairo' !important;
         background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
         color: black !important; border-radius: 12px !important;
-        text-shadow: none !important;
     }}
 
     hr {{ border: 0; height: 1px; background-image: linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,0.75), rgba(255,255,255,0)); margin: 20px 0; }}
