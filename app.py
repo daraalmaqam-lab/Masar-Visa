@@ -1,121 +1,45 @@
 import streamlit as st
-import numpy as np
-from PIL import Image
-import re
 
-# ================== 1. إعداد الصفحة (ثابت) ==================
-st.set_page_config(
-    page_title="Golden Path",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+# =========================================================
+# الغرفة رقم (1): شاشة الدخول (تأشيرات) - "ممنوع التغيير"
+# =========================================================
+def show_login_page():
+    # كود التنسيق المعتمد اللي ثبتناه مع بعض
+    st.markdown(f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
+    [data-testid="stHeader"], header, footer {{ display: none !important; }}
+    .stApp {{
+        background-image: url("https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070");
+        background-size: cover; background-position: center; background-attachment: fixed;
+    }}
+    [data-testid="stVerticalBlock"] {{
+        position: fixed !important; top: 50% !important; left: 50% !important;
+        transform: translate(-50%, -50%) !important; width: 100% !important; 
+        display: flex !important; flex-direction: column !important;
+        align-items: center !important; justify-content: center !important;
+    }}
+    .main-title {{
+        color: #fbbf24; font-family: 'Cairo', sans-serif; font-size: 70px;
+        font-weight: 900; text-shadow: 4px 4px 15px black; margin-bottom: 20px;
+    }}
+    div[data-baseweb="input"] {{
+        width: 380px !important; background-color: #1e2129 !important;
+        border-radius: 12px !important; border: 2px solid #fbbf24 !important;
+        margin-bottom: 15px !important;
+    }}
+    input {{ text-align: center !important; color: white !important; font-size: 20px !important; }}
+    .stButton button {{
+        height: 50px; width: 200px; background-color: #fbbf24;
+        color: black; font-weight: bold; font-family: 'Cairo';
+        border-radius: 12px; border: none; font-size: 22px;
+        box-shadow: 0px 5px 20px rgba(0,0,0,0.6);
+    }}
+    </style>
+    """, unsafe_allow_html=True)
 
-# ================== 2. نظام الثيمات (اختياري) ==================
-if "theme" not in st.session_state:
-    st.session_state.theme = "الذهبي الملكي"
-
-# القائمة الجانبية لتغيير الثيم
-with st.sidebar:
-    st.markdown("<h3 style='text-align:center; font-family:Cairo;'>⚙️ التنسيق</h3>", unsafe_allow_html=True)
-    theme_choice = st.selectbox("اختر الثيم:", ["الذهبي الملكي", "الليلي الغامق", "الأخضر الهادئ"])
-    st.session_state.theme = theme_choice
-
-# تعريف ألوان الثيمات
-theme_config = {
-    "الذهبي الملكي": {"color": "#fbbf24", "img": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070"},
-    "الليلي الغامق": {"color": "#3b82f6", "img": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074"},
-    "الأخضر الهادئ": {"color": "#10b981", "img": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070"}
-}
-current_c = theme_config[st.session_state.theme]["color"]
-current_bg = theme_config[st.session_state.theme]["img"]
-
-# ================== 3. 🎨 CSS التوسيط الكامل (المعتمد) ==================
-st.markdown(f"""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
-
-/* إخفاء الهيدر والفوتر */
-[data-testid="stHeader"], header, footer {{ display: none !important; }}
-
-/* الخلفية الثابتة */
-.stApp {{
-    background-image: url("{current_bg}");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}}
-
-/* 🎯 حاوية التوسيط المطلق (شاشتك المفضلة) */
-[data-testid="stVerticalBlock"] {{
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 100% !important; 
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background-color: transparent !important;
-    z-index: 9999;
-}}
-
-/* تنسيق كلمة تأشيرات */
-.main-title {{
-    color: {current_c};
-    font-family: 'Cairo', sans-serif;
-    font-size: 70px;
-    font-weight: 900;
-    text-shadow: 4px 4px 15px black;
-    margin-bottom: 20px;
-    text-align: center;
-}}
-
-/* مربعات الإدخال */
-div[data-baseweb="input"] {{
-    width: 380px !important;
-    background-color: rgba(30, 33, 41, 0.9) !important;
-    border-radius: 12px !important;
-    border: 2px solid {current_c} !important;
-    margin-bottom: 15px !important;
-}}
-
-input {{
-    text-align: center !important;
-    color: white !important;
-    font-size: 20px !important;
-    height: 45px !important;
-}}
-
-/* زر الدخول */
-.stButton button {{
-    height: 50px;
-    width: 200px;
-    background-color: {current_c};
-    color: black;
-    font-weight: bold;
-    font-family: 'Cairo';
-    border-radius: 12px;
-    border: none;
-    font-size: 22px;
-    box-shadow: 0px 5px 20px rgba(0,0,0,0.6);
-}}
-
-.stTextInput {{
-    width: 100% !important;
-    display: flex !important;
-    justify-content: center !important;
-}}
-</style>
-""", unsafe_allow_html=True)
-
-# ================== 4. نظام الدخول ==================
-if "auth" not in st.session_state:
-    st.session_state.auth = False
-
-if not st.session_state.auth:
     st.markdown('<div class="main-title">تأشيرات</div>', unsafe_allow_html=True)
-
+    
     u = st.text_input("User", placeholder="اسم المستخدم", label_visibility="collapsed", key="u_login").upper()
     p = st.text_input("Pass", placeholder="كلمة المرور", type="password", label_visibility="collapsed", key="p_login")
 
@@ -126,11 +50,45 @@ if not st.session_state.auth:
         else:
             st.error("البيانات غير صحيحة")
 
-# ================== 5. لوحة التحكم (الداخلية) ==================
-else:
-    st.markdown(f"<h1 style='text-align:center; color:{current_c}; font-family:Cairo;'>🌍 لوحة التحكم - {st.session_state.theme}</h1>", unsafe_allow_html=True)
+# =========================================================
+# الغرفة رقم (2): لوحة التحكم - "هنا عدل براحتك يا علي"
+# =========================================================
+def show_dashboard():
+    # تنسيق بسيط للوحة التحكم عشان تكون واضحة ومريحة
+    st.markdown("""
+    <style>
+    .dash-header { text-align: center; color: #fbbf24; font-family: 'Cairo'; font-size: 50px; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<h1 class="dash-header">🌍 لوحة التحكم الذكية</h1>', unsafe_allow_html=True)
+    st.write("---")
+
+    # 👇👇👇👇 (بداية منطقة التعديل الخاصة بك) 👇👇👇👇
     
-    # هنا تضع باقي أكوادك الخاصة بمعالجة الجوازات
-    if st.button("تسجيل الخروج"):
+    st.subheader("مرحباً بك يا علي.. ابدأ بإضافة مهامك هنا")
+    
+    # مثال لزر جديد:
+    if st.button("📸 رفع جواز سفر جديد"):
+        st.write("سيتم فتح نظام الكاميرا قريباً...")
+
+    # 👆👆👆👆 (نهاية منطقة التعديل) 👆👆👆👆
+
+    # زر خروج في القائمة الجانبية
+    if st.sidebar.button("🚪 تسجيل الخروج"):
         st.session_state.auth = False
         st.rerun()
+
+# =========================================================
+# المنظم: المحرك الرئيسي للمنظومة
+# =========================================================
+st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
+
+if "auth" not in st.session_state:
+    st.session_state.auth = False
+
+# التنقل بين الغرف
+if not st.session_state.auth:
+    show_login_page()
+else:
+    show_dashboard()
