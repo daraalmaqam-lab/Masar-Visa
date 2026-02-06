@@ -40,7 +40,7 @@ st.markdown("""
     z-index: 9999;
 }
 
-/* العنوان (تأشيرات أو VISA) */
+/* العنوان (تأشيرات   أو VISA) */
 .main-title {
     color: #fbbf24;
     font-family: 'Cairo', sans-serif;
@@ -119,3 +119,4 @@ else:
     if st.button("خروج"):
         st.session_state.auth = False
         st.rerun()
+
