@@ -18,7 +18,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل المحدث لإزالة المربعات البيضاء تحت الكلمات ---
+# --- 🎨 الستايل النهائي (شفافية + يمين + بدون مربعات) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -26,8 +26,6 @@ st.markdown(f"""
     header, footer, .stAppDeployButton, [data-testid="stHeader"], [data-testid="stSidebar"] {{
         display: none !important;
     }}
-
-    [data-testid="stVerticalBlock"] {{ gap: 0rem !important; }}
 
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
@@ -39,56 +37,48 @@ st.markdown(f"""
         background: rgba(0, 0, 0, 0.45); 
         backdrop-filter: blur(10px);
         padding: 30px; border-radius: 30px; max-width: 1100px; margin: 20px auto;
-        border: 1px solid rgba(255, 255, 255, 0.2); color: white;
-        text-align: right !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }}
 
-    .inner-title {{
-        font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
-        color: #fbbf24; text-align: center; 
-        background: transparent !important;
-        margin-bottom: 25px; border-bottom: 2px solid #fbbf24;
-        padding-bottom: 15px;
-        text-shadow: 2px 2px 5px rgba(0,0,0,1);
-    }}
-
-    /* 🛑 حذف المربع الأبيض تحت كلمة الوجهة وباقي العناوين 🛑 */
-    [data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] > div, [data-testid="stWidgetLabel"] p {{
-        background-color: transparent !important;
-        background: transparent !important;
-        color: white !important;
+    /* 🛡️ إجبار كل العناوين والنصوص على اليمين 🛡️ */
+    label, p, span, h3, [data-testid="stWidgetLabel"] {{
         text-align: right !important;
         direction: rtl !important;
         font-family: 'Cairo' !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
+        color: white !important;
+        background-color: transparent !important; /* ضمان عدم وجود مربع خلف الكلمات */
     }}
 
-    [data-testid="stWidgetLabel"] p {{
-        font-size: 23px !important; 
-        font-weight: 700 !important;
+    /* العنوان الرئيسي في الوسط للفخامة */
+    .inner-title {{
+        font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
+        color: #fbbf24; text-align: center !important; 
+        background: transparent !important;
+        border-bottom: 2px solid #fbbf24;
+        padding-bottom: 15px; margin-bottom: 25px;
+        text-shadow: 2px 2px 5px rgba(0,0,0,1);
+    }}
+
+    /* حذف أي خلفية بيضاء تظهر تحت الكلمات (بما فيها الوجهة) */
+    div[data-testid="stWidgetLabel"] > div {{
+        background-color: transparent !important;
     }}
 
     .section-head {{
-        font-size: 24px !important;
-        font-weight: 800 !important;
-        color: #fbbf24 !important;
-        margin: 20px 0 !important;
-        border-right: 5px solid #fbbf24;
-        padding-right: 15px;
-        background: transparent !important;
+        font-size: 24px !important; font-weight: 800 !important; color: #fbbf24 !important;
+        margin: 20px 0 !important; border-right: 5px solid #fbbf24; padding-right: 15px;
+        text-align: right !important;
     }}
 
-    /* توحيد الخانات */
+    /* توحيد الخانات (أبيض ناصع) */
     input, [data-baseweb="select"], [data-baseweb="input"], .stSelectbox div {{
         background-color: #FFFFFF !important;
         color: black !important;
         border-radius: 8px !important;
         text-align: right !important;
-    }}
-
-    [data-baseweb="select"] div {{
-        color: black !important;
-        font-weight: bold !important;
+        height: 45px !important;
+        text-shadow: none !important; /* النص داخل المربع لا يحتاج ظل */
     }}
 
     .stButton > button {{
@@ -102,6 +92,7 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
+# المنطق البرمجي (الذي لا يؤثر على الشاشة الأولى)
 if not st.session_state.auth:
     _, col_mid, _ = st.columns([1, 2, 1])
     with col_mid:
@@ -162,7 +153,7 @@ else:
         b1, b2, b3 = st.columns([2, 2, 1])
         with b1:
             if st.button("إصدار ملف التأشيرة 🖨️"):
-                st.success("جاري تجهيز الملف...")
+                st.success("تم الحفظ! هل تريد طباعة التقرير؟")
         with b2:
             if st.button("مسح البيانات 🧹"):
                 st.rerun()
