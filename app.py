@@ -10,10 +10,19 @@ WALLPAPERS = {
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076"
 }
 
+# قائمة المطارات الأوروبية الشائعة
+EUROPE_AIRPORTS = [
+    "Tripoli (MJI)", "Benghazi (BEN)", "Istanbul (IST)",
+    "Rome (FCO)", "Milan (MXP)", "Paris (CDG)", 
+    "Madrid (MAD)", "Barcelona (BCN)", "Frankfurt (FRA)", 
+    "Munich (MUC)", "Amsterdam (AMS)", "Vienna (VIE)", 
+    "Malta (MLA)", "Athens (ATH)", "Other / أخرى"
+]
+
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "دبي"
 
-# --- 🎨 الستايل (إصلاح الشفافية وتنسيق اليمين) ---
+# --- 🎨 الستايل (الشفافية + يمين) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -75,7 +84,6 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 if not st.session_state.auth:
-    # (كود الدخول المختصر)
     _, col, _ = st.columns([1, 2, 1])
     with col:
         st.markdown('<div class="glass-box" style="margin-top:100px;">', unsafe_allow_html=True)
@@ -101,18 +109,18 @@ else:
         st.text_input("رقم الجواز")
         st.date_input("تاريخ انتهاء الجواز")
     with c3:
-        st.selectbox("الوجهة", ["إيطاليا", "فرنسا", "تركيا", "إسبانيا"])
+        st.selectbox("الوجهة", ["إيطاليا", "فرنسا", "تركيا", "إسبانيا", "ألمانيا"])
         st.text_input("رقم الهاتف")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # حجة 2: تعديل مسار رحلة الطيران (من/إلى مع التواريخ)
+    # حجة 2: تفاصيل حجز الطيران مع مطارات أوروبا
     st.markdown('<div class="glass-box">', unsafe_allow_html=True)
     st.markdown('<p class="section-head">2️⃣ تفاصيل حجز الطيران (Flight Route)</p>', unsafe_allow_html=True)
     f1, f2, f3, f4 = st.columns(4)
     with f1:
-        st.text_input("مطار المغادرة (من)", placeholder="مثلاً: Tripoli")
+        st.selectbox("مطار المغادرة (من)", EUROPE_AIRPORTS, index=0)
     with f2:
-        st.text_input("مطار الوصول (إلى)", placeholder="مثلاً: Rome")
+        st.selectbox("مطار الوصول (إلى)", EUROPE_AIRPORTS, index=3) # افتراضي روما
     with f3:
         st.date_input("تاريخ الذهاب")
     with f4:
@@ -125,7 +133,7 @@ else:
     b1, b2, b3 = st.columns([2, 2, 1])
     with b1:
         if st.button("إصدار ملف التأشيرة 🖨️"):
-            st.success("تم تجهيز مسار الرحلة والبيانات!")
+            st.success("تم تجهيز مسار الرحلة بنجاح!")
     with b2:
         if st.button("مسح البيانات 🧹"):
             st.rerun()
