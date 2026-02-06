@@ -77,7 +77,7 @@ if not st.session_state.auth:
     with col_mid:
         st.markdown(f'''
             <div class="glass-card">
-                <div class="inner-title">🛂 طيران المسار الذهبي ✈️</div>
+                <div class="inner-title"> طيران المسار الذهبي ✈️</div>
             ''', unsafe_allow_html=True)
         
         st.selectbox("ثيمات", list(WALLPAPERS.keys()), index=0, key="new_bg", on_change=update_bg)
@@ -93,3 +93,4 @@ if not st.session_state.auth:
         st.markdown('</div>', unsafe_allow_html=True)
 else:
     st.markdown('<div class="glass-card"><div class="inner-title">🌍 لوحة التحكم</div></div>', unsafe_allow_html=True)
+
