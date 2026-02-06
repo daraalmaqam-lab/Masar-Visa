@@ -13,7 +13,7 @@ WALLPAPERS = {
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "دبي"
 
-# --- 🎨 الستايل (إزالة المربع الأبيض + تنسيق يمين) ---
+# --- 🎨 الستايل (إصلاح الشفافية وتنسيق اليمين) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -27,7 +27,7 @@ st.markdown(f"""
         background-size: cover; background-position: center; background-attachment: fixed;
     }}
 
-    /* 🛡️ إخفاء المربع الأبيض نهائياً عن العناوين 🛡️ */
+    /* 🛡️ إزالة المربعات البيضاء نهائياً 🛡️ */
     [data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] > div {{
         background-color: transparent !important;
         background: transparent !important;
@@ -40,13 +40,11 @@ st.markdown(f"""
         text-align: right !important;
         direction: rtl !important;
         font-family: 'Cairo' !important;
-        font-size: 22px !important;
+        font-size: 20px !important; 
         font-weight: 700 !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
-        background: transparent !important;
     }}
 
-    /* تصميم الخانات من الداخل */
     input, [data-baseweb="select"], [data-baseweb="input"], .stSelectbox div {{
         background-color: white !important;
         border-radius: 10px !important;
@@ -69,15 +67,15 @@ st.markdown(f"""
 
     .glass-box {{
         background: rgba(0, 0, 0, 0.4); 
-        padding: 30px; border-radius: 25px; 
+        padding: 25px; border-radius: 25px; 
         border: 1px solid rgba(255, 255, 255, 0.2);
         margin-bottom: 20px;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- نظام الدخول ---
 if not st.session_state.auth:
+    # (كود الدخول المختصر)
     _, col, _ = st.columns([1, 2, 1])
     with col:
         st.markdown('<div class="glass-box" style="margin-top:100px;">', unsafe_allow_html=True)
@@ -90,10 +88,9 @@ if not st.session_state.auth:
                 st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # --- شاشة التحكم بالترتيب (بالحجة) ---
     st.markdown('<div class="inner-title">🌍 لوحة التحكم - تجهيز ملف التأشيرة الكامل</div>', unsafe_allow_html=True)
     
-    # بالحجة 1: بيانات الجواز
+    # حجة 1: بيانات المسافر
     st.markdown('<div class="glass-box">', unsafe_allow_html=True)
     st.markdown('<p class="section-head">1️⃣ بيانات الجواز والمسافر</p>', unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
@@ -108,23 +105,27 @@ else:
         st.text_input("رقم الهاتف")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # بالحجة 2: الحجوزات
+    # حجة 2: تعديل مسار رحلة الطيران (من/إلى مع التواريخ)
     st.markdown('<div class="glass-box">', unsafe_allow_html=True)
-    st.markdown('<p class="section-head">2️⃣ الحجوزات المبدئية (Dummy Bookings)</p>', unsafe_allow_html=True)
-    air, hotel = st.columns(2)
-    with air:
-        st.text_input("مسار الرحلة (Tripoli - Rome)")
-    with hotel:
-        st.text_input("عنوان الإقامة المقترح")
+    st.markdown('<p class="section-head">2️⃣ تفاصيل حجز الطيران (Flight Route)</p>', unsafe_allow_html=True)
+    f1, f2, f3, f4 = st.columns(4)
+    with f1:
+        st.text_input("مطار المغادرة (من)", placeholder="مثلاً: Tripoli")
+    with f2:
+        st.text_input("مطار الوصول (إلى)", placeholder="مثلاً: Rome")
+    with f3:
+        st.date_input("تاريخ الذهاب")
+    with f4:
+        st.date_input("تاريخ العودة")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # بالحجة 3: المستندات والأزرار
+    # حجة 3: الإجراءات
     st.markdown('<div class="glass-box">', unsafe_allow_html=True)
     st.markdown('<p class="section-head">3️⃣ الإجراءات النهائية</p>', unsafe_allow_html=True)
     b1, b2, b3 = st.columns([2, 2, 1])
     with b1:
         if st.button("إصدار ملف التأشيرة 🖨️"):
-            st.success("تم تجهيز البيانات بنجاح!")
+            st.success("تم تجهيز مسار الرحلة والبيانات!")
     with b2:
         if st.button("مسح البيانات 🧹"):
             st.rerun()
