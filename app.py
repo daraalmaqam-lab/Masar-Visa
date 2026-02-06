@@ -1,103 +1,91 @@
 import streamlit as st
-import easyocr
 import numpy as np
 from PIL import Image
-import cv2
 import re
 
-# 1. إعدادات الصفحة (ممنوع اللمس)
+# 1. إعدادات الصفحة (مقفلة نهائياً)
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🧠 تحميل محرك الذكاء الاصطناعي مرة واحدة ---
-@st.cache_resource
-def load_ocr_engine():
-    return easyocr.Reader(['en'])
+# --- دالة المخ الذكي للقارئ (تعديل وظيفي فقط) ---
+def get_passport_data(file):
+    import easyocr
+    import cv2
+    reader = easyocr.Reader(['en'])
+    image = Image.open(file)
+    img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # تحسين الصورة للقراءة من الصور الضعيفة
+    processed = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    return reader.readtext(processed, detail=0)
 
-# --- 🎨 التنسيق الأصلي (مقفل تماماً بناءً على طلبك) ---
+# --- 🎨 الستايل الذهبي الأصلي (ممنوع التغيير أو اللمس) ---
 st.markdown("""
     <style>
     header, footer, [data-testid="stHeader"] { display: none !important; }
-    .stApp { background-image: url("https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070"); background-size: cover; }
+    .stApp { 
+        background-image: url("https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070"); 
+        background-size: cover; background-attachment: fixed;
+    }
     div[data-testid="stWidgetLabel"] { background-color: transparent !important; }
-    div[data-testid="stWidgetLabel"] p { color: white !important; text-align: right !important; text-shadow: 2px 2px 4px black !important; font-family: 'Cairo', sans-serif !important; }
-    input { text-align: right !important; font-weight: bold !important; }
-    .glass-box { background: rgba(0, 0, 0, 0.45); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 20px; }
+    div[data-testid="stWidgetLabel"] p { 
+        color: white !important; text-align: right !important; 
+        text-shadow: 2px 2px 4px black !important; font-family: 'Cairo', sans-serif !important;
+        font-size: 20px !important;
+    }
+    input { text-align: right !important; font-weight: bold !important; border-radius: 10px !important; }
+    .glass-box { background: rgba(0, 0, 0, 0.45); padding: 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 🔐 نظام الدخول (بيانات علي الأصلية) ---
-if 'auth' not in st.session_state: 
+# --- نظام الدخول المستقر ---
+if 'auth' not in st.session_state:
     st.session_state.auth = False
 
 if not st.session_state.auth:
+    # الشاشة الرئيسية الأصلية
     _, col, _ = st.columns([1, 2, 1])
     with col:
         st.markdown('<div class="glass-box" style="margin-top:100px;">', unsafe_allow_html=True)
-        st.markdown("<h2 style='text-align:center; color:#fbbf24;'>طيران المسار الذهبي</h2>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align:center; color:#fbbf24; font-family:Cairo;'>طيران المسار الذهبي</h1>", unsafe_allow_html=True)
         u = st.text_input("اسم المستخدم").upper()
         p = st.text_input("كلمة المرور", type="password")
         if st.button("دخول للنظام"):
             if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
-            else:
-                st.error("البيانات خطأ!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # --- 🛠️ شاشة التحكم (التعديل الذكي للقارئ هنا فقط) ---
-    st.markdown("<h2 style='text-align:right; color:#fbbf24;'>🌍 لوحة التحكم الذكية</h2>", unsafe_allow_html=True)
+    # شاشة التحكم (ثابتة التصميم)
+    st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم الذكية</h2>", unsafe_allow_html=True)
     
-    # أولاً: تعريف المتغيرات فاضية عشان ما يطلعش NameError
-    scanned_name = ""
-    scanned_passport = ""
+    # منع NameError بتعريف المتغيرات مسبقاً
+    s_name, s_pass = "", ""
 
-    # ثانياً: خانة رفع الملف (لازم تكون قبل سطر الـ if uploaded_file)
     st.markdown('<div class="glass-box">', unsafe_allow_html=True)
-    st.markdown("<p style='text-align:right; color:white;'>📸 ارفع صورة الجواز للقراءة الآلية:</p>", unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("", type=['jpg', 'png', 'jpeg'], key="passport_uploader")
+    up_file = st.file_uploader("📸 ارفع صورة الجواز للتعبئة التلقائية", type=['jpg', 'png', 'jpeg'])
     
-    # ثالثاً: معالجة الصورة لو تم الرفع
-    if uploaded_file:
-        reader = load_ocr_engine()
-        image = Image.open(uploaded_file)
-        
-        # تحويل الصورة ومعالجتها (المخ الفايق)
-        img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-        gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
-        # فلتر تنظيف الصورة لزيادة الدقة
-        processed_img = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-        
-        with st.spinner('جاري التحليل الذكي...'):
-            results = reader.readtext(processed_img, detail=0)
-            full_text = "".join(results).upper().replace(" ", "")
-            
-            # البحث عن رقم الجواز (نمط حرف + أرقام)
-            pass_match = re.search(r'[A-Z][0-9]{7,9}', full_text)
-            if pass_match:
-                scanned_passport = pass_match.group()
-            
-            # البحث عن الاسم في شفرة الجواز الليبي LBY
-            if "LBY" in full_text:
-                try:
-                    name_part = full_text.split("LBY")[1]
-                    scanned_name = name_part.split("<<")[0].replace("<", " ").strip()
-                except:
-                    scanned_name = results[0] if results else ""
-            else:
-                scanned_name = results[0] if results else ""
-        
-        st.success("✅ تمت القراءة بنجاح!")
+    if up_file:
+        with st.spinner('جاري المسح الذكي...'):
+            try:
+                res = get_passport_data(up_file)
+                raw = "".join(res).upper().replace(" ", "")
+                # ذكاء استخراج رقم الجواز
+                p_match = re.search(r'[A-Z][0-9]{7,9}', raw)
+                if p_match: s_pass = p_match.group()
+                # ذكاء استخراج الاسم من شفرة LBY
+                if "LBY" in raw:
+                    s_name = raw.split("LBY")[1].split("<<")[0].replace("<", " ").strip()
+                else:
+                    s_name = res[0] if res else ""
+            except: pass
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # رابعاً: عرض البيانات في الخانات
+    # عرض البيانات (نفس الترتيب والشكل)
     st.markdown('<div class="glass-box">', unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.text_input("الاسم واللقب (تلقائي)", value=scanned_name)
-    with col2:
-        st.text_input("رقم الجواز (تلقائي)", value=scanned_passport)
+    c1, c2 = st.columns(2)
+    with c1: st.text_input("الاسم واللقب", value=s_name)
+    with c2: st.text_input("رقم الجواز", value=s_pass)
     
-    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("خروج 🚪"):
         st.session_state.auth = False
         st.rerun()
