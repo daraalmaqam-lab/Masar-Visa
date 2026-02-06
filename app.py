@@ -112,7 +112,7 @@ if "auth" not in st.session_state:
 # ================== LOGIN ==================
 if not st.session_state.auth:
 
-    st.markdown('<div class="main-title-center">طيران المسار الذهبي</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title-center">VISA</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="input-row"><div class="label-style">اسم المستخدم</div>', unsafe_allow_html=True)
     u = st.text_input("u", label_visibility="collapsed").upper()
@@ -170,3 +170,4 @@ else:
     if st.button("خروج"):
         st.session_state.auth = False
         st.rerun()
+
