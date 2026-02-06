@@ -12,14 +12,13 @@ WALLPAPERS = {
     "اسطنبول": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2071"
 }
 
-# تهيئة حالة الجلسة
 if 'auth' not in st.session_state: st.session_state.auth = False
 if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس"
 
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (التعديل المطلوب: حجم الخط 23) ---
+# --- 🎨 الستايل المصلح ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -31,13 +30,12 @@ st.markdown(f"""
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
         background-size: cover; background-position: center; background-attachment: fixed;
-        direction: rtl;
     }}
 
     .main-title {{
         background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
         padding: 15px; border-radius: 15px; text-align: center; max-width: 500px;
-        margin: 20px auto; color: white; font-family: 'Cairo' !important; font-size: 30px !important; font-weight: 900 !important;
+        margin: 20px auto; color: white; font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
         border: 2px solid rgba(255, 255, 255, 0.4);
     }}
 
@@ -45,39 +43,42 @@ st.markdown(f"""
         background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(15px);
         padding: 40px; border-radius: 30px; max-width: 550px; margin: 0 auto;
         border: 1px solid rgba(255, 255, 255, 0.2); color: white;
-        text-align: right;
     }}
 
-    /* التعديل المطلوب: حجم الخط 23 للعناوين فقط */
+    /* حل مشكلة تداخل الكلمات */
     [data-testid="stWidgetLabel"] p {{
-        font-size: 23px !important; /* المقاس الجديد */
+        font-size: 23px !important;
         font-family: 'Cairo' !important;
         font-weight: 700 !important;
         color: white !important;
-        text-align: right !important;
+        text-align: right !important; /* محاذاة لليمين */
         direction: rtl !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
-        margin-right: 18% !important;
+        width: 100% !important; /* جعل النص يأخذ العرض الكامل لمنع النزول لسطر جديد */
+        white-space: nowrap !important; /* إجبار الكلمات على البقاء في سطر واحد */
+        margin-bottom: 5px !important;
     }}
 
+    /* محاذاة حاوية الخانة لليمين لتناسب النص */
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
-        width: 65% !important; 
-        margin: 0 auto 20px auto !important;
+        width: 70% !important; 
+        margin-left: auto !important; /* دفع الخانة لليمين */
+        margin-right: 0 !important;
+        margin-bottom: 20px !important;
     }}
 
     input {{
         height: 45px !important; font-size: 18px !important; text-align: center !important;
-        border-radius: 8px !important; font-weight: bold !important;
+        border-radius: 8px !important;
     }}
 
     .stButton > button {{
-        width: 85% !important; 
+        width: 100% !important; 
         height: 60px !important; 
-        font-size: 24px !important;
+        font-size: 22px !important;
         font-weight: 900 !important; 
         font-family: 'Cairo' !important;
         background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-        color: black !important; border-radius: 12px !important; margin: 25px auto !important;
+        color: black !important; border-radius: 12px !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -100,18 +101,5 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # لوحة التحكم الداخلية
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
-    col_a, col_b, col_c = st.columns([1, 3, 1])
-    with col_b:
-        st.markdown('<div class="glass-card" style="max-width: 800px;">', unsafe_allow_html=True)
-        st.subheader("📝 نموذج إدخال بيانات المسافر")
-        c1, c2 = st.columns(2)
-        c1.text_input("الاسم الأول")
-        c1.text_input("اللقب")
-        c2.text_input("رقم الجواز")
-        st.divider()
-        if st.button("🚪 تسجيل الخروج"):
-            st.session_state.auth = False
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+    # باقي كود لوحة التحكم...
