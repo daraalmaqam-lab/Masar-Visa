@@ -3,10 +3,10 @@ import numpy as np
 from PIL import Image
 import re
 
-# 1. الإعدادات المقفلة
+# 1. إعدادات الصفحة (مقفلة نهائياً)
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- دالة المخ الذكي للقارئ ---
+# --- دالة المخ الذكي للقارئ (وظيفية فقط) ---
 def get_passport_data(file):
     import easyocr
     import cv2
@@ -17,7 +17,7 @@ def get_passport_data(file):
     processed = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     return reader.readtext(processed, detail=0)
 
-# --- 🎨 الستايل الذهبي (تم التعديل بـ "قوة إضافية" لضمان التطبيق) ---
+# --- 🎨 الستايل الذهبي المقفل (تعديل اليمين والحافة السوداء) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -29,30 +29,38 @@ st.markdown("""
         background-size: cover; background-attachment: fixed;
     }
 
-    /* 🏷️ إجبار حجم الخط والحافة السوداء والجهة اليمين */
+    /* 🏷️ إجبار الكلمات لليمين، حجم 23، وحافة سوداء */
     [data-testid="stWidgetLabel"] p { 
         color: white !important; 
-        text-align: right !important; 
-        direction: rtl !important;
+        text-align: right !important; /* لليمين */
+        direction: rtl !important; /* اتجاه عربي */
         font-family: 'Cairo', sans-serif !important;
-        font-size: 23px !important; /* الحجم المطلوب */
+        font-size: 23px !important; 
         font-weight: 900 !important;
-        /* حافة سوداء قوية حول الحروف */
+        /* حافة سوداء واضحة جداً */
         text-shadow: 
             -2px -2px 0 #000,  
              2px -2px 0 #000,
             -2px  2px 0 #000,
-             2px  2px 0 #000,
-             3px  3px 5px rgba(0,0,0,1) !important;
-        display: block !important;
-        width: 100% !important;
+             2px  2px 0 #000 !important;
+        margin-bottom: 10px !important;
     }
 
-    /* محاذاة الصناديق نفسها لليمين */
-    [data-testid="stFormSubmitButton"] { text-align: right !important; }
-    input { text-align: right !important; font-weight: bold !important; border-radius: 10px !important; }
+    /* محاذاة النص داخل المربعات لليمين */
+    input { 
+        text-align: right !important; 
+        direction: rtl !important;
+        font-weight: bold !important; 
+        border-radius: 10px !important; 
+    }
     
-    .glass-box { background: rgba(0, 0, 0, 0.45); padding: 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 20px; }
+    .glass-box { 
+        background: rgba(0, 0, 0, 0.45); 
+        padding: 30px; 
+        border-radius: 25px; 
+        border: 1px solid rgba(255, 255, 255, 0.2); 
+        margin-bottom: 20px; 
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -65,15 +73,18 @@ if not st.session_state.auth:
     with col:
         st.markdown('<div class="glass-box" style="margin-top:100px;">', unsafe_allow_html=True)
         st.markdown("<h1 style='text-align:center; color:#fbbf24; font-family:Cairo; text-shadow: 2px 2px 4px black;'>طيران المسار الذهبي</h1>", unsafe_allow_html=True)
+        
+        # الخانات المطلوبة (الكلمات لليمين)
         u = st.text_input("اسم المستخدم").upper()
         p = st.text_input("كلمة المرور", type="password")
+        
         if st.button("دخول للنظام"):
             if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة التحكم
+    # شاشة التحكم (ثابتة التصميم)
     st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo; text-shadow: 2px 2px 4px black;'>🌍 لوحة التحكم الذكية</h2>", unsafe_allow_html=True)
     
     s_name, s_pass = "", ""
@@ -82,7 +93,7 @@ else:
     up_file = st.file_uploader("📸 ارفع صورة الجواز للتعبئة التلقائية", type=['jpg', 'png', 'jpeg'])
     
     if up_file:
-        with st.spinner('جاري المسح الذكي...'):
+        with st.spinner('جاري القراءة بدقة...'):
             try:
                 res = get_passport_data(up_file)
                 raw = "".join(res).upper().replace(" ", "")
