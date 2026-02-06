@@ -17,7 +17,7 @@ def get_passport_data(file):
     processed = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     return reader.readtext(processed, detail=0)
 
-# --- 🎨 الستايل الذهبي المقفل (تعديل اليمين والحافة السوداء) ---
+# --- 🎨 الستايل الذهبي المقفل (مع تعديل حجم المربعات لمقاس الإصبع) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -29,31 +29,43 @@ st.markdown("""
         background-size: cover; background-attachment: fixed;
     }
 
-    /* 🏷️ إجبار الكلمات لليمين، حجم 23، وحافة سوداء */
+    /* 🏷️ العناوين: يمين، حجم 23، حافة سوداء */
     [data-testid="stWidgetLabel"] p { 
         color: white !important; 
-        text-align: right !important; /* لليمين */
-        direction: rtl !important; /* اتجاه عربي */
+        text-align: right !important; 
+        direction: rtl !important; 
         font-family: 'Cairo', sans-serif !important;
         font-size: 23px !important; 
         font-weight: 900 !important;
-        /* حافة سوداء واضحة جداً */
-        text-shadow: 
-            -2px -2px 0 #000,  
-             2px -2px 0 #000,
-            -2px  2px 0 #000,
-             2px  2px 0 #000 !important;
+        text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000 !important;
         margin-bottom: 10px !important;
     }
 
-    /* محاذاة النص داخل المربعات لليمين */
-    input { 
+    /* 🖐️ تعديل مربعات النص لمقاس إصبع اليد */
+    .stTextInput input { 
+        height: 55px !important; /* مقاس الإصبع */
+        font-size: 20px !important; 
         text-align: right !important; 
         direction: rtl !important;
         font-weight: bold !important; 
-        border-radius: 10px !important; 
+        border-radius: 12px !important; 
+        border: 2px solid #fbbf24 !important; /* إطار ذهبي رقيق */
+        background-color: white !important;
+        color: black !important;
     }
     
+    /* ستايل الأزرار لتكون مريحة للمس أيضاً */
+    .stButton button {
+        height: 55px !important;
+        width: 100% !important;
+        border-radius: 12px !important;
+        font-family: 'Cairo' !important;
+        font-size: 20px !important;
+        background-color: #fbbf24 !important;
+        color: black !important;
+        font-weight: bold !important;
+    }
+
     .glass-box { 
         background: rgba(0, 0, 0, 0.45); 
         padding: 30px; 
@@ -74,7 +86,6 @@ if not st.session_state.auth:
         st.markdown('<div class="glass-box" style="margin-top:100px;">', unsafe_allow_html=True)
         st.markdown("<h1 style='text-align:center; color:#fbbf24; font-family:Cairo; text-shadow: 2px 2px 4px black;'>طيران المسار الذهبي</h1>", unsafe_allow_html=True)
         
-        # الخانات المطلوبة (الكلمات لليمين)
         u = st.text_input("اسم المستخدم").upper()
         p = st.text_input("كلمة المرور", type="password")
         
