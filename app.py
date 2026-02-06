@@ -3,7 +3,7 @@ import streamlit as st
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🌆 مكتبة الثيمات العالمية ---
+# --- 🌆 مكتبة الثيمات ---
 WALLPAPERS = {
     "باريس": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073", 
     "روما": "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076", 
@@ -18,7 +18,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل النهائي (شفافية + يمين + بدون مربعات) ---
+# --- 🎨 الستايل (إصلاح مشكلة المربع الأبيض في الصورة) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -40,29 +40,30 @@ st.markdown(f"""
         border: 1px solid rgba(255, 255, 255, 0.2);
     }}
 
-    /* 🛡️ إجبار كل العناوين والنصوص على اليمين 🛡️ */
-    label, p, span, h3, [data-testid="stWidgetLabel"] {{
+    /* 🛡️ إجبار النصوص على اليمين والشفافية الكاملة للعناوين 🛡️ */
+    label, [data-testid="stWidgetLabel"] {{
+        background-color: transparent !important; /* إزالة المربع الأبيض */
+        background: transparent !important;
+        box-shadow: none !important; /* إزالة أي ظل للمربع */
+        border: none !important;
+    }}
+
+    [data-testid="stWidgetLabel"] p {{
+        color: white !important;
         text-align: right !important;
         direction: rtl !important;
         font-family: 'Cairo' !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
-        color: white !important;
-        background-color: transparent !important; /* ضمان عدم وجود مربع خلف الكلمات */
+        font-size: 23px !important; 
+        font-weight: 700 !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,1) !important; /* ظل أسود للنص فقط */
+        background: transparent !important;
     }}
 
-    /* العنوان الرئيسي في الوسط للفخامة */
     .inner-title {{
         font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
         color: #fbbf24; text-align: center !important; 
-        background: transparent !important;
-        border-bottom: 2px solid #fbbf24;
-        padding-bottom: 15px; margin-bottom: 25px;
+        border-bottom: 2px solid #fbbf24; padding-bottom: 15px; margin-bottom: 25px;
         text-shadow: 2px 2px 5px rgba(0,0,0,1);
-    }}
-
-    /* حذف أي خلفية بيضاء تظهر تحت الكلمات (بما فيها الوجهة) */
-    div[data-testid="stWidgetLabel"] > div {{
-        background-color: transparent !important;
     }}
 
     .section-head {{
@@ -71,14 +72,13 @@ st.markdown(f"""
         text-align: right !important;
     }}
 
-    /* توحيد الخانات (أبيض ناصع) */
+    /* الخانات (أبيض ناصع من الداخل) */
     input, [data-baseweb="select"], [data-baseweb="input"], .stSelectbox div {{
         background-color: #FFFFFF !important;
         color: black !important;
         border-radius: 8px !important;
         text-align: right !important;
         height: 45px !important;
-        text-shadow: none !important; /* النص داخل المربع لا يحتاج ظل */
     }}
 
     .stButton > button {{
@@ -87,12 +87,10 @@ st.markdown(f"""
         background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
         color: black !important; border-radius: 12px !important;
     }}
-
-    hr {{ border: 0; height: 1px; background-image: linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,0.75), rgba(255,255,255,0)); margin: 20px 0; }}
     </style>
     """, unsafe_allow_html=True)
 
-# المنطق البرمجي (الذي لا يؤثر على الشاشة الأولى)
+# باقي الكود كما هو لضمان استقرار الشاشة الرئيسية
 if not st.session_state.auth:
     _, col_mid, _ = st.columns([1, 2, 1])
     with col_mid:
@@ -153,7 +151,7 @@ else:
         b1, b2, b3 = st.columns([2, 2, 1])
         with b1:
             if st.button("إصدار ملف التأشيرة 🖨️"):
-                st.success("تم الحفظ! هل تريد طباعة التقرير؟")
+                st.success("تم الحفظ!")
         with b2:
             if st.button("مسح البيانات 🧹"):
                 st.rerun()
