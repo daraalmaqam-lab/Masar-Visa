@@ -107,4 +107,3 @@ else:
     if st.button("خروج 🚪"):
         st.session_state.auth = False
         st.rerun()
-        
