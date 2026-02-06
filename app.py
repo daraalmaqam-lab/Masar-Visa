@@ -6,7 +6,7 @@ import re
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 🎨 الستايل الذهبي (التمركز المطلق في وسط الشاشة) ---
+# --- 🎨 الستايل الذهبي (توسيط العناصر اللي داخل الدائرة الحمراء) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -16,32 +16,41 @@ st.markdown("""
     .stApp { 
         background-image: url("https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070"); 
         background-size: cover; background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
-    /* 🎯 الصندوق السحري للتوسط في نص الشاشة */
-    .login-container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    /* 🎯 الصندوق اللي حيجمع كل شيء في وسط الشاشة */
+    .login-box {
         width: 500px;
+        background: rgba(0, 0, 0, 0.2); /* خلفية خفيفة جداً للتركيز */
+        padding: 30px;
+        border-radius: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        z-index: 1000;
+        margin: 0 auto;
     }
 
-    /* سطر الإدخال */
-    .input-row {
+    .main-title-center {
+        text-align: center; color: #fbbf24; font-family: 'Cairo'; 
+        font-size: 50px; font-weight: 900; text-shadow: 3px 3px 6px black;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    /* تنسيق السطر (الكلمة يمين المربع) */
+    .auth-row {
         display: flex;
         align-items: center;
         justify-content: flex-end;
         width: 100%;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         direction: rtl;
     }
 
-    .label-style {
+    .auth-label {
         color: white;
         font-family: 'Cairo', sans-serif;
         font-size: 24px;
@@ -51,7 +60,7 @@ st.markdown("""
         text-align: right;
     }
 
-    /* المربعات الداكنة */
+    /* المربعات الداكنة والملمومة */
     div[data-baseweb="input"] {
         height: 42px !important; 
         width: 300px !important; 
@@ -67,35 +76,23 @@ st.markdown("""
         color: white !important;
     }
 
-    /* الزر تحت المربعات */
-    .button-container {
+    /* الزر تحت المربعات ومحاذى لليمين */
+    .btn-container {
         width: 300px;
-        margin-right: 165px; 
+        margin-right: 170px; 
         text-align: right;
         margin-top: 10px;
     }
 
     .stButton button {
         height: 45px !important;
-        width: 150px !important; 
+        width: 140px !important; 
         background-color: #fbbf24 !important;
         color: black !important;
         font-weight: bold !important;
         font-family: 'Cairo' !important;
         border-radius: 10px !important;
         border: none !important;
-        box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
-    }
-
-    .main-title-center {
-        text-align: center; 
-        color: #fbbf24; 
-        font-family: 'Cairo'; 
-        font-size: 55px; 
-        font-weight: 900; 
-        text-shadow: 4px 4px 8px black;
-        margin-bottom: 40px;
-        width: 100%;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -105,34 +102,34 @@ if 'auth' not in st.session_state:
     st.session_state.auth = False
 
 if not st.session_state.auth:
-    # إنشاء حاوية الدخول المركزية
-    st.markdown('<div class="login-container">', unsafe_allow_html=True)
+    # استخدام حاوية التوسيط
+    st.markdown('<div class="login-box">', unsafe_allow_html=True)
     st.markdown('<div class="main-title-center">طيران المسار الذهبي</div>', unsafe_allow_html=True)
 
     # سطر اسم المستخدم
-    st.markdown('<div class="input-row"><div class="label-style">اسم المستخدم</div>', unsafe_allow_html=True)
+    st.markdown('<div class="auth-row"><div class="auth-label">اسم المستخدم</div>', unsafe_allow_html=True)
     u = st.text_input("u", label_visibility="collapsed", key="u_field").upper()
     st.markdown('</div>', unsafe_allow_html=True)
 
     # سطر كلمة المرور
-    st.markdown('<div class="input-row"><div class="label-style">كلمة المرور</div>', unsafe_allow_html=True)
+    st.markdown('<div class="auth-row"><div class="auth-label">كلمة المرور</div>', unsafe_allow_html=True)
     p = st.text_input("p", type="password", label_visibility="collapsed", key="p_field")
     st.markdown('</div>', unsafe_allow_html=True)
 
     # زر الدخول
-    st.markdown('<div class="button-container">', unsafe_allow_html=True)
+    st.markdown('<div class="btn-container">', unsafe_allow_html=True)
     if st.button("دخول للنظام"):
         if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
             st.session_state.auth = True
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True) # نهاية الصندوق
 
 else:
     # شاشة التحكم
     st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم الذكية</h2>", unsafe_allow_html=True)
     
-    # دالة القارئ
+    # دالة القارئ الاختيارية
     def get_passport_data(file):
         import easyocr
         import cv2
