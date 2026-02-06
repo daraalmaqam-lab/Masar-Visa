@@ -18,7 +18,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (العناوين والبطاقة شفافة بظل أسود) ---
+# --- 🎨 الستايل (توحيد الألوان والتنسيق) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -35,7 +35,6 @@ st.markdown(f"""
         direction: rtl !important;
     }}
 
-    /* البطاقة الزجاجية وتعديل الشفافية */
     .glass-card {{
         background: rgba(0, 0, 0, 0.45); 
         backdrop-filter: blur(10px);
@@ -44,14 +43,11 @@ st.markdown(f"""
         text-align: right !important;
     }}
 
-    /* 🛑 جعل مربع العنوان العلوي شفافاً ومنسجماً 🛑 */
     .inner-title {{
         font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
-        color: #fbbf24; text-align: center; 
-        background: transparent !important; /* شفاف تماماً */
-        margin-bottom: 25px; border-bottom: 2px solid #fbbf24;
+        color: #fbbf24; text-align: center; margin-bottom: 25px; border-bottom: 2px solid #fbbf24;
         padding-bottom: 15px;
-        text-shadow: 2px 2px 5px rgba(0,0,0,1); /* تحديد أسود قوي */
+        text-shadow: 2px 2px 5px rgba(0,0,0,1);
     }}
 
     h3, p, span, label, .stMarkdown, [data-testid="stWidgetLabel"] p {{
@@ -78,15 +74,17 @@ st.markdown(f"""
         text-align: right !important;
     }}
 
-    /* توحيد لون الخانات */
+    /* 🛑 توحيد لون كل الخانات (نصوص واختيارات وتاريخ) 🛑 */
     input, [data-baseweb="select"], [data-baseweb="input"], .stSelectbox div {{
-        background-color: #FFFFFF !important;
+        background-color: #FFFFFF !important; /* لون أبيض ناصع */
+        background: #FFFFFF !important;
         color: black !important;
         border-radius: 8px !important;
         text-align: right !important;
         height: 45px !important;
     }}
 
+    /* إصلاح لون نص الاختيار المختار */
     [data-baseweb="select"] div {{
         color: black !important;
         font-weight: bold !important;
@@ -123,7 +121,6 @@ else:
     _, col_main, _ = st.columns([1, 10, 1])
     with col_main:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        # العنوان هنا أصبح شفافاً تماماً كما طلبت
         st.markdown('<div class="inner-title">🌍 لوحة التحكم - تجهيز ملف التأشيرة الكامل</div>', unsafe_allow_html=True)
         
         st.markdown('<p class="section-head">1️⃣ بيانات الجواز والمسافر</p>', unsafe_allow_html=True)
