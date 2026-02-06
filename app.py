@@ -18,7 +18,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل المحدث ---
+# --- 🎨 الستايل (حذف المربعات الفارغة تماماً) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -27,12 +27,14 @@ st.markdown(f"""
         display: none !important;
     }}
 
-    /* 🛑 كود إخفاء المربعات الفارغة والمسافات الزائدة تحت العنوان */
-    [data-testid="stVerticalBlock"] > div:empty {{
-        display: none !important;
+    /* 🛑 حذف المربع والمسافة تحت العنوان نهائياً */
+    [data-testid="stVerticalBlock"] {{
+        gap: 0rem !important;
     }}
-    .stAlert {{
-        margin-top: -20px !important;
+    
+    [data-testid="stVerticalBlock"] > div {{
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
     }}
 
     .stApp {{
@@ -44,7 +46,8 @@ st.markdown(f"""
     .main-title {{
         background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
         padding: 15px; border-radius: 15px; text-align: center; max-width: 500px;
-        margin: 20px auto 10px auto; color: white; font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
+        margin: 20px auto 0px auto; /* 0px من الأسفل لإلغاء المربع */
+        color: white; font-family: 'Cairo' !important; font-size: 28px !important; font-weight: 900 !important;
         border: 2px solid rgba(255, 255, 255, 0.4);
     }}
 
@@ -94,8 +97,8 @@ st.markdown(f"""
 if not st.session_state.auth:
     st.markdown('<div class="main-title">🛂 طيران المسار الذهبي ✈️</div>', unsafe_allow_html=True)
     
-    # استخدام حاوية واحدة لتقليل المسافات الفارغة
-    col1, col_mid, col2 = st.columns([1, 2, 1])
+    # محاذاة مباشرة لتقليل الفراغات
+    _, col_mid, _ = st.columns([1, 2, 1])
     with col_mid:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.selectbox("ثيمات", list(WALLPAPERS.keys()), index=0, key="new_bg", on_change=update_bg)
