@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ================== 🎨 CSS التوسيط بدون المربع الأسود ==================
+# ================== 🎨 CSS التوسيط المطلق المحسن ==================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -28,85 +28,69 @@ st.markdown("""
     background-attachment: fixed;
 }
 
-/* 🎯 التوسيط المطلق للكتلة بالكامل */
+/* 🎯 حاوية التوسيط المطلق - تجعل كل شيء في منتصف الشاشة */
 [data-testid="stVerticalBlock"] {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 550px !important; 
-    padding: 0 !important;
-    background-color: transparent !important; /* إزالة أي خلفية سوداء */
-    border: none !important;
+    width: 500px !important; 
+    text-align: center;
+    background-color: transparent !important;
     z-index: 9999;
 }
 
-/* صف الإدخال (الكلمة + المربع) */
-.input-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 100%;
-    margin-bottom: 20px;
-    direction: rtl;
+/* العنوان (تأشيرات أو VISA) */
+.main-title {
+    color: #fbbf24;
+    font-family: 'Cairo', sans-serif;
+    font-size: 60px;
+    font-weight: 900;
+    text-shadow: 4px 4px 10px black;
+    margin-bottom: 30px;
 }
 
-/* ستايل الكلمات (اسم المستخدم / كلمة المرور) */
-.label-style {
-    color: white;
-    font-family: 'Cairo', sans-serif;
-    font-size: 24px;
-    font-weight: 900;
-    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
-    min-width: 160px;
-    text-align: right;
+/* سطر الإدخال لضمان التوسط */
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
 /* مربعات الإدخال */
 div[data-baseweb="input"] {
-    width: 300px !important;
+    width: 350px !important;
     background-color: #1e2129 !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     border: 2px solid #fbbf24 !important;
+    margin: 10px auto !important;
 }
 
 input {
-    font-size: 18px !important;
-    text-align: right !important;
+    text-align: center !important; /* النص داخل الخانة في الوسط */
     color: white !important;
+    font-size: 20px !important;
 }
 
-/* زر الدخول */
-.button-container {
-    width: 100%;
+/* زر الدخول في الوسط */
+.stButton {
     display: flex;
-    justify-content: flex-start;
-    padding-right: 170px; /* موازنته ليكون تحت المربعات */
-    margin-top: 10px;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .stButton button {
-    height: 45px;
-    width: 150px;
+    height: 50px;
+    width: 200px;
     background-color: #fbbf24;
     color: black;
     font-weight: bold;
     font-family: 'Cairo';
-    border-radius: 10px;
+    border-radius: 12px;
     border: none;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.8);
-}
-
-/* العنوان الرئيسي */
-.main-title-center {
-    text-align: center;
-    color: #fbbf24;
-    font-family: 'Cairo';
-    font-size: 55px;
-    font-weight: 900;
-    text-shadow: 4px 4px 10px black;
-    margin-bottom: 40px;
-    width: 100%;
+    font-size: 20px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -116,33 +100,22 @@ if "auth" not in st.session_state:
     st.session_state.auth = False
 
 if not st.session_state.auth:
-    # العنوان
-    st.markdown('<div class="main-title-center">تــاشــيرات</div>', unsafe_allow_html=True)
+    # كلمة تأشيرات في الوسط
+    st.markdown('<div class="main-title">تأشيرات</div>', unsafe_allow_html=True)
 
-    # حقل اسم المستخدم
-    st.markdown('<div class="input-row"><div class="label-style">اسم المستخدم</div>', unsafe_allow_html=True)
-    u = st.text_input("u", label_visibility="collapsed", key="u_login").upper()
-    st.markdown('</div>', unsafe_allow_html=True)
+    # الخانات (اسم المستخدم وكلمة المرور)
+    u = st.text_input("اسم المستخدم", placeholder="اسم المستخدم", label_visibility="collapsed", key="u_login").upper()
+    p = st.text_input("كلمة المرور", placeholder="كلمة المرور", type="password", label_visibility="collapsed", key="p_login")
 
-    # حقل كلمة المرور
-    st.markdown('<div class="input-row"><div class="label-style">كلمة المرور</div>', unsafe_allow_html=True)
-    p = st.text_input("p", type="password", label_visibility="collapsed", key="p_login")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # الزر
-    st.markdown('<div class="button-container">', unsafe_allow_html=True)
+    # زر الدخول
     if st.button("دخول للنظام"):
         if (u in ["ALI", "ALI FETORY"]) and p == "0925843353":
             st.session_state.auth = True
             st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # ================== لوحة التحكم ==================
 else:
     st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم الذكية</h2>", unsafe_allow_html=True)
-    
-    # ... (باقي كود لوحة التحكم الخاص بك) ...
     if st.button("خروج"):
         st.session_state.auth = False
         st.rerun()
-
