@@ -3,10 +3,10 @@ import numpy as np
 from PIL import Image
 import re
 
-# 1. إعدادات الصفحة (مقفلة نهائياً)
+# 1. إعدادات الصفحة المقفلة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- دالة المخ الذكي للقارئ (وظيفية فقط) ---
+# --- دالة المخ الذكي للقارئ ---
 def get_passport_data(file):
     import easyocr
     import cv2
@@ -17,7 +17,7 @@ def get_passport_data(file):
     processed = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     return reader.readtext(processed, detail=0)
 
-# --- 🎨 الستايل الذهبي المقفل (مع تعديل حجم المربعات لمقاس الإصبع) ---
+# --- 🎨 الستايل الذهبي المعتدل (تصغير المربعات لتبدو أنيقة) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -38,29 +38,26 @@ st.markdown("""
         font-size: 23px !important; 
         font-weight: 900 !important;
         text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000 !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 5px !important;
     }
 
-    /* 🖐️ تعديل مربعات النص لمقاس إصبع اليد */
+    /* ✍️ تعديل مربعات النص لتكون متناسقة وأنيقة */
     .stTextInput input { 
-        height: 55px !important; /* مقاس الإصبع */
-        font-size: 20px !important; 
+        height: 42px !important; /* مقاس معتدل وأنيق */
+        font-size: 18px !important; 
         text-align: right !important; 
         direction: rtl !important;
         font-weight: bold !important; 
-        border-radius: 12px !important; 
-        border: 2px solid #fbbf24 !important; /* إطار ذهبي رقيق */
+        border-radius: 8px !important; 
+        border: 1px solid #fbbf24 !important;
         background-color: white !important;
         color: black !important;
     }
     
-    /* ستايل الأزرار لتكون مريحة للمس أيضاً */
     .stButton button {
-        height: 55px !important;
-        width: 100% !important;
-        border-radius: 12px !important;
+        height: 45px !important;
+        border-radius: 8px !important;
         font-family: 'Cairo' !important;
-        font-size: 20px !important;
         background-color: #fbbf24 !important;
         color: black !important;
         font-weight: bold !important;
@@ -68,43 +65,40 @@ st.markdown("""
 
     .glass-box { 
         background: rgba(0, 0, 0, 0.45); 
-        padding: 30px; 
-        border-radius: 25px; 
+        padding: 25px; 
+        border-radius: 20px; 
         border: 1px solid rgba(255, 255, 255, 0.2); 
-        margin-bottom: 20px; 
+        margin-bottom: 15px; 
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- نظام الدخول المستقر ---
+# --- نظام الدخول ---
 if 'auth' not in st.session_state:
     st.session_state.auth = False
 
 if not st.session_state.auth:
-    _, col, _ = st.columns([1, 2, 1])
+    _, col, _ = st.columns([1, 1.5, 1])
     with col:
         st.markdown('<div class="glass-box" style="margin-top:100px;">', unsafe_allow_html=True)
         st.markdown("<h1 style='text-align:center; color:#fbbf24; font-family:Cairo; text-shadow: 2px 2px 4px black;'>طيران المسار الذهبي</h1>", unsafe_allow_html=True)
-        
         u = st.text_input("اسم المستخدم").upper()
         p = st.text_input("كلمة المرور", type="password")
-        
         if st.button("دخول للنظام"):
             if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    # شاشة التحكم (ثابتة التصميم)
+    # شاشة التحكم
     st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo; text-shadow: 2px 2px 4px black;'>🌍 لوحة التحكم الذكية</h2>", unsafe_allow_html=True)
     
     s_name, s_pass = "", ""
-
     st.markdown('<div class="glass-box">', unsafe_allow_html=True)
-    up_file = st.file_uploader("📸 ارفع صورة الجواز للتعبئة التلقائية", type=['jpg', 'png', 'jpeg'])
+    up_file = st.file_uploader("📸 ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
     
     if up_file:
-        with st.spinner('جاري القراءة بدقة...'):
+        with st.spinner('جاري المسح...'):
             try:
                 res = get_passport_data(up_file)
                 raw = "".join(res).upper().replace(" ", "")
@@ -112,8 +106,7 @@ else:
                 if p_match: s_pass = p_match.group()
                 if "LBY" in raw:
                     s_name = raw.split("LBY")[1].split("<<")[0].replace("<", " ").strip()
-                else:
-                    s_name = res[0] if res else ""
+                else: s_name = res[0] if res else ""
             except: pass
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -121,7 +114,6 @@ else:
     c1, c2 = st.columns(2)
     with c1: st.text_input("الاسم واللقب", value=s_name)
     with c2: st.text_input("رقم الجواز", value=s_pass)
-    
     if st.button("خروج 🚪"):
         st.session_state.auth = False
         st.rerun()
