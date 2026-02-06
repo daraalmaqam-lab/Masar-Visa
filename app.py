@@ -3,17 +3,20 @@ import numpy as np
 from PIL import Image
 import re
 
+# ================== إعداد الصفحة ==================
 st.set_page_config(
     page_title="Golden Path",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
+# ================== CSS ==================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
 
-header, footer, [data-testid="stHeader"] {
+/* إخفاء الهيدر */
+[data-testid="stHeader"], header, footer {
     display: none !important;
 }
 
@@ -24,26 +27,13 @@ header, footer, [data-testid="stHeader"] {
     background-position: center;
 }
 
-/* العنوان */
-.main-title-center {
-    text-align: center;
-    color: #fbbf24;
-    font-family: 'Cairo';
-    font-size: 55px;
-    font-weight: 900;
-    text-shadow: 4px 4px 8px black;
-    margin-top: 60px;
-    margin-bottom: 40px;
-}
-
-/* 🔴 الحاوية الجديدة للخانات فقط */
-.inputs-center {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    z-index: 9999;
+/* 🔴 هذا هو المفتاح: توسيط البلوك الحقيقي */
+[data-testid="stVerticalBlock"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 520px !important;
 }
 
 /* صف الإدخال */
@@ -56,13 +46,16 @@ header, footer, [data-testid="stHeader"] {
     direction: rtl;
 }
 
+/* النصوص */
 .label-style {
     color: white;
-    font-family: 'Cairo';
+    font-family: 'Cairo', sans-serif;
     font-size: 24px;
     font-weight: 900;
-    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000,
-                 -2px 2px 0 #000, 2px 2px 0 #000;
+    text-shadow: -2px -2px 0 #000,
+                 2px -2px 0 #000,
+                 -2px 2px 0 #000,
+                 2px 2px 0 #000;
     min-width: 150px;
     text-align: right;
 }
@@ -98,20 +91,28 @@ input {
     border-radius: 10px;
     border: none;
 }
+
+/* العنوان */
+.main-title-center {
+    text-align: center;
+    color: #fbbf24;
+    font-family: 'Cairo';
+    font-size: 55px;
+    font-weight: 900;
+    text-shadow: 4px 4px 8px black;
+    margin-bottom: 40px;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- AUTH ----------
+# ================== AUTH ==================
 if "auth" not in st.session_state:
     st.session_state.auth = False
 
+# ================== LOGIN ==================
 if not st.session_state.auth:
 
-    # العنوان (يبقى فوق)
     st.markdown('<div class="main-title-center">طيران المسار الذهبي</div>', unsafe_allow_html=True)
-
-    # 🔴 الخانات فقط في وسط الشاشة
-    st.markdown('<div class="inputs-center">', unsafe_allow_html=True)
 
     st.markdown('<div class="input-row"><div class="label-style">اسم المستخدم</div>', unsafe_allow_html=True)
     u = st.text_input("u", label_visibility="collapsed").upper()
@@ -128,7 +129,44 @@ if not st.session_state.auth:
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
+# ================== DASHBOARD ==================
 else:
-    st.success("تم تسجيل الدخول ✅")
+    st.markdown(
+        "<h2 style='text-align:right; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم الذكية</h2>",
+        unsafe_allow_html=True
+    )
+
+    def get_passport_data(file):
+        import easyocr, cv2
+        reader = easyocr.Reader(['en'])
+        image = Image.open(file)
+        img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        processed = cv2.adaptiveThreshold(
+            gray, 255,
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY, 11, 2
+        )
+        return reader.readtext(processed, detail=0)
+
+    s_name, s_pass = "", ""
+    up_file = st.file_uploader("📸 ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
+
+    if up_file:
+        try:
+            res = get_passport_data(up_file)
+            raw = "".join(res).upper().replace(" ", "")
+            p_match = re.search(r'[A-Z][0-9]{7,9}', raw)
+            if p_match:
+                s_pass = p_match.group()
+            if "LBY" in raw:
+                s_name = raw.split("LBY")[1].split("<<")[0].replace("<", " ").strip()
+        except:
+            pass
+
+    st.text_input("الاسم واللقب", value=s_name)
+    st.text_input("رقم الجواز", value=s_pass)
+
+    if st.button("خروج"):
+        st.session_state.auth = False
+        st.rerun()
