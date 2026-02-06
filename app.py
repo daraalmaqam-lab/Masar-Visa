@@ -19,7 +19,7 @@ if 'bg_choice' not in st.session_state: st.session_state.bg_choice = "باريس
 def update_bg():
     st.session_state.bg_choice = st.session_state.new_bg
 
-# --- 🎨 الستايل (العناوين على اليمين بحجم 25) ---
+# --- 🎨 الستايل (التعديل المطلوب: حجم الخط 23) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -31,7 +31,7 @@ st.markdown(f"""
     .stApp {{
         background-image: url("{WALLPAPERS[st.session_state.bg_choice]}");
         background-size: cover; background-position: center; background-attachment: fixed;
-        direction: rtl; /* توجيه الصفحة بالكامل من اليمين لليسار */
+        direction: rtl;
     }}
 
     .main-title {{
@@ -48,16 +48,16 @@ st.markdown(f"""
         text-align: right;
     }}
 
-    /* جلب الكلمات لليمين بحجم 25 */
+    /* التعديل المطلوب: حجم الخط 23 للعناوين فقط */
     [data-testid="stWidgetLabel"] p {{
-        font-size: 25px !important;
+        font-size: 23px !important; /* المقاس الجديد */
         font-family: 'Cairo' !important;
         font-weight: 700 !important;
         color: white !important;
-        text-align: right !important; /* المحاذاة لليمين */
+        text-align: right !important;
         direction: rtl !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
-        margin-right: 18% !important; /* تنسيق النص ليبدأ مع بداية الخانة */
+        margin-right: 18% !important;
     }}
 
     [data-testid="stTextInput"], [data-testid="stSelectbox"] {{
@@ -100,6 +100,7 @@ if not st.session_state.auth:
                 st.error("بيانات الدخول غير صحيحة!")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
+    # لوحة التحكم الداخلية
     st.markdown('<div class="main-title">🌍 لوحة التحكم - المسار الذهبي</div>', unsafe_allow_html=True)
     col_a, col_b, col_c = st.columns([1, 3, 1])
     with col_b:
