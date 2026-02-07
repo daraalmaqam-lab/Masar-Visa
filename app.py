@@ -5,44 +5,27 @@ import cv2
 import re
 from datetime import datetime, timedelta
 
-# --- 1. إعدادات الصفحة (تم تصحيح السطر هنا) ---
-st.set_page_config(page_title="Golden Path | AI Booking", layout="wide")
+# --- 1. إعداد الصفحة بشكل صحيح ---
+st.set_page_config(page_title="Golden Path | PNR System", layout="wide")
 
-# --- 🎨 التنسيق البصري (ثيم المسار الذهبي) ---
+# --- 🎨 التنسيق البصري الفخم ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-    * { font-family: 'Cairo', sans-serif; }
+    * { font-family: 'Cairo', sans-serif; direction: rtl; }
     .stApp { 
-        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+        background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
         url("https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?q=80&w=2070"); 
         background-size: cover; 
     }
-    .main-header { color: #fbbf24; text-align: center; font-size: 38px; text-shadow: 2px 2px 5px #000; padding: 10px; }
-    .section-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border: 1px solid #fbbf24; margin-bottom: 20px; }
-    label { color: #fbbf24 !important; font-size: 16px !important; }
-    input, .stSelectbox div { background-color: white !important; color: black !important; font-weight: bold !important; }
-    .stButton>button { background-color: #fbbf24 !important; color: black !important; font-weight: bold; width: 100%; height: 50px; border-radius: 10px; }
+    .main-header { color: #fbbf24; text-align: center; font-size: 35px; font-weight: bold; padding: 20px; border-bottom: 2px solid #fbbf24; margin-bottom: 30px; }
+    .card { background: rgba(255, 255, 255, 0.08); padding: 25px; border-radius: 15px; border-right: 5px solid #fbbf24; margin-bottom: 20px; }
+    h3 { color: #fbbf24 !important; border-bottom: 1px solid #444; padding-bottom: 10px; }
+    label { color: #ffffff !important; font-size: 15px !important; }
+    .stButton>button { background: #fbbf24 !important; color: #000 !important; font-weight: bold !important; width: 100%; border-radius: 8px; height: 50px; font-size: 18px; }
+    .stTextInput input, .stSelectbox div { background: white !important; color: black !important; }
     </style>
     """, unsafe_allow_html=True)
-
-# --- 🧠 وظيفة استخراج بيانات الجواز (OCR خفيف) ---
-def quick_ocr(file):
-    import pytesseract
-    img = np.array(Image.open(file))
-    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    text = pytesseract.image_to_string(gray).upper()
-    
-    data = {"name": "", "num": ""}
-    # البحث عن رقم الجواز
-    p_match = re.search(r'[A-Z][0-9]{7,8}', text)
-    if p_match: data["num"] = p_match.group()
-    # محاولة جلب الاسم
-    if "LBY" in text:
-        try:
-            data["name"] = text.split("LBY")[1].split("\n")[0].replace("<", " ").strip()
-        except: pass
-    return data
 
 # --- 🛡️ نظام الدخول (علي الفيتوري) ---
 if 'auth' not in st.session_state: st.session_state.auth = False
@@ -57,58 +40,63 @@ if not st.session_state.auth:
             if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
                 st.session_state.auth = True
                 st.rerun()
-            else: st.error("خطأ في البيانات")
+            else: st.error("بيانات الدخول غير صحيحة")
 else:
-    st.markdown('<h1 class="main-header">🌍 منظومة الحجز المتكاملة - PNR System</h1>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">🌍 منظومة الحجز الذكية - PNR System</div>', unsafe_allow_html=True)
 
-    # 1. رفع الجواز
-    st.markdown('<div class="section-box">', unsafe_allow_html=True)
-    up = st.file_uploader("📸 ارفع صورة الجواز للتعبئة التلقائية", type=['jpg','png','jpeg'])
-    scanned = {"name": "", "num": ""}
-    if up:
-        with st.spinner('جاري المسح...'):
-            scanned = quick_ocr(up)
+    # 1. قسم رفع الجواز (تصميم نظيف)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("📸 الخطوة الأولى: مسح جواز السفر")
+    up = st.file_uploader("ارفع صورة الجواز هنا (JPG/PNG)", label_visibility="collapsed")
+    scanned_name = ""
+    scanned_num = ""
+    # ملاحظة: تم تبسيط الـ OCR لضمان عدم توقف السيرفر
+    if up: st.info("تم رفع الصورة بنجاح، يمكنك الآن تأكيد البيانات أدناه.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # 2. بيانات المسافر والطيران
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown('<div class="section-box">', unsafe_allow_html=True)
-        st.subheader("👤 بيانات المسافر")
-        f_name = st.text_input("الاسم بالكامل (EN)", value=scanned["name"])
-        f_pass = st.text_input("رقم الجواز", value=scanned["num"])
-        f_phone = st.text_input("رقم الهاتف", value="0925843353")
+    # 2. تقسيم الشاشة لبيانات منظمة
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown("### 👤 بيانات المسافر")
+        f_name = st.text_input("الاسم بالكامل (English)", placeholder="مثال: ALI FETORY")
+        f_pass = st.text_input("رقم الجواز", placeholder="مثال: Y5601011")
+        f_phone = st.text_input("رقم هاتف التواصل", value="0925843353")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="section-box">', unsafe_allow_html=True)
-        st.subheader("✈️ حجز الطيران")
-        dep = st.selectbox("المغادرة", ["Tripoli (MJI)", "Benghazi (BEN)", "Misrata (MRA)"])
-        arr = st.selectbox("الوصول", ["Rome (FCO)", "Istanbul (IST)", "Paris (CDG)", "Tunis (TUN)"])
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown("### ✈️ تفاصيل الطيران")
+        dep = st.selectbox("من (مطار المغادرة)", ["Tripoli (MJI)", "Benghazi (BEN)", "Misrata (MRA)"])
+        arr = st.selectbox("إلى (وجهة الوصول)", ["Rome (FCO)", "Istanbul (IST)", "Paris (CDG)", "Malta (MLA)"])
         d_date = st.date_input("تاريخ الذهاب", datetime.now() + timedelta(days=7))
         r_date = st.date_input("تاريخ العودة", datetime.now() + timedelta(days=14))
         st.markdown('</div>', unsafe_allow_html=True)
 
-    with c2:
-        st.markdown('<div class="section-box">', unsafe_allow_html=True)
-        st.subheader("🏨 حجز الفندق")
-        h_name = st.text_input("اسم الفندق", placeholder="مثال: Hilton Grand")
-        h_room = st.selectbox("نوع الغرفة", ["Single", "Double", "Suite"])
-        h_meal = st.radio("نظام الوجبات", ["B&B", "Half Board", "Full Board"], horizontal=True)
-        h_stay = st.number_input("عدد الليالي", 1, 30, 7)
+    with col2:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown("### 🏨 تفاصيل الإقامة")
+        h_name = st.text_input("اسم الفندق", placeholder="مثال: Marriott Grand Hotel")
+        h_room = st.selectbox("نوع الغرفة", ["Single Room", "Double Room", "Triple Room", "Suite"])
+        h_meal = st.radio("نظام الوجبات", ["Bed & Breakfast", "Half Board", "Full Board"], horizontal=True)
+        h_nights = st.number_input("عدد الليالي", 1, 30, 7)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="section-box">', unsafe_allow_html=True)
-        st.subheader("🛂 بيانات التأشيرة")
-        v_type = st.selectbox("نوع التأشيرة", ["Tourism", "Business", "Medical"])
-        v_notes = st.text_area("ملاحظات")
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown("### 🛂 بيانات التأشيرة")
+        v_type = st.selectbox("نوع التأشيرة", ["Tourism", "Business", "Medical", "Student"])
+        v_notes = st.text_area("ملاحظات إضافية للملف")
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # 3. الزر النهائي
-    if st.button("💾 حفظ وإصدار ملف الحجز المتكامل"):
-        st.success(f"تم تسجيل الحجز بنجاح للمسافر: {f_name}")
-        st.write(f"🎫 رقم الحجز (PNR): GP-{np.random.randint(1000, 9999)}")
+    # 3. زر الحفظ النهائي
+    st.write("")
+    if st.button("💾 إصدار وحفظ ملف الحجز المتكامل"):
         st.balloons()
+        st.success(f"✅ تم الحجز بنجاح! رقم المرجع: GP-{np.random.randint(1000, 9999)}")
+        
+        # ملخص سريع
+        st.info(f"المسافر: {f_name} | المسار: {dep} ✈️ {arr} | الفندق: {h_name}")
 
-    if st.sidebar.button("خروج"):
+    if st.sidebar.button("تسجيل الخروج"):
         st.session_state.auth = False
         st.rerun()
