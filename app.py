@@ -124,3 +124,4 @@ else:
     if st.sidebar.button("تسجيل الخروج"):
         st.session_state.auth = False
         st.rerun()
+
