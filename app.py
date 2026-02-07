@@ -17,7 +17,7 @@ def get_passport_data(file):
     processed = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     return reader.readtext(processed, detail=0)
 
-# --- 🎨 الستايل الذهبي (تصغير طول المربعات لتطابق المربع الأحمر) ---
+# --- 🎨 الستايل الذهبي المطور (التوسيط الكامل) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -29,61 +29,69 @@ st.markdown("""
         background-size: cover; background-attachment: fixed;
     }
 
-    /* العنوان الرئيسي */
-    .main-title {
-        text-align: center; color: #fbbf24; font-family: 'Cairo'; 
-        font-size: 45px; font-weight: 900; text-shadow: 3px 3px 6px black;
-        margin-bottom: 30px;
-    }
-
-    /* 🏷️ العناوين: حجم 23، حافة سوداء، يمين */
-    [data-testid="stWidgetLabel"] p { 
-        color: white !important; 
-        text-align: right !important; 
-        direction: rtl !important; 
-        font-family: 'Cairo', sans-serif !important;
-        font-size: 23px !important; 
-        font-weight: 900 !important;
-        text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000 !important;
-        width: 300px !important; /* نفس عرض المربع الصغير */
-        margin: 0 auto !important;
-    }
-
-    /* ✍️ جعل المربعات قصيرة (300px) زي المربع الأحمر */
-    div[data-baseweb="input"] {
-        height: 40px !important; 
-        width: 300px !important; /* الطول القصير المطلوب */
-        margin: 0 auto !important; /* التوسيط في نص الشاشة */
-        background-color: #1e2129 !important; 
-        border-radius: 8px !important;
-        border: 1px solid #fbbf24 !important;
-    }
-    
-    input {
-        height: 40px !important;
-        font-size: 18px !important;
-        text-align: right !important;
-        color: white !important;
-    }
-
-    /* الزر الأصفر */
-    .stButton { text-align: center !important; }
-    .stButton button {
-        height: 45px !important;
-        width: 120px !important; 
-        border-radius: 10px !important;
-        background-color: #fbbf24 !important;
-        color: black !important;
-        font-weight: bold !important;
-        font-family: 'Cairo' !important;
-        margin-top: 20px !important;
-    }
-
+    /* 🎯 حاوية التوسيط المطلق للشاشة الرئيسية */
     .login-wrapper {
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-top: 60px;
+        justify-content: center;
+        height: 80vh; /* يعطي مساحة عمودية للتوسيط */
+        width: 100%;
+    }
+
+    .main-title {
+        text-align: center; color: #fbbf24; font-family: 'Cairo'; 
+        font-size: 55px; font-weight: 900; text-shadow: 3px 3px 6px black;
+        margin-bottom: 20px;
+    }
+
+    /* 🏷️ العناوين: توسيط النص فوق الخانات */
+    [data-testid="stWidgetLabel"] p { 
+        color: white !important; 
+        text-align: center !important; /* خليت العنوان في النص */
+        direction: rtl !important; 
+        font-family: 'Cairo', sans-serif !important;
+        font-size: 20px !important; 
+        font-weight: 700 !important;
+        text-shadow: 2px 2px 4px black !important;
+        width: 100% !important;
+        margin-bottom: 5px !important;
+    }
+
+    /* ✍️ تنسيق الخانات (العرض 300px وممركزة) */
+    div[data-baseweb="input"] {
+        height: 45px !important; 
+        width: 320px !important; 
+        margin: 0 auto !important; 
+        background-color: rgba(30, 33, 41, 0.9) !important; 
+        border-radius: 10px !important;
+        border: 2px solid #fbbf24 !important;
+    }
+    
+    input {
+        height: 45px !important;
+        font-size: 18px !important;
+        text-align: center !important; /* الكتابة داخل الخانة تكون في النص */
+        color: white !important;
+    }
+
+    /* الزر الأصفر الممركز */
+    .stButton { 
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    .stButton button {
+        height: 50px !important;
+        width: 180px !important; 
+        border-radius: 12px !important;
+        background-color: #fbbf24 !important;
+        color: black !important;
+        font-weight: bold !important;
+        font-family: 'Cairo' !important;
+        font-size: 20px !important;
+        margin-top: 25px !important;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
     }
     </style>
     """, unsafe_allow_html=True)
@@ -93,10 +101,10 @@ if 'auth' not in st.session_state:
     st.session_state.auth = False
 
 if not st.session_state.auth:
+    # استخدام حاوية الـ wrapper لتوسيط كل شيء
     st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="main-title">طيران المسار الذهبي</div>', unsafe_allow_html=True)
     
-    # الخانات بالطول القصير (300px)
     u = st.text_input("اسم المستخدم", key="u_login").upper()
     p = st.text_input("كلمة المرور", type="password", key="p_login")
     
@@ -104,19 +112,21 @@ if not st.session_state.auth:
         if (u == "ALI" or u == "ALI FETORY") and p == "0925843353":
             st.session_state.auth = True
             st.rerun()
+        else:
+            st.error("البيانات غير صحيحة")
     st.markdown('</div>', unsafe_allow_html=True)
+
 else:
-    # شاشة التحكم (بنفس التنسيق الملموم)
-    st.markdown("<h2 style='text-align:right; color:#fbbf24; font-family:Cairo; margin-right:20%;'>لوحة التحكم</h2>", unsafe_allow_html=True)
+    # لوحة التحكم (تظهر بشكل طبيعي بعد الدخول)
+    st.markdown("<h1 style='text-align:center; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم الذكية</h1>", unsafe_allow_html=True)
+    st.write("---")
     
-    s_name, s_pass = "", ""
-    
-    # حاوية ملمومة لشاشة التحكم
     with st.container():
         _, center_col, _ = st.columns([1, 2, 1])
         with center_col:
             up_file = st.file_uploader("📸 ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
             
+            s_name, s_pass = "", ""
             if up_file:
                 try:
                     res = get_passport_data(up_file)
@@ -128,9 +138,9 @@ else:
                     else: s_name = res[0] if res else ""
                 except: pass
 
-            st.text_input("الاسم", value=s_name, key="sc_name")
-            st.text_input("رقم الجواز", value=s_pass, key="sc_pass")
+            st.text_input("الاسم المستخرج", value=s_name)
+            st.text_input("رقم الجواز المستخرج", value=s_pass)
             
-            if st.button("خروج"):
+            if st.button("تسجيل الخروج"):
                 st.session_state.auth = False
                 st.rerun()
