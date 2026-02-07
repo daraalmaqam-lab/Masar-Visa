@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ================== 2. نظام الثيمات (اختياري) ==================
+# ========== 2. نظام الثيمات (اختياري) ========
 if "theme" not in st.session_state:
     st.session_state.theme = "الذهبي الملكي"
 
@@ -134,4 +134,5 @@ else:
     if st.button("تسجيل الخروج"):
         st.session_state.auth = False
         st.rerun()
+
 
