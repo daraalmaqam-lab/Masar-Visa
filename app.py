@@ -6,7 +6,7 @@ import re
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Golden Path", layout="wide", initial_sidebar_state="collapsed")
 
-# --- دالة المخ الذكي للقارئ ---
+# --- دالة القارئ الذكي ---
 def get_passport_data(file):
     import easyocr
     import cv2
@@ -17,7 +17,7 @@ def get_passport_data(file):
     processed = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     return reader.readtext(processed, detail=0)
 
-# --- 🎨 الستايل الذهبي المطور (التوسيط الكامل) ---
+# --- 🎨 الستايل الذهبي (توسيط إجباري 100%) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
@@ -29,69 +29,64 @@ st.markdown("""
         background-size: cover; background-attachment: fixed;
     }
 
-    /* 🎯 حاوية التوسيط المطلق للشاشة الرئيسية */
-    .login-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 80vh; /* يعطي مساحة عمودية للتوسيط */
-        width: 100%;
+    /* 🎯 التوسيط المطلق في وسط الشاشة بالضبط */
+    [data-testid="stVerticalBlock"] {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 100% !important;
+        max-width: 400px !important; /* عرض منطقة الدخول */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     .main-title {
         text-align: center; color: #fbbf24; font-family: 'Cairo'; 
-        font-size: 55px; font-weight: 900; text-shadow: 3px 3px 6px black;
-        margin-bottom: 20px;
+        font-size: 50px; font-weight: 900; text-shadow: 3px 3px 6px black;
+        margin-bottom: 20px; white-space: nowrap;
     }
 
-    /* 🏷️ العناوين: توسيط النص فوق الخانات */
+    /* 🏷️ العناوين: ممركزة فوق الخانات */
     [data-testid="stWidgetLabel"] p { 
         color: white !important; 
-        text-align: center !important; /* خليت العنوان في النص */
-        direction: rtl !important; 
+        text-align: center !important; 
+        width: 100% !important;
         font-family: 'Cairo', sans-serif !important;
-        font-size: 20px !important; 
+        font-size: 22px !important; 
         font-weight: 700 !important;
         text-shadow: 2px 2px 4px black !important;
-        width: 100% !important;
-        margin-bottom: 5px !important;
     }
 
-    /* ✍️ تنسيق الخانات (العرض 300px وممركزة) */
+    /* ✍️ المربعات: عرض 300px ممركزة */
     div[data-baseweb="input"] {
         height: 45px !important; 
-        width: 320px !important; 
+        width: 300px !important; 
         margin: 0 auto !important; 
-        background-color: rgba(30, 33, 41, 0.9) !important; 
+        background-color: #1e2129 !important; 
         border-radius: 10px !important;
         border: 2px solid #fbbf24 !important;
     }
     
     input {
-        height: 45px !important;
-        font-size: 18px !important;
-        text-align: center !important; /* الكتابة داخل الخانة تكون في النص */
+        text-align: center !important;
         color: white !important;
+        font-size: 18px !important;
     }
 
-    /* الزر الأصفر الممركز */
-    .stButton { 
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }
+    /* زر الدخول */
     .stButton button {
         height: 50px !important;
-        width: 180px !important; 
-        border-radius: 12px !important;
+        width: 200px !important; 
         background-color: #fbbf24 !important;
         color: black !important;
         font-weight: bold !important;
         font-family: 'Cairo' !important;
-        font-size: 20px !important;
-        margin-top: 25px !important;
-        box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
+        font-size: 22px !important;
+        margin-top: 20px !important;
+        border-radius: 12px !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -101,8 +96,6 @@ if 'auth' not in st.session_state:
     st.session_state.auth = False
 
 if not st.session_state.auth:
-    # استخدام حاوية الـ wrapper لتوسيط كل شيء
-    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="main-title">طيران المسار الذهبي</div>', unsafe_allow_html=True)
     
     u = st.text_input("اسم المستخدم", key="u_login").upper()
@@ -114,33 +107,13 @@ if not st.session_state.auth:
             st.rerun()
         else:
             st.error("البيانات غير صحيحة")
-    st.markdown('</div>', unsafe_allow_html=True)
-
 else:
-    # لوحة التحكم (تظهر بشكل طبيعي بعد الدخول)
-    st.markdown("<h1 style='text-align:center; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم الذكية</h1>", unsafe_allow_html=True)
-    st.write("---")
+    # لوحة التحكم - نلغي التوسيط المطلق عشان تخدم براحتك
+    st.markdown("""<style>[data-testid="stVerticalBlock"] { position: static !important; transform: none !important; width: 100% !important; max-width: 100% !important; }</style>""", unsafe_allow_html=True)
     
-    with st.container():
-        _, center_col, _ = st.columns([1, 2, 1])
-        with center_col:
-            up_file = st.file_uploader("📸 ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
-            
-            s_name, s_pass = "", ""
-            if up_file:
-                try:
-                    res = get_passport_data(up_file)
-                    raw = "".join(res).upper().replace(" ", "")
-                    p_match = re.search(r'[A-Z][0-9]{7,9}', raw)
-                    if p_match: s_pass = p_match.group()
-                    if "LBY" in raw:
-                        s_name = raw.split("LBY")[1].split("<<")[0].replace("<", " ").strip()
-                    else: s_name = res[0] if res else ""
-                except: pass
-
-            st.text_input("الاسم المستخرج", value=s_name)
-            st.text_input("رقم الجواز المستخرج", value=s_pass)
-            
-            if st.button("تسجيل الخروج"):
-                st.session_state.auth = False
-                st.rerun()
+    st.markdown("<h1 style='text-align:center; color:#fbbf24; font-family:Cairo;'>🌍 لوحة التحكم</h1>", unsafe_allow_html=True)
+    
+    up_file = st.file_uploader("📸 ارفع صورة الجواز", type=['jpg', 'png', 'jpeg'])
+    if st.button("تسجيل الخروج"):
+        st.session_state.auth = False
+        st.rerun()
